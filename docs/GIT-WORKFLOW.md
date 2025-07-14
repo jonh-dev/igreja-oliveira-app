@@ -183,18 +183,39 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 git push origin develop
 ```
 
-#### **🏁 Processo de Release (develop → main):**
+#### **🏁 Sincronização develop → main (MERGE MANUAL):**
+
+**🚨 SEMPRE preferir merge manual ao invés de PR no GitHub**
+
 ```bash
 # 1. Finalizar e testar develop  
 git checkout develop
 pnpm run type-check
 pnpm run build  # se disponível
 
-# 2. Merge para main (release)
-git checkout main
-git merge develop
+# 2. Verificar diferenças entre branches
+git log --oneline main..develop  # Ver commits que serão mergeados
+git diff main..develop  # Ver mudanças de código
 
-# 3. Tag da versão
+# 3. Merge manual para main
+git checkout main
+git pull origin main  # Garantir que main está atualizado
+git merge develop  # Merge local sem fast-forward
+
+# 4. Push main atualizado
+git push origin main
+
+# 5. Voltar para develop para continuar trabalhando
+git checkout develop
+```
+
+#### **🏁 Release Oficial (com tag de versão):**
+```bash
+# Só quando realmente prontos para release público
+# 1. Primeiro fazer merge manual develop → main (passos acima)
+
+# 2. Criar tag da versão em main
+git checkout main
 git tag -a v1.0.0 -m "Release v1.0.0 - MVP Igreja
 
 Features implementadas:
@@ -206,12 +227,17 @@ Features implementadas:
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
-# 4. Push main + tags
-git push origin main
+# 3. Push tags
 git push origin --tags
 
-# 5. Voltar para develop
+# 4. Voltar para develop
 git checkout develop
+```
+
+#### **⚡ Sincronização Rápida (sem tag):**
+```bash
+# Para sincronizar mudanças de documentação/pequenos ajustes
+git checkout main && git merge develop && git push origin main && git checkout develop
 ```
 
 ### **3. Validação Pré-Commit**
@@ -520,9 +546,11 @@ Passos para testar as mudanças
 1. ✅ Primeiro commit com estrutura atual (839c455)
 2. ✅ Setup de branches (main, develop)
 3. ✅ Git workflow documentado
-4. 🔄 **PRÓXIMO**: Criar repositório GitHub e push inicial
-5. 📝 Configurar commit template
-6. 🔧 Setup de pre-commit hooks
+4. ✅ Repositório GitHub criado e conectado
+5. ✅ Push inicial realizado
+6. 🔄 **PRÓXIMO**: Sincronizar develop → main (merge manual)
+7. 📝 Configurar commit template
+8. 🔧 Setup de pre-commit hooks
 
 ### **Futuro**
 1. 🌐 Criar repositório GitHub
