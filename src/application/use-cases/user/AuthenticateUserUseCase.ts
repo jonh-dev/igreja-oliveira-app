@@ -8,7 +8,6 @@ export class AuthenticateUserUseCase {
   async execute(dto: AuthenticateUserDto): Promise<AuthResult> {
     const { email, password } = dto;
 
-    // Validações de negócio
     if (!email || !password) {
       throw new Error('Email and password are required');
     }

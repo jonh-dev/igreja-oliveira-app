@@ -12,7 +12,6 @@ export class CreateUserUseCase {
   async execute(dto: CreateUserDto): Promise<User> {
     const { email, password, fullName, phone, city, neighborhood, address, role } = dto;
 
-    // Validações de negócio
     if (!email || !password || !fullName) {
       throw new Error('Email, password, and full name are required');
     }
@@ -25,16 +24,13 @@ export class CreateUserUseCase {
       throw new Error('Password must be at least 6 characters long');
     }
 
-    // Verificar se usuário já existe
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new Error('User with this email already exists');
     }
 
-    // Registrar no serviço de autenticação
     const authResult = await this.authService.register(email, password, fullName);
 
-    // Criar usuário no repositório
     const userData = {
       email,
       fullName,

@@ -1,10 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Configuração do Supabase - NUNCA usar fallbacks
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-// Validação rigorosa sem fallbacks - falha rápida se não configurado
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     'Variáveis de ambiente Supabase são obrigatórias:\n' +
@@ -16,14 +14,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    // Configurações específicas para app mobile
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
   },
 });
 
-// Tipos para as tabelas do banco
 export interface DatabaseUser {
   id: string;
   email: string;
@@ -47,7 +43,6 @@ export interface DatabaseDonation {
   updated_at: string;
 }
 
-// Schema do banco para type safety
 export interface Database {
   public: {
     Tables: {

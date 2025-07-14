@@ -8,7 +8,6 @@ export class CreateDonationUseCase {
   async execute(dto: CreateDonationDto): Promise<Donation> {
     const { userId, amount, description } = dto;
 
-    // Validações de negócio
     if (!userId) {
       throw new Error('User ID is required');
     }
@@ -17,7 +16,6 @@ export class CreateDonationUseCase {
       throw new Error('Amount must be greater than zero');
     }
 
-    // Validar formato do valor (máximo 2 casas decimais)
     if (!this.isValidAmount(amount)) {
       throw new Error('Amount must have at most 2 decimal places');
     }

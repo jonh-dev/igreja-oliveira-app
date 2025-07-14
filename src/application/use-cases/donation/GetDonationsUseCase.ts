@@ -8,7 +8,6 @@ export class GetDonationsUseCase {
   async execute(dto: GetDonationsDto = {}): Promise<Donation[]> {
     const { userId, limit = 50, offset = 0 } = dto;
 
-    // Validações de negócio
     if (limit < 1 || limit > 100) {
       throw new Error('Limit must be between 1 and 100');
     }

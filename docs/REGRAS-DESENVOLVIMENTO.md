@@ -323,6 +323,63 @@ export class ChurchEventsService {
 
 ## 🎨 Padrões de Código - Qualidade Extrema
 
+### **⚠️ REGRA CRÍTICA: NUNCA USAR COMENTÁRIOS**
+
+#### **🚨 PROIBIDO: Comentários no código**
+```typescript
+// ❌ PROIBIDO - Comentários no código
+// Este método busca usuários por email
+const findUserByEmail = (email: string) => {
+  // Validar email antes de buscar
+  if (!email) return null;
+  // Buscar no banco de dados
+  return userRepository.findByEmail(email);
+};
+
+// ✅ CORRETO - Código auto-explicativo
+const findUserByEmail = (email: string): Promise<User | null> => {
+  if (!email) return Promise.resolve(null);
+  return userRepository.findByEmail(email);
+};
+```
+
+#### **📋 Princípios de Código Limpo:**
+- **Self-documenting code**: Nomes descritivos eliminam necessidade de comentários
+- **Single Responsibility**: Funções pequenas e específicas
+- **Clear naming**: Variáveis e funções explicam sua intenção
+- **Type safety**: TypeScript fornece documentação via tipos
+
+#### **🔧 Como evitar comentários:**
+```typescript
+// ❌ RUIM - Precisa de comentário
+const calc = (a: number, b: number, c: string) => {
+  // Calcular salário com desconto de imposto
+  return c === 'admin' ? a * 0.8 : a * 0.9;
+};
+
+// ✅ BOM - Auto-explicativo
+const calculateSalaryWithTaxDiscount = (
+  grossSalary: number, 
+  userRole: UserRole
+): number => {
+  const adminTaxRate = 0.8;
+  const regularTaxRate = 0.9;
+  
+  return userRole === UserRole.ADMIN 
+    ? grossSalary * adminTaxRate
+    : grossSalary * regularTaxRate;
+};
+```
+
+#### **🚫 Exceções (também proibidas):**
+- ❌ TODO comments
+- ❌ FIXME comments  
+- ❌ Comments explicando código
+- ❌ Commented out code
+- ❌ Documentation comments no código
+
+**Se precisar documentar, use arquivos .md separados!**
+
 ### **1. Nomenclatura - Igreja Context**
 
 ```typescript
