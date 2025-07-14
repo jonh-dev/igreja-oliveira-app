@@ -74,24 +74,71 @@ refactor(application): aplicar Clean Architecture
 
 ## 🔄 Fluxo de Desenvolvimento
 
-### **1. Branch Strategy**
+### **1. Setup Inicial Obrigatório**
 ```bash
+# 1. Renomear master para main (padrão GitHub)
+git branch -M main
+
+# 2. Criar branch develop (desenvolvimento principal)
+git checkout -b develop
+
+# 3. Criar repositório remoto no GitHub
+# Via GitHub web interface: https://github.com/jonh-dev/igreja-oliveira-app
+
+# 4. Conectar repositório local ao remoto
+git remote add origin https://github.com/jonh-dev/igreja-oliveira-app.git
+
+# 5. Push inicial das branches principais
+git push -u origin main
+git push -u origin develop
+```
+
+### **2. Branch Strategy Rigorosa**
+```bash
+# SEMPRE trabalhar em features branches a partir de develop
+git checkout develop
+git pull origin develop
+
 # Criar feature branch
 git checkout -b feature/supabase-repositories
 
-# Trabalhar na feature
+# Trabalhar na feature com commits incrementais
 git add .
 git commit -m "feat(infrastructure): implementar UserRepository"
 
-# Merge para develop
+# Push da feature para remote
+git push -u origin feature/supabase-repositories
+
+# Merge para develop (só quando feature completa)
 git checkout develop
 git merge feature/supabase-repositories
 
-# Delete feature branch
+# Push develop atualizado
+git push origin develop
+
+# Cleanup da feature branch
 git branch -d feature/supabase-repositories
+git push origin --delete feature/supabase-repositories
 ```
 
-### **2. Processo de Commit**
+### **3. Regras de Branch Obrigatórias**
+
+#### **🚨 NUNCA COMMITAR DIRETAMENTE EM:**
+- ❌ `main` (apenas via merge de release)
+- ❌ `develop` (apenas via merge de features)
+
+#### **✅ SEMPRE USAR FEATURE BRANCHES:**
+- `feature/nome-da-funcionalidade`
+- `fix/nome-do-bug`
+- `chore/nome-da-tarefa`
+- `docs/nome-da-documentacao`
+
+#### **🔄 Fluxo Obrigatório:**
+```
+feature/xyz → develop → release/v1.x.x → main
+```
+
+### **4. Processo de Commit**
 ```bash
 # 1. Verificar status
 git status
@@ -337,12 +384,39 @@ echo "✅ Todas as validações passaram!"
 
 ## 🚀 Integração com GitHub (Futuro)
 
-### **Repository Setup**
+### **Repository Setup - PROCESSO INICIAL COMPLETO**
+
+#### **1. Criar Repositório no GitHub**
 ```bash
-# Quando criar repositório remoto
+# 1. Ir para: https://github.com/new
+# 2. Repository name: igreja-oliveira-app
+# 3. Description: Sistema de Gestão para Igreja Oliveira - React Native
+# 4. Public/Private: Escolher conforme necessidade
+# 5. NÃO inicializar com README, .gitignore ou license (já temos local)
+# 6. Create repository
+```
+
+#### **2. Conectar Local ao Remoto**
+```bash
+# Já foi feito o setup inicial:
+# ✅ git branch -M main
+# ✅ git checkout -b develop
+
+# Conectar ao remoto
 git remote add origin https://github.com/jonh-dev/igreja-oliveira-app.git
-git branch -M main
+
+# Push inicial das branches principais
 git push -u origin main
+git push -u origin develop
+```
+
+#### **3. Configurar Branch Protection (GitHub)**
+```bash
+# No GitHub > Settings > Branches:
+# 1. Proteger 'main': Require pull request reviews
+# 2. Proteger 'develop': Require pull request reviews  
+# 3. Require status checks (CI quando configurado)
+# 4. Require branches to be up to date
 ```
 
 ### **GitHub Actions (Futuro)**
@@ -386,11 +460,13 @@ Passos para testar as mudanças
 
 ## 🎯 Próximos Passos
 
-### **Imediato**
-1. ✅ Primeiro commit com estrutura atual
-2. 🔄 Setup de branches (develop, feature/*)
-3. 📝 Configurar commit template
-4. 🔧 Setup de pre-commit hooks
+### **Imediato - STATUS ATUAL**
+1. ✅ Primeiro commit com estrutura atual (839c455)
+2. ✅ Setup de branches (main, develop)
+3. ✅ Git workflow documentado
+4. 🔄 **PRÓXIMO**: Criar repositório GitHub e push inicial
+5. 📝 Configurar commit template
+6. 🔧 Setup de pre-commit hooks
 
 ### **Futuro**
 1. 🌐 Criar repositório GitHub
