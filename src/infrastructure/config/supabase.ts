@@ -1,9 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Configuração do Supabase para desenvolvimento
-// TODO: Mover para variáveis de ambiente em produção
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key';
+// Configuração do Supabase - NUNCA usar fallbacks
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+// Validação rigorosa sem fallbacks - falha rápida se não configurado
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Variáveis de ambiente Supabase são obrigatórias:\n' +
+    '- EXPO_PUBLIC_SUPABASE_URL\n' +
+    '- EXPO_PUBLIC_SUPABASE_ANON_KEY\n' +
+    'Configure no arquivo .env na raiz do projeto'
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

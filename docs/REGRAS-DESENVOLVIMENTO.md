@@ -154,6 +154,95 @@ export class NavigationStrategy {
 
 ## 🗄️ Padrões Supabase - Expertise Aplicada
 
+### **⚠️ REGRA CRÍTICA: VARIÁVEIS DE AMBIENTE**
+
+#### **🚨 NUNCA usar fallbacks de variáveis de ambiente**
+```typescript
+// ❌ PROIBIDO - Fallbacks podem expor dados em produção
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://default.supabase.co';
+
+// ✅ CORRETO - Falha rápida sem fallback
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+if (!supabaseUrl) {
+  throw new Error('EXPO_PUBLIC_SUPABASE_URL é obrigatório');
+}
+```
+
+#### **📋 Processo de Setup Supabase Obrigatório:**
+
+**1. Criar projeto no Supabase:**
+```bash
+# 1. Ir para https://database.new
+# 2. Criar novo projeto: "igreja-oliveira-app"
+# 3. Escolher região próxima (South America - São Paulo)
+# 4. Definir senha forte para banco
+# 5. Aguardar provisionamento (~2min)
+```
+
+**2. Configurar variáveis no Expo:**
+```bash
+# Criar arquivo .env na raiz do projeto
+echo "EXPO_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co" > .env
+echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here" >> .env
+
+# Adicionar ao .gitignore (já feito)
+# .env já está no .gitignore
+```
+
+**3. Configurar secrets para produção:**
+```bash
+# Via Supabase CLI (quando disponível)
+supabase secrets set EXPO_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
+supabase secrets set EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+
+# Via Dashboard: Project Settings > API > Project URL & API Keys
+```
+
+**4. Validação obrigatória:**
+```typescript
+// src/infrastructure/config/supabase.ts
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+// Validação rigorosa sem fallbacks
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Variáveis de ambiente Supabase são obrigatórias');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
+
+#### **🔐 Secrets Management - Tier Gratuito:**
+
+**Supabase oferece gratuitamente:**
+- ✅ **4 secrets padrão** (URL, ANON_KEY, SERVICE_ROLE_KEY, DB_URL)
+- ✅ **Secrets customizados** via Dashboard/CLI
+- ✅ **Vault para database secrets** (encrypted storage)
+- ✅ **Environment variables** para Edge Functions
+- ✅ **Local development** com .env files
+
+**Limitações tier gratuito:**
+- 💾 **500MB database storage**
+- 🔄 **2GB bandwidth/mês**
+- 👥 **50.000 monthly active users**
+- ⏱️ **Edge Functions**: 500.000 invocations/mês
+
+**Setup de desenvolvimento:**
+```bash
+# 1. Instalar Supabase CLI
+npm install -g supabase
+
+# 2. Login no Supabase
+supabase login
+
+# 3. Inicializar projeto local (opcional)
+supabase init
+
+# 4. Configurar secrets locais
+echo "EXPO_PUBLIC_SUPABASE_URL=http://localhost:54321" > .env.local
+echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=local_anon_key" >> .env.local
+```
+
 ### **1. Row Level Security (RLS) - Hierarquia Igreja**
 
 ```sql
