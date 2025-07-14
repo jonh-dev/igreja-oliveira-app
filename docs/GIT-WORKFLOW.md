@@ -121,47 +121,97 @@ git branch -d feature/supabase-repositories
 git push origin --delete feature/supabase-repositories
 ```
 
-### **3. Regras de Branch Obrigatórias**
+### **3. Regras de Branch - DESENVOLVEDOR SOLO**
 
-#### **🚨 NUNCA COMMITAR DIRETAMENTE EM:**
-- ❌ `main` (apenas via merge de release)
-- ❌ `develop` (apenas via merge de features)
+#### **📋 Estratégia Simplificada para Projeto Pequeno:**
 
-#### **✅ SEMPRE USAR FEATURE BRANCHES:**
-- `feature/nome-da-funcionalidade`
-- `fix/nome-do-bug`
-- `chore/nome-da-tarefa`
-- `docs/nome-da-documentacao`
+**🎯 PRINCIPAL: Trabalhar diretamente em `develop`**
+- ✅ Commits diretos em `develop` são permitidos
+- ✅ `main` apenas para releases estáveis
+- ✅ Feature branches opcionais para mudanças grandes
 
-#### **🔄 Fluxo Obrigatório:**
-```
-feature/xyz → develop → release/v1.x.x → main
-```
-
-### **4. Processo de Commit**
+#### **🔄 Fluxo Simplificado:**
 ```bash
-# 1. Verificar status
-git status
+# Fluxo principal (80% dos casos)
+develop → main (quando pronto para release)
 
-# 2. Validar qualidade (OBRIGATÓRIO)
+# Fluxo para features grandes (20% dos casos) 
+feature/xyz → develop → main
+```
+
+#### **📊 Quando usar cada abordagem:**
+
+**✅ COMMIT DIRETO EM DEVELOP:**
+- Correções pequenas (<50 linhas)
+- Implementações simples
+- Atualizações de documentação
+- Configurações e ajustes
+
+**✅ FEATURE BRANCH:**
+- Implementações grandes (>100 linhas)
+- Novas telas ou componentes
+- Mudanças arquiteturais
+- Experimentos que podem falhar
+
+### **4. Workflow Diário - DESENVOLVEDOR SOLO**
+
+#### **🌅 Início do Dia:**
+```bash
+# 1. Sempre começar em develop
+git checkout develop
+git pull origin develop
+```
+
+#### **💻 Durante o Desenvolvimento:**
+```bash
+# 1. Validar qualidade (SEMPRE obrigatório)
 pnpm run type-check
-pnpm run lint      # quando configurado
-pnpm run test      # quando configurado
 
-# 3. Adicionar arquivos
+# 2. Commit incremental em develop
 git add .
+git commit -m "feat(infrastructure): implementar UserRepository
 
-# 4. Commit com mensagem padrão
-git commit -m "feat(infrastructure): configurar Supabase
-
-- Adicionar cliente Supabase com configuração mobile
-- Implementar interfaces TypeScript para Database
-- Configurar autoRefresh e persistSession
-- Adicionar types para User e Donation tables
+- Adicionar CRUD operations
+- Configurar RLS policies  
+- Testes unitários básicos
 
 🧪 Generated with [Claude Code](https://claude.ai/code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
+
+# 3. Push para backup/sincronia
+git push origin develop
+```
+
+#### **🏁 Processo de Release (develop → main):**
+```bash
+# 1. Finalizar e testar develop  
+git checkout develop
+pnpm run type-check
+pnpm run build  # se disponível
+
+# 2. Merge para main (release)
+git checkout main
+git merge develop
+
+# 3. Tag da versão
+git tag -a v1.0.0 -m "Release v1.0.0 - MVP Igreja
+
+Features implementadas:
+- Clean Architecture
+- Configuração Supabase  
+- Sistema de autenticação básico
+
+🧪 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+# 4. Push main + tags
+git push origin main
+git push origin --tags
+
+# 5. Voltar para develop
+git checkout develop
 ```
 
 ### **3. Validação Pré-Commit**
@@ -410,13 +460,19 @@ git push -u origin main
 git push -u origin develop
 ```
 
-#### **3. Configurar Branch Protection (GitHub)**
+#### **3. Configurar Branch Protection - DESENVOLVEDOR SOLO**
 ```bash
 # No GitHub > Settings > Branches:
-# 1. Proteger 'main': Require pull request reviews
-# 2. Proteger 'develop': Require pull request reviews  
-# 3. Require status checks (CI quando configurado)
-# 4. Require branches to be up to date
+# 1. Proteger APENAS 'main':
+#    - ✅ Restrict pushes that create files larger than 100MB
+#    - ✅ Require signed commits (opcional)
+#    - ❌ NÃO proteger 'develop' (precisamos push direto)
+#    - ❌ NÃO require PR reviews (projeto solo)
+
+# 2. Configurar merge protections (opcional):
+#    - ✅ Allow merge commits  
+#    - ✅ Allow squash merging
+#    - ✅ Allow rebase merging
 ```
 
 ### **GitHub Actions (Futuro)**
