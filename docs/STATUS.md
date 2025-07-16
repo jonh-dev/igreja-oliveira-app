@@ -2,7 +2,7 @@
 
 ## 🎯 Fase Atual: **FASE 2 - Refatoração da Arquitetura** ✅
 
-### 📅 Última Atualização: 2025-01-14 - 15:30
+### 📅 Última Atualização: 2025-01-16 - 14:45
 
 ---
 
@@ -45,6 +45,7 @@
 - [x] **Regras de segurança** sem fallbacks de variáveis
 - [x] **Clean code** - todos os comentários removidos
 - [x] **Refatoração de baixo acoplamento** - Address separado do User
+- [x] **Validação de CEP** - Implementada com ViaCEP API
 - [ ] **Implementar camada de Infrastructure**
   - [x] SupabaseUserRepository
   - [ ] SupabaseAddressRepository
