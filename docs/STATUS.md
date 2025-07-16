@@ -2,7 +2,7 @@
 
 ## 🎯 Fase Atual: **FASE 2 - Refatoração da Arquitetura** ✅
 
-### 📅 Última Atualização: 2025-01-14
+### 📅 Última Atualização: 2025-01-14 - 15:30
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### **🏗️ Arquitetura Clean Architecture**
 - ✅ **Estrutura de pastas** reorganizada seguindo padrões 2025
-- ✅ **Domain Layer** com entidades User e Donation
+- ✅ **Domain Layer** com entidades User, Address e Donation
 - ✅ **Application Layer** com interfaces e use cases
 - ✅ **Interfaces segregadas** na camada de aplicação
 - ✅ **Use Cases** implementados com injeção de dependências
@@ -28,9 +28,12 @@
 ### **📚 Documentação**
 - ✅ **MESA-REDONDA.md** completo com regras atualizadas
 - ✅ **REGRAS-DESENVOLVIMENTO.md** criado com padrões detalhados
+- ✅ **SUPABASE-SETUP.md** processo completo de configuração
+- ✅ **GIT-WORKFLOW.md** adaptado para desenvolvedor solo
 - ✅ **Boas práticas TypeScript** validadas
 - ✅ **Estrutura de pastas** documentada
 - ✅ **Regra PNPM obrigatório** adicionada
+- ✅ **Regra NUNCA comentários** implementada
 
 ---
 
@@ -39,8 +42,12 @@
 ### **📊 Prioridade Alta**
 - [x] **Scripts de qualidade** configurados no package.json
 - [x] **Configuração do Supabase** implementada e testada
+- [x] **Regras de segurança** sem fallbacks de variáveis
+- [x] **Clean code** - todos os comentários removidos
+- [x] **Refatoração de baixo acoplamento** - Address separado do User
 - [ ] **Implementar camada de Infrastructure**
-  - [ ] SupabaseUserRepository
+  - [x] SupabaseUserRepository
+  - [ ] SupabaseAddressRepository
   - [ ] SupabaseDonationRepository
   - [ ] SupabaseAuthService
 
@@ -65,6 +72,7 @@ src/
 ├── domain/
 │   ├── entities/
 │   │   ├── User.ts ✅
+│   │   ├── Address.ts ✅
 │   │   ├── Donation.ts ✅
 │   │   └── index.ts ✅
 │   └── value-objects/ (preparado)
@@ -72,6 +80,7 @@ src/
 │   ├── interfaces/
 │   │   ├── repositories/
 │   │   │   ├── IUserRepository.ts ✅
+│   │   │   ├── IAddressRepository.ts ✅
 │   │   │   └── IDonationRepository.ts ✅
 │   │   └── services/
 │   │       └── IAuthService.ts ✅
@@ -86,7 +95,8 @@ src/
 │       ├── CreateUserDto.ts ✅
 │       └── CreateDonationDto.ts ✅
 ├── infrastructure/
-│   ├── repositories/ (preparado)
+│   ├── repositories/
+│   │   └── SupabaseUserRepository.ts ✅
 │   ├── services/ (preparado)
 │   └── config/
 │       └── supabase.ts ✅

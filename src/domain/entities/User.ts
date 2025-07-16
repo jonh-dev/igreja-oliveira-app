@@ -11,9 +11,6 @@ export interface User {
   email: string;
   fullName: string;
   phone?: string;
-  city?: string;
-  neighborhood?: string;
-  address?: string;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
@@ -23,17 +20,11 @@ export interface CreateUserData {
   email: string;
   fullName: string;
   phone?: string;
-  city?: string;
-  neighborhood?: string;
-  address?: string;
   role: UserRole;
 }
 
 export interface UpdateUserData {
   fullName?: string;
   phone?: string;
-  city?: string;
-  neighborhood?: string;
-  address?: string;
   role?: UserRole;
 }

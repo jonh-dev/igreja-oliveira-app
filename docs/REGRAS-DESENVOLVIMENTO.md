@@ -492,6 +492,110 @@ export class ChurchValidators {
 }
 ```
 
+### **4. CEP Validation - Brasil Específico**
+
+```typescript
+// ✅ CORRETO - Value Object para CEP
+export class CEP {
+  private constructor(private readonly value: string) {}
+
+  static create(cep: string): CEP {
+    const cleanCep = this.cleanCEP(cep);
+    
+    if (!this.isValidFormat(cleanCep)) {
+      throw new Error('CEP deve ter 8 dígitos numéricos');
+    }
+
+    return new CEP(cleanCep);
+  }
+
+  getValue(): string {
+    return this.value;
+  }
+
+  getFormatted(): string {
+    return `${this.value.substring(0, 5)}-${this.value.substring(5)}`;
+  }
+
+  private static cleanCEP(cep: string): string {
+    return cep.replace(/\D/g, '');
+  }
+
+  private static isValidFormat(cep: string): boolean {
+    return /^\d{8}$/.test(cep);
+  }
+}
+
+// ✅ CORRETO - Service para validação de CEP via ViaCEP
+export class ViaCEPService implements ICEPValidationService {
+  private readonly baseUrl = 'https://viacep.com.br/ws';
+
+  async validateCEP(cep: string): Promise<CEPInfo | null> {
+    try {
+      const cleanCep = cep.replace(/\D/g, '');
+      
+      if (!/^\d{8}$/.test(cleanCep)) {
+        throw new Error('CEP deve ter 8 dígitos numéricos');
+      }
+
+      const response = await fetch(`${this.baseUrl}/${cleanCep}/json/`);
+      
+      if (!response.ok) {
+        throw new Error('Erro ao consultar CEP');
+      }
+
+      const data = await response.json();
+      
+      if (data.erro) {
+        return null;
+      }
+
+      return {
+        cep: data.cep,
+        logradouro: data.logradouro,
+        complemento: data.complemento,
+        bairro: data.bairro,
+        localidade: data.localidade,
+        uf: data.uf,
+        ibge: data.ibge,
+        gia: data.gia,
+        ddd: data.ddd,
+        siafi: data.siafi
+      };
+    } catch (error) {
+      console.error('Erro ao validar CEP:', error);
+      return null;
+    }
+  }
+}
+
+// ✅ CORRETO - Uso no CreateUserUseCase
+export class CreateUserUseCase {
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly addressRepository: IAddressRepository,
+    private readonly cepValidationService: ICEPValidationService
+  ) {}
+
+  async execute(dto: CreateUserDto): Promise<User> {
+    // Validação automática de CEP
+    if (dto.address?.zipCode) {
+      const cep = CEP.create(dto.address.zipCode);
+      const cepInfo = await this.cepValidationService.validateCEP(cep.getValue());
+      
+      if (!cepInfo) {
+        throw new Error('CEP inválido ou não encontrado');
+      }
+
+      // Auto-preenchimento de dados do endereço
+      dto.address.city = cepInfo.localidade;
+      dto.address.neighborhood = cepInfo.bairro;
+      dto.address.state = cepInfo.uf;
+    }
+  }
+}
+```
+
 ---
 
 ## 🧪 Testes - Cobertura Obrigatória
