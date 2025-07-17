@@ -34,6 +34,7 @@
 - ✅ **Estrutura de pastas** documentada
 - ✅ **Regra PNPM obrigatório** adicionada
 - ✅ **Regra NUNCA comentários** implementada
+- ✅ **Configuração do tsconfig.json** ajustada para padrão Expo + TypeScript (sem extends expo/tsconfig.base)
 
 ---
 
@@ -48,9 +49,10 @@
 - [x] **Validação de CEP** - Implementada com ViaCEP API
 - [ ] **Implementar camada de Infrastructure**
   - [x] SupabaseUserRepository
-  - [ ] SupabaseAddressRepository
-  - [ ] SupabaseDonationRepository
-  - [ ] SupabaseAuthService
+  - [x] SupabaseAddressRepository
+  - [x] SupabaseDonationRepository
+  - [x] SupabaseAuthService
+  - [x] Container de Injeção de Dependências
 
 ### **📊 Prioridade Média**
 - [ ] **Camada de Presentation**
