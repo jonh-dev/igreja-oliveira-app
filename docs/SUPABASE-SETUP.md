@@ -334,3 +334,14 @@ SELECT * FROM users; -- Deve respeitar políticas
 **👤 Responsável**: João Zanardi (jonh-dev)  
 
 **🎯 Objetivo**: Configurar Supabase seguindo práticas de segurança enterprise para aplicação de gestão eclesiástica.
+
+## 🔑 API Keys Supabase
+
+- Sempre use a Publishable Key (sb_publishable_...) no frontend/mobile.
+- Nunca exponha a Service Role Key.
+- Legacy anon key só para compatibilidade.
+- Se receber 401, revise as policies e o tipo de key usada.
+
+## 🛠️ Troubleshooting
+
+- 401 Unauthorized: Verifique se está usando a publishable key e se há policy de SELECT para a role anon/public.
