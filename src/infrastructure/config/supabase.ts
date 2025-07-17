@@ -32,6 +32,20 @@ export interface DatabaseUser {
   updated_at: string;
 }
 
+export interface DatabaseAddress {
+  id: string;
+  user_id: string;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string | null;
+  zip_code: string;
+  country: string | null;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DatabaseDonation {
   id: string;
   user_id: string;
@@ -50,6 +64,11 @@ export interface Database {
         Row: DatabaseUser;
         Insert: Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      addresses: {
+        Row: DatabaseAddress;
+        Insert: Omit<DatabaseAddress, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<DatabaseAddress, 'id' | 'created_at' | 'updated_at'>>;
       };
       donations: {
         Row: DatabaseDonation;
