@@ -13,6 +13,13 @@
 
 ## 🎯 Princípios Fundamentais
 
+### **0. Versão Node.js - Regra LTS**
+- **SEMPRE usar a versão LTS mais recente do Node.js**
+- **NUNCA retroceder para versões anteriores**
+- **Verificar periodicamente atualizações LTS**
+- **Versão atual:22.110 (LTS mais recente)**
+- **Comando para alterar: `nvm use 22.11.0`**
+
 ### **1. Escalabilidade Primeiro**
 - Código deve suportar crescimento de 50 → 50.000 usuários
 - Arquitetura preparada para expansão de funcionalidades
@@ -242,6 +249,12 @@ supabase init
 echo "EXPO_PUBLIC_SUPABASE_URL=http://localhost:54321" > .env.local
 echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=local_anon_key" >> .env.local
 ```
+
+### **Supabase API Keys - Regra**
+- Sempre use a Publishable Key (sb_publishable_...) no frontend/mobile.
+- Nunca exponha a Service Role Key.
+- Legacy anon key só para compatibilidade.
+- Se receber 401, revise as policies e o tipo de key usada.
 
 ### **1. Row Level Security (RLS) - Hierarquia Igreja**
 
@@ -977,3 +990,35 @@ jobs:
 **👤 Responsável**: João Zanardi (jonh-dev)
 
 **🎯 Objetivo**: Garantir código de qualidade enterprise para sistema de gestão eclesiástica escalável e mantível.
+
+---
+
+## ⚙️ Configuração do TypeScript (tsconfig.json)
+
+- **NUNCA** usar `extends: "expo/tsconfig.base"` a menos que o preset esteja instalado e seja realmente necessário.
+- Para projetos Expo + TypeScript, utilize o seguinte padrão:
+
+```json
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "react-native",
+    "strict": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
+}
+```
+- Isso garante compatibilidade, performance e evita erros de preset ausente.
