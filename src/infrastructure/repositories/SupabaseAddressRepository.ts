@@ -1,20 +1,6 @@
 import { IAddressRepository } from '../../application/interfaces/repositories/IAddressRepository';
 import { Address, CreateAddressData, UpdateAddressData } from '../../domain/entities/Address';
-import { supabase } from '../config/supabase';
-
-interface DatabaseAddress {
-  id: string;
-  user_id: string;
-  street: string;
-  neighborhood: string;
-  city: string;
-  state: string | null;
-  zip_code: string;
-  country: string | null;
-  is_default: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import { supabase, DatabaseAddress } from '../config/supabase';
 
 export class SupabaseAddressRepository implements IAddressRepository {
   async findById(id: string): Promise<Address | null> {
