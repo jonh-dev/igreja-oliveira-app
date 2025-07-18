@@ -161,6 +161,60 @@ CREATE TABLE donations (
 );
 ```
 
+## 💰 Contexto Real das Doações - Igreja Oliveira
+
+### **Fluxo Atual de Doações**
+
+#### **1. Cultos Dominicais - Gasofilaço (Dinheiro Vivo)**
+- **Frequência**: Apenas aos domingos
+- **Processo**: 
+  - Pessoas fazem ofertas no gasofilaço durante o culto
+  - Líderes e diáconos recolhem o gasofilaço
+  - Contabilização manual em sala fechada
+  - Registro de valores totais sem identificação individual
+- **Características**:
+  - Não há controle de quem doou especificamente
+  - Valores são consolidados por culto
+  - Processo manual sujeito a erros
+
+#### **2. Doações Eletrônicas (PIX/Cartão)**
+- **Frequência**: Diária (24/7)
+- **Processo**:
+  - Doações via PIX ou cartão de crédito/débito
+  - Integração com sistema bancário da igreja
+  - Captura automática de valores
+  - Identificação do doador por transação
+- **Características**:
+  - Controle individual de doadores
+  - Rastreabilidade completa
+  - Processo automatizado
+
+#### **3. Relatórios e Controle**
+- **Consolidação**: Valores de gasofilaço + eletrônicos
+- **Exportação**: PDF e CSV para análise
+- **Métricas**: Por culto, período, tipo de doação
+- **Acesso**: Hierárquico por role (admin, pastor, diáconos)
+
+### **Requisitos Técnicos**
+
+#### **Sistema de Gasofilaço**
+- Interface para contabilização manual
+- Registro de valores por culto/domingo
+- Controle de quem registrou (liderança)
+- Validações de valores e datas
+
+#### **Integração Open Finance**
+- Conexão com APIs bancárias
+- Captura automática de transações
+- Mapeamento de doadores
+- Sincronização em tempo real
+
+#### **Relatórios Consolidados**
+- Geração de PDF profissionais
+- Exportação CSV para Excel
+- Filtros avançados
+- Métricas e gráficos
+
 ---
 
 ## 🎯 Funcionalidades MVP
@@ -175,18 +229,36 @@ CREATE TABLE donations (
 - [x] Configurar injeção de dependências
 
 ### **Fase 2: Interface do Usuário 🔄**
-- [ ] Criar componentes compartilhados
-- [ ] Implementar navegação com Strategy Pattern
-- [ ] Desenvolver telas principais
-- [ ] Integrar com Supabase
+- [x] Criar componentes compartilhados
+- [x] Implementar navegação com Strategy Pattern
+- [x] Desenvolver telas principais
+- [x] Integrar com Supabase
 
-### **Fase 3: Testes e Qualidade**
+### **Fase 3: Sistema de Doações (Contexto Real)**
+- [x] Implementar telas de doações básicas
+- [ ] **Sistema de Gasofilaço (Dinheiro Vivo)**
+  - [ ] Tela para contabilização manual de ofertas em dinheiro
+  - [ ] Registro por líderes/diáconos após culto dominical
+  - [ ] Controle de valores sem identificação individual
+  - [ ] Relatórios consolidados por data/culto
+- [ ] **Sistema de Doações Eletrônicas**
+  - [ ] Integração com Open Finance da igreja
+  - [ ] Captura automática de valores via PIX/cartão
+  - [ ] Identificação de doadores por transação
+  - [ ] Sincronização com relatórios consolidados
+- [ ] **Relatórios e Exportação**
+  - [ ] Geração de PDF com dados consolidados
+  - [ ] Exportação CSV para análise externa
+  - [ ] Filtros por período, tipo de doação
+  - [ ] Métricas e estatísticas por culto
+
+### **Fase 4: Testes e Qualidade**
 - [ ] Implementar testes unitários
 - [ ] Configurar CI/CD
 - [ ] Setup de linting e formatação
 - [ ] Documentação completa
 
-### **Fase 4: Deploy e Monitoramento**
+### **Fase 5: Deploy e Monitoramento**
 - [ ] Build para produção
 - [ ] Deploy nas stores
 - [ ] Monitoramento e analytics

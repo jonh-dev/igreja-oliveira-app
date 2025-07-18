@@ -1,8 +1,8 @@
 # 📋 Tasks e Implementações - Igreja Oliveira App
 
-## 🎯 Status Atual: **FASE 2 - Refatoração da Arquitetura** ✅
+## 🎯 Status Atual: **FASE 3 - Sistema de Doações (Contexto Real)** 🔄
 
-### 📅 Última Atualização: 2025-01-16 - 14:45
+### 📅 Última Atualização: 2025-01-16 - 16:30
 
 ---
 
@@ -126,26 +126,50 @@
   - [ ] Testes unitários
 
 #### **4. Telas Principais**
-- [ ] **Auth Screens**
-  - [ ] LoginScreen - Formulário de login com logo e branding
-  - [ ] RegisterScreen - Cadastro de usuários com validação
-  - [ ] ForgotPasswordScreen - Recuperação de senha
-  - [ ] Integração com SupabaseAuthService
-  - [ ] Estados de loading e error handling
+- [x] **Auth Screens**
+  - [x] LoginScreen - Formulário de login com logo e branding
+  - [x] RegisterScreen - Cadastro de usuários com validação
+  - [x] ForgotPasswordScreen - Recuperação de senha
+  - [x] Integração com SupabaseAuthService
+  - [x] Estados de loading e error handling
 
-- [ ] **Dashboard Screens**
-  - [ ] AdminDashboard - Visão administrativa com métricas
-  - [ ] PastorDashboard - Visão pastoral com ministérios
-  - [ ] MemberDashboard - Visão de membro com dados pessoais
-  - [ ] Dados personalizados por role
-  - [ ] Cards com métricas e atividades recentes
+- [x] **Dashboard Screens**
+  - [x] AdminDashboard - Visão administrativa com métricas
+  - [x] PastorDashboard - Visão pastoral com ministérios
+  - [x] MemberDashboard - Visão de membro com dados pessoais
+  - [x] Dados personalizados por role
+  - [x] Cards com métricas e atividades recentes
 
-- [ ] **Donations Screens**
-  - [ ] DonationsListScreen - Lista de doações com filtros
-  - [ ] CreateDonationScreen - Formulário de doação com tipos
-  - [ ] DonationDetailsScreen - Detalhes da doação
-  - [ ] Integração com repositories
-  - [ ] Busca e filtros por data/tipo
+- [x] **Donations Screens (Básico)**
+  - [x] DonationsListScreen - Lista de doações com filtros
+  - [x] CreateDonationScreen - Formulário de doação com tipos
+  - [x] DonationDetailsScreen - Detalhes da doação
+  - [x] Integração com repositories
+  - [x] Busca e filtros por data/tipo
+
+- [ ] **Sistema de Gasofilaço (Contexto Real)**
+  - [ ] GasofilaçoScreen - Contabilização manual de ofertas em dinheiro
+  - [ ] Registro por culto dominical com data e valores
+  - [ ] Controle de quem registrou (liderança autorizada)
+  - [ ] Validações de valores e datas de culto
+  - [ ] Interface para contagem de cédulas e moedas
+  - [ ] Relatórios consolidados por culto
+
+- [ ] **Sistema de Doações Eletrônicas**
+  - [ ] OpenFinanceScreen - Integração com sistema bancário
+  - [ ] Captura automática de transações PIX/cartão
+  - [ ] Mapeamento de doadores por transação
+  - [ ] Sincronização em tempo real com relatórios
+  - [ ] Configuração de APIs bancárias
+  - [ ] Monitoramento de transações
+
+- [ ] **Relatórios e Exportação**
+  - [ ] ReportsScreen - Geração de relatórios consolidados
+  - [ ] Exportação PDF com layout profissional
+  - [ ] Exportação CSV para análise externa
+  - [ ] Filtros avançados por período e tipo
+  - [ ] Métricas e gráficos por culto
+  - [ ] Comparativos entre gasofilaço e eletrônicas
 
 - [ ] **Navigation Setup**
   - [ ] Configurar React Navigation 7.x
@@ -266,36 +290,36 @@
 ## 🎯 PRÓXIMOS PASSOS IMEDIATOS
 
 ### **🔧 Esta Semana (Prioridade Alta)**
-1. **Iniciar Presentation Layer**
-   - Criar estrutura de pastas para screens e components
-   - Implementar componentes UI básicos (Button, Input, Card)
-   - Configurar navegação com React Navigation
-   - Criar telas de autenticação
+1. **Sistema de Gasofilaço**
+   - Implementar GasofilaçoScreen para contabilização manual
+   - Criar interface para contagem de cédulas e moedas
+   - Adicionar validações de valores e datas de culto
+   - Implementar controle de quem registrou (liderança)
 
-2. **Integração com Backend**
-   - Conectar Use Cases com UI
-   - Implementar gerenciamento de estado
-   - Adicionar tratamento de erros
-   - Testar fluxos completos
+2. **Integração Open Finance**
+   - Pesquisar APIs bancárias para Open Finance
+   - Implementar OpenFinanceScreen para configuração
+   - Criar sistema de captura automática de transações
+   - Mapear doadores por transação
 
-3. **Qualidade de Código**
-   - Configurar ESLint e Prettier
-   - Implementar pre-commit hooks
-   - Adicionar testes unitários básicos
-   - Validar padrões de código
+3. **Relatórios e Exportação**
+   - Implementar ReportsScreen com filtros avançados
+   - Criar sistema de geração de PDF profissionais
+   - Adicionar exportação CSV para análise externa
+   - Implementar métricas e gráficos por culto
 
 ### **📱 Próximas 2 Semanas (Prioridade Média)**
-1. **Telas Principais**
-   - Dashboard personalizado por role
-   - Telas de doações completas
-   - Navegação hierárquica
-   - Validações de formulários
+1. **Sistema Completo de Doações**
+   - Integração completa gasofilaço + eletrônicas
+   - Relatórios consolidados com métricas
+   - Exportação PDF e CSV funcionais
+   - Validações e controles de acesso
 
-2. **Testes Automatizados**
-   - Setup completo de testes
-   - Cobertura mínima de 80%
-   - Testes de integração
-   - E2E tests para fluxos críticos
+2. **Testes e Qualidade**
+   - Setup completo de testes para novos módulos
+   - Cobertura mínima de 80% para sistema de doações
+   - Testes de integração com APIs bancárias
+   - E2E tests para fluxos de gasofilaço
 
 ### **🧪 Próximo Mês (Prioridade Baixa)**
 1. **Deploy e Produção**
