@@ -7,11 +7,12 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from 'react-native';
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
-import { Colors, Typography, Spacing } from '../../components/shared/design-system';
+import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
 
 interface Donation {
   id: string;
