@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  View,
 } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
 
@@ -48,20 +49,40 @@ export const Button: React.FC<ButtonProps> = ({
     textStyle,
   ];
 
+  const getLoadingColor = () => {
+    switch (variant) {
+      case 'outline':
+        return Colors.primary;
+      case 'secondary':
+        return Colors.white;
+      case 'danger':
+        return Colors.white;
+      default:
+        return Colors.white;
+    }
+  };
+
   return (
     <TouchableOpacity
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? Colors.primary : Colors.white}
-          size="small"
-        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator
+            color={getLoadingColor()}
+            size="small"
+            style={styles.loadingIndicator}
+          />
+          <Text style={[textStyleCombined, styles.loadingText]}>{title}</Text>
+        </View>
       ) : (
-        <Text style={textStyleCombined}>{title}</Text>
+        <View style={styles.contentContainer}>
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
+          <Text style={textStyleCombined}>{title}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -94,6 +115,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1.5,
     borderColor: Colors.primary,
+    ...Shadows.sm,
+    elevation: 1,
   },
   
   // Tamanhos
@@ -158,5 +181,26 @@ const styles = StyleSheet.create({
   // Texto base
   text: {
     textAlign: 'center',
+  },
+  
+  // Containers para loading e conteúdo
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    marginRight: Spacing.sm,
+  },
+  loadingIndicator: {
+    marginRight: Spacing.sm,
+  },
+  loadingText: {
+    opacity: 0.8,
   },
 }); 
