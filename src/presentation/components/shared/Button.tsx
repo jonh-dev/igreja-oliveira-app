@@ -53,7 +53,7 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      activeOpacity={0.7}
     >
       {loading ? (
         <ActivityIndicator
@@ -61,10 +61,7 @@ export const Button: React.FC<ButtonProps> = ({
           size="small"
         />
       ) : (
-        <>
-          {icon && <>{icon}</>}
-          <Text style={textStyleCombined}>{title}</Text>
-        </>
+        <Text style={textStyleCombined}>{title}</Text>
       )}
     </TouchableOpacity>
   );
@@ -75,23 +72,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     ...Shadows.sm,
+    elevation: 2,
   },
   
   // Variantes
   primary: {
     backgroundColor: Colors.primary,
+    borderWidth: 0,
   },
   secondary: {
     backgroundColor: Colors.secondary,
+    borderWidth: 0,
   },
   danger: {
     backgroundColor: Colors.danger,
+    borderWidth: 0,
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: Colors.primary,
   },
   
@@ -120,15 +121,19 @@ const styles = StyleSheet.create({
   // Textos por variante
   primaryText: {
     color: Colors.white,
+    fontWeight: Typography.fontWeightSemibold,
   },
   secondaryText: {
     color: Colors.white,
+    fontWeight: Typography.fontWeightSemibold,
   },
   dangerText: {
     color: Colors.white,
+    fontWeight: Typography.fontWeightSemibold,
   },
   outlineText: {
     color: Colors.primary,
+    fontWeight: Typography.fontWeightSemibold,
   },
   
   // Textos por tamanho
