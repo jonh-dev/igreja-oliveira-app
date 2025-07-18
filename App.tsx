@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
-import { CardTest } from './src/presentation/components/shared/CardTest';
+import { TestHarness } from './src/presentation/components/shared/TestHarness';
+import { AppMain } from './src/presentation/screens/AppMain';
+import { Environment } from './src/config/environment';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <CardTest />
+      {Environment.shouldShowTests() ? <TestHarness /> : <AppMain />}
       <StatusBar style="auto" />
     </View>
   );
