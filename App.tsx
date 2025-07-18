@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
-import { DesignSystemTest } from './src/presentation/components/shared/DesignSystemTest';
+import { ButtonTest } from './src/presentation/components/shared/ButtonTest';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <DesignSystemTest />
+      <ButtonTest />
       <StatusBar style="auto" />
     </View>
   );
