@@ -6,9 +6,10 @@ import { InputTest } from './InputTest';
 import { CardTest } from './CardTest';
 import { NavigationStrategyTest } from './NavigationStrategyTest';
 import { AuthScreensTest } from './AuthScreensTest';
+import { DashboardScreensTest } from './DashboardScreensTest';
 import { Colors, Typography, Spacing } from './design-system';
 
-type TestComponent = 'design-system' | 'button' | 'input' | 'card' | 'navigation' | 'auth-screens';
+type TestComponent = 'design-system' | 'button' | 'input' | 'card' | 'navigation' | 'auth-screens' | 'dashboard-screens';
 
 export const TestHarness: React.FC = () => {
   const [currentTest, setCurrentTest] = useState<TestComponent>('card');
@@ -20,6 +21,7 @@ export const TestHarness: React.FC = () => {
     { id: 'card' as TestComponent, name: 'Card Component', component: CardTest },
     { id: 'navigation' as TestComponent, name: 'Navigation Strategy', component: NavigationStrategyTest },
     { id: 'auth-screens' as TestComponent, name: 'Auth Screens', component: AuthScreensTest },
+    { id: 'dashboard-screens' as TestComponent, name: 'Dashboard Screens', component: DashboardScreensTest },
   ];
 
   const CurrentTestComponent = tests.find(test => test.id === currentTest)?.component || CardTest;
