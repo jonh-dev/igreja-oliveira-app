@@ -311,10 +311,10 @@ pnpm run test        # Quando disponível
 
 ### **Paleta de Cores - Igreja Oliveira**
 ```css
-/* Cores Principais */
---primary-color: #1a4d80;        /* Azul escuro - confiança */
---secondary-color: #f39c12;       /* Laranja - energia */
---accent-color: #27ae60;          /* Verde - crescimento */
+/* Cores Principais - Verde Oliveira */
+--primary-color: #556B2F;         /* Verde oliveira escuro - tradição */
+--secondary-color: #8FBC8F;       /* Verde oliveira claro - paz */
+--accent-color: #6B8E23;          /* Verde oliveira médio - harmonia */
 
 /* Cores Neutras */
 --white: #ffffff;
@@ -324,14 +324,14 @@ pnpm run test        # Quando disponível
 --black: #000000;
 
 /* Cores de Status */
---success: #28a745;               /* Verde - sucesso */
---warning: #ffc107;               /* Amarelo - aviso */
---danger: #dc3545;                /* Vermelho - erro */
---info: #17a2b8;                  /* Azul - informação */
+--success: #556B2F;               /* Verde oliveira escuro - sucesso */
+--warning: #DAA520;               /* Dourado - aviso */
+--danger: #DC143C;                /* Vermelho - erro */
+--info: #4682B4;                  /* Azul aço - informação */
 
 /* Gradientes */
---primary-gradient: linear-gradient(135deg, #1a4d80 0%, #2c5aa0 100%);
---secondary-gradient: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+--primary-gradient: linear-gradient(135deg, #556B2F 0%, #8FBC8F 100%);
+--secondary-gradient: linear-gradient(135deg, #8FBC8F 0%, #6B8E23 100%);
 ```
 
 ### **Tipografia**

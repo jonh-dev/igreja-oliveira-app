@@ -112,7 +112,7 @@
   - [ ] Testes unitários
 
 - [ ] **Design System Setup**
-  - [ ] Configurar paleta de cores (azul #1a4d80, laranja #f39c12, verde #27ae60)
+  - [ ] Configurar paleta de cores (verde oliveira escuro #556B2F, verde oliveira claro #8FBC8F, verde oliveira médio #6B8E23)
   - [ ] Configurar tipografia (Inter, Poppins)
   - [ ] Configurar espaçamentos e border radius
   - [ ] Configurar shadows

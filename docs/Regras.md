@@ -45,7 +45,7 @@
 - Sync inteligente de dados
 
 ### **5. Design System - Igreja Oliveira**
-- **Paleta de Cores**: Azul escuro (#1a4d80), Laranja (#f39c12), Verde (#27ae60)
+- **Paleta de Cores**: Verde oliveira escuro (#556B2F), Verde oliveira claro (#8FBC8F), Verde oliveira médio (#6B8E23)
 - **Tipografia**: Inter (primária), Poppins (secundária)
 - **Espaçamentos**: Sistema de 8px (8, 16, 24, 32, 48px)
 - **Border Radius**: 4px, 8px, 12px, 16px

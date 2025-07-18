@@ -1,8 +1,8 @@
 export const Colors = {
-  // Cores Principais
-  primary: '#1a4d80',
-  secondary: '#f39c12',
-  accent: '#27ae60',
+  // Cores Principais - Verde Oliveira
+  primary: '#556B2F',        // Verde oliveira escuro
+  secondary: '#8FBC8F',      // Verde oliveira claro
+  accent: '#6B8E23',         // Verde oliveira médio
   
   // Cores Neutras
   white: '#ffffff',
@@ -12,14 +12,14 @@ export const Colors = {
   black: '#000000',
   
   // Cores de Status
-  success: '#28a745',
-  warning: '#ffc107',
-  danger: '#dc3545',
-  info: '#17a2b8',
+  success: '#556B2F',        // Verde oliveira escuro
+  warning: '#DAA520',        // Dourado
+  danger: '#DC143C',         // Vermelho
+  info: '#4682B4',           // Azul aço
   
   // Gradientes
-  primaryGradient: ['#1a4d80', '#2c5aa0'],
-  secondaryGradient: ['#f39c12', '#e67e22'],
+  primaryGradient: ['#556B2F', '#8FBC8F'],      // Verde oliveira escuro para claro
+  secondaryGradient: ['#8FBC8F', '#6B8E23'],    // Verde oliveira claro para médio
 } as const;
 
 export const Typography = {
