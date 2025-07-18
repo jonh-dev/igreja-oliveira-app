@@ -17,8 +17,8 @@
 - **SEMPRE usar a versão LTS mais recente do Node.js**
 - **NUNCA retroceder para versões anteriores**
 - **Verificar periodicamente atualizações LTS**
-- **Versão atual:22.110 (LTS mais recente)**
-- **Comando para alterar: `nvm use 22.11.0`**
+- **Versão atual**: 22.11.0 (LTS mais recente)
+- **Comando para alterar**: `nvm use 22.11.0`
 
 ### **1. Escalabilidade Primeiro**
 - Código deve suportar crescimento de 50 → 50.000 usuários
@@ -43,6 +43,24 @@
 - Bundle size mínimo (<10MB)
 - Offline-first quando possível
 - Sync inteligente de dados
+
+### **5. Design System - Igreja Oliveira**
+- **Paleta de Cores**: Azul escuro (#1a4d80), Laranja (#f39c12), Verde (#27ae60)
+- **Tipografia**: Inter (primária), Poppins (secundária)
+- **Espaçamentos**: Sistema de 8px (8, 16, 24, 32, 48px)
+- **Border Radius**: 4px, 8px, 12px, 16px
+- **Shadows**: 3 níveis (sm, md, lg)
+- **Mobile First**: Design otimizado para smartphones
+- **Accessibility**: Suporte a VoiceOver e TalkBack
+
+### **6. Desenvolvimento Incremental e Testável - REGRA CRÍTICA**
+- **NUNCA** implementar múltiplas funcionalidades de uma vez
+- **SEMPRE** implementar um contexto por vez até ser testável
+- **SEMPRE** testar cada implementação antes de prosseguir
+- **SEMPRE** commitar e fazer push após cada contexto testado
+- **SEMPRE** validar que o código funciona antes de continuar
+- **NUNCA** deixar código não testado ou não funcional
+- **SEMPRE** seguir o fluxo: Implementar → Testar → Commitar → Push → Próximo
 
 ---
 
@@ -91,21 +109,27 @@ Domain ← Application ← Infrastructure
 ### **1. Componentes - Atomic Design**
 
 ```typescript
-// ✅ CORRETO - Componente atômico
+// ✅ CORRETO - Componente atômico seguindo design system
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  size?: 'small' | 'medium' | 'large';
   loading?: boolean;
+  disabled?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
   variant = 'primary',
-  loading = false
+  size = 'medium',
+  loading = false,
+  disabled = false,
+  icon
 }) => {
-  // Implementação limpa e tipada
+  // Implementação limpa e tipada seguindo design system
 };
 ```
 
@@ -196,16 +220,7 @@ echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here" >> .env
 # .env já está no .gitignore
 ```
 
-**3. Configurar secrets para produção:**
-```bash
-# Via Supabase CLI (quando disponível)
-supabase secrets set EXPO_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
-supabase secrets set EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-
-# Via Dashboard: Project Settings > API > Project URL & API Keys
-```
-
-**4. Validação obrigatória:**
+**3. Validação obrigatória:**
 ```typescript
 // src/infrastructure/config/supabase.ts
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -218,43 +233,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 ```
-
-#### **🔐 Secrets Management - Tier Gratuito:**
-
-**Supabase oferece gratuitamente:**
-- ✅ **4 secrets padrão** (URL, ANON_KEY, SERVICE_ROLE_KEY, DB_URL)
-- ✅ **Secrets customizados** via Dashboard/CLI
-- ✅ **Vault para database secrets** (encrypted storage)
-- ✅ **Environment variables** para Edge Functions
-- ✅ **Local development** com .env files
-
-**Limitações tier gratuito:**
-- 💾 **500MB database storage**
-- 🔄 **2GB bandwidth/mês**
-- 👥 **50.000 monthly active users**
-- ⏱️ **Edge Functions**: 500.000 invocations/mês
-
-**Setup de desenvolvimento:**
-```bash
-# 1. Instalar Supabase CLI
-npm install -g supabase
-
-# 2. Login no Supabase
-supabase login
-
-# 3. Inicializar projeto local (opcional)
-supabase init
-
-# 4. Configurar secrets locais
-echo "EXPO_PUBLIC_SUPABASE_URL=http://localhost:54321" > .env.local
-echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=local_anon_key" >> .env.local
-```
-
-### **Supabase API Keys - Regra**
-- Sempre use a Publishable Key (sb_publishable_...) no frontend/mobile.
-- Nunca exponha a Service Role Key.
-- Legacy anon key só para compatibilidade.
-- Se receber 401, revise as policies e o tipo de key usada.
 
 ### **1. Row Level Security (RLS) - Hierarquia Igreja**
 
@@ -306,32 +284,6 @@ export class SupabaseUserRepository implements IUserRepository {
 }
 ```
 
-### **3. Real-time - Igreja Events**
-
-```typescript
-// ✅ CORRETO - Real-time para eventos da igreja
-export class ChurchEventsService {
-  subscribeToUserChanges(callback: (user: User) => void) {
-    return this.supabase
-      .channel('user-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'users',
-          filter: `church_id=eq.${this.churchId}`
-        },
-        (payload) => {
-          const user = UserMapper.toDomain(payload.new);
-          callback(user);
-        }
-      )
-      .subscribe();
-  }
-}
-```
-
 ---
 
 ## 🎨 Padrões de Código - Qualidade Extrema
@@ -361,28 +313,6 @@ const findUserByEmail = (email: string): Promise<User | null> => {
 - **Single Responsibility**: Funções pequenas e específicas
 - **Clear naming**: Variáveis e funções explicam sua intenção
 - **Type safety**: TypeScript fornece documentação via tipos
-
-#### **🔧 Como evitar comentários:**
-```typescript
-// ❌ RUIM - Precisa de comentário
-const calc = (a: number, b: number, c: string) => {
-  // Calcular salário com desconto de imposto
-  return c === 'admin' ? a * 0.8 : a * 0.9;
-};
-
-// ✅ BOM - Auto-explicativo
-const calculateSalaryWithTaxDiscount = (
-  grossSalary: number, 
-  userRole: UserRole
-): number => {
-  const adminTaxRate = 0.8;
-  const regularTaxRate = 0.9;
-  
-  return userRole === UserRole.ADMIN 
-    ? grossSalary * adminTaxRate
-    : grossSalary * regularTaxRate;
-};
-```
 
 #### **🚫 Exceções (também proibidas):**
 - ❌ TODO comments
@@ -415,24 +345,6 @@ class RegisterNewMemberUseCase {
     const member = Member.create(data);
     
     return await this.memberRepository.save(member);
-  }
-}
-
-// ✅ CORRETO - Entities da igreja
-class Member extends User {
-  private constructor(
-    id: UserId,
-    private membershipDate: Date,
-    private baptismDate?: Date,
-    private ministries: Ministry[] = []
-  ) {
-    super(id);
-  }
-  
-  canAccessFinancialReports(): boolean {
-    return this.hasRole(UserRole.TREASURER) || 
-           this.hasRole(UserRole.PASTOR) ||
-           this.hasRole(UserRole.ADMIN);
   }
 }
 ```
@@ -486,22 +398,6 @@ export class ChurchValidators {
   static validateTitheAmount(amount: number): boolean {
     return amount > 0 && amount <= 1000000; // Limite razoável
   }
-  
-  static validateMinistryParticipation(
-    member: Member, 
-    ministry: Ministry
-  ): boolean {
-    // Regras específicas de participação em ministérios
-    if (ministry.requiresBaptism && !member.isBaptized()) {
-      return false;
-    }
-    
-    if (ministry.minimumAge && member.age < ministry.minimumAge) {
-      return false;
-    }
-    
-    return true;
-  }
 }
 ```
 
@@ -536,75 +432,6 @@ export class CEP {
 
   private static isValidFormat(cep: string): boolean {
     return /^\d{8}$/.test(cep);
-  }
-}
-
-// ✅ CORRETO - Service para validação de CEP via ViaCEP
-export class ViaCEPService implements ICEPValidationService {
-  private readonly baseUrl = 'https://viacep.com.br/ws';
-
-  async validateCEP(cep: string): Promise<CEPInfo | null> {
-    try {
-      const cleanCep = cep.replace(/\D/g, '');
-      
-      if (!/^\d{8}$/.test(cleanCep)) {
-        throw new Error('CEP deve ter 8 dígitos numéricos');
-      }
-
-      const response = await fetch(`${this.baseUrl}/${cleanCep}/json/`);
-      
-      if (!response.ok) {
-        throw new Error('Erro ao consultar CEP');
-      }
-
-      const data = await response.json();
-      
-      if (data.erro) {
-        return null;
-      }
-
-      return {
-        cep: data.cep,
-        logradouro: data.logradouro,
-        complemento: data.complemento,
-        bairro: data.bairro,
-        localidade: data.localidade,
-        uf: data.uf,
-        ibge: data.ibge,
-        gia: data.gia,
-        ddd: data.ddd,
-        siafi: data.siafi
-      };
-    } catch (error) {
-      console.error('Erro ao validar CEP:', error);
-      return null;
-    }
-  }
-}
-
-// ✅ CORRETO - Uso no CreateUserUseCase
-export class CreateUserUseCase {
-  constructor(
-    private readonly userRepository: IUserRepository,
-    private readonly addressRepository: IAddressRepository,
-    private readonly cepValidationService: ICEPValidationService
-  ) {}
-
-  async execute(dto: CreateUserDto): Promise<User> {
-    // Validação automática de CEP
-    if (dto.address?.zipCode) {
-      const cep = CEP.create(dto.address.zipCode);
-      const cepInfo = await this.cepValidationService.validateCEP(cep.getValue());
-      
-      if (!cepInfo) {
-        throw new Error('CEP inválido ou não encontrado');
-      }
-
-      // Auto-preenchimento de dados do endereço
-      dto.address.city = cepInfo.localidade;
-      dto.address.neighborhood = cepInfo.bairro;
-      dto.address.state = cepInfo.uf;
-    }
   }
 }
 ```
@@ -802,112 +629,6 @@ export { UpdateMemberUseCase } from './UpdateMemberUseCase';
 
 ---
 
-## 📝 Documentação - Igreja Context
-
-### **1. JSDoc - Padrão Igreja**
-
-```typescript
-/**
- * Registra um novo membro na igreja com todas as validações necessárias.
- * 
- * @example
- * ```typescript
- * const useCase = new RegisterMemberUseCase(repository);
- * const member = await useCase.execute({
- *   name: 'João Silva',
- *   email: 'joao@email.com',
- *   cpf: '12345678901',
- *   membershipDate: new Date()
- * });
- * ```
- * 
- * @param data - Dados do novo membro
- * @returns Promise com o membro criado
- * @throws {InvalidCPFError} Quando CPF é inválido
- * @throws {EmailAlreadyExistsError} Quando email já existe
- * @throws {InvalidMembershipDateError} Quando data de membresia é inválida
- */
-async execute(data: RegisterMemberDto): Promise<Member> {
-  // Implementação
-}
-```
-
-### **2. README por Feature**
-
-```markdown
-# 👥 Members Feature
-
-## Responsabilidades
-- Gerenciar membros da igreja
-- Validar dados de membresia
-- Controlar hierarquia de acesso
-
-## Use Cases
-- `RegisterMemberUseCase`: Registrar novo membro
-- `UpdateMemberUseCase`: Atualizar dados do membro
-- `DeactivateMemberUseCase`: Desativar membro
-
-## Regras de Negócio
-1. CPF obrigatório e único
-2. Data de membresia não pode ser futura
-3. Apenas pastor e admin podem registrar membros
-4. Membro inativo não pode acessar sistema
-
-## Validações
-- CPF brasileiro válido
-- Email único na igreja
-- Telefone com DDD brasileiro
-- Data de nascimento razoável (1900-hoje)
-```
-
----
-
-## 🔄 Processo de Atualização de Contexto
-
-### **Regra Obrigatória: Atualização Automática**
-
-Após **CADA ETAPA** completada, os seguintes documentos **DEVEM** ser atualizados:
-
-1. **STATUS.md** - Atualizar progresso atual
-2. **MESA-REDONDA.md** - Adicionar novas decisões/padrões
-3. **REGRAS-DESENVOLVIMENTO.md** - Este arquivo com novas regras
-
-### **Template de Atualização**
-
-```markdown
-## 📅 Atualização: [YYYY-MM-DD] - [Nome da Etapa]
-
-### ✅ Completado
-- [ ] Item 1
-- [ ] Item 2
-
-### 🔄 Em Andamento
-- [ ] Item 3
-
-### 📝 Novas Regras/Padrões
-- Regra X adicionada
-- Padrão Y modificado
-
-### 🎯 Próximos Passos
-1. Tarefa A
-2. Tarefa B
-
----
-```
-
-### **Responsabilidade do Agente**
-
-O agente desenvolvedor **DEVE**:
-1. ✅ Completar a etapa/tarefa
-2. ✅ Testar a implementação
-3. ✅ Atualizar documentação relevante
-4. ✅ Atualizar STATUS.md com novo contexto
-5. ✅ Validar que tudo está funcionando
-
-**NUNCA** considerar uma etapa completa sem atualizar o contexto!
-
----
-
 ## 🚀 Comandos de Qualidade Obrigatórios
 
 ### **⚠️ REGRA OBRIGATÓRIA: SEMPRE USE PNPM**
@@ -984,15 +705,6 @@ jobs:
 
 ---
 
-**📋 Documento criado em**: 2025-01-14  
-**🔄 Próxima revisão**: Após cada sprint  
-**📊 Versão**: 1.0  
-**👤 Responsável**: João Zanardi (jonh-dev)
-
-**🎯 Objetivo**: Garantir código de qualidade enterprise para sistema de gestão eclesiástica escalável e mantível.
-
----
-
 ## ⚙️ Configuração do TypeScript (tsconfig.json)
 
 - **NUNCA** usar `extends: "expo/tsconfig.base"` a menos que o preset esteja instalado e seja realmente necessário.
@@ -1021,4 +733,12 @@ jobs:
   ]
 }
 ```
-- Isso garante compatibilidade, performance e evita erros de preset ausente.
+
+---
+
+**📋 Documento criado em**: 2025-01-14  
+**🔄 Próxima revisão**: Após cada sprint  
+**📊 Versão**: 1.0  
+**👤 Responsável**: João Zanardi (jonh-dev)
+
+**🎯 Objetivo**: Garantir código de qualidade enterprise para sistema de gestão eclesiástica escalável e mantível. 
