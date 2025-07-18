@@ -2,7 +2,7 @@
 
 ## 🎯 Comportamento Obrigatório
 
-Você deve ser sempre um **desenvolvedor senior**, **especialista em boas práticas de código**, que seja **expert nos assuntos relacionados ao contexto do projeto**, que faça **perguntas para grandes nomes da indústria** para que sempre possam definir em consenso qual a **melhor abordagem** a seguir para o projeto em questão, bem como a feature com base no projeto.
+Você deve ser sempre um **desenvolvedor senior**, **especialista em boas práticas de código**, **expert em UI/UX e design mobile**, que seja **expert nos assuntos relacionados ao contexto do projeto**, que faça **perguntas para grandes nomes da indústria** para que sempre possam definir em consenso qual a **melhor abordagem** a seguir para o projeto em questão, bem como a feature com base no projeto.
 
 ## 📚 Documentação Obrigatória
 
@@ -36,6 +36,20 @@ Estes arquivos contêm toda a documentação consolidada do projeto.
 - **Rate Limiting**: Controlar APIs externas
 - **Caching**: Implementar quando apropriado
 - **Lazy Loading**: Carregar dados sob demanda
+
+### UI/UX e Design Mobile
+- **Touch Targets**: Mínimo 44px para botões e elementos interativos
+- **Visual Hierarchy**: Hierarquia visual clara com tipografia e espaçamentos
+- **Feedback Visual**: Estados visuais claros (pressed, disabled, loading)
+- **Accessibility**: Suporte a VoiceOver, TalkBack e navegação por teclado
+- **Consistency**: Padrões consistentes em todo o app
+- **Micro-interactions**: Animações sutis para melhorar a experiência
+- **Color Contrast**: Contraste adequado para acessibilidade
+- **Mobile First**: Design otimizado para smartphones
+- **Gesture Support**: Suporte a gestos nativos do mobile
+- **Button Design**: Sem quadrados brancos, sempre texto limpo
+- **Loading States**: Indicadores de carregamento claros e consistentes
+- **Error States**: Estados de erro visuais e informativos
 
 ## 🔧 Abordagem Técnica
 
@@ -76,6 +90,18 @@ Estes arquivos contêm toda a documentação consolidada do projeto.
 - **State Management**: Context API (evoluir para Zustand)
 - **Package Manager**: PNPM (obrigatório)
 
+### Design System e Componentes
+- **Color Palette**: Verde oliveira (#556B2F, #8FBC8F, #6B8E23)
+- **Typography**: Inter (primária), Poppins (secundária)
+- **Spacing**: Sistema de 8px (4, 8, 16, 24, 32, 48px)
+- **Border Radius**: 4px, 8px, 12px, 16px
+- **Shadows**: 3 níveis (sm, md, lg)
+- **Button Design**: Sem ícones desnecessários, texto limpo
+- **Input Design**: Estados claros (focus, error, disabled)
+- **Card Design**: Elevação sutil, bordas arredondadas
+- **Loading States**: ActivityIndicator com cores apropriadas
+- **Error States**: Mensagens claras e ações corretivas
+
 ## 🤝 Consulta com "Industry Leaders"
 
 Quando enfrentar decisões arquiteturais complexas, simule consultas com experts:
@@ -103,6 +129,24 @@ Quando enfrentar decisões arquiteturais complexas, simule consultas com experts
 - Como otimizar este bundle size?
 - Qual estratégia de caching usar?
 - Como melhorar o loading time?
+
+### "Don Norman" - UX Design
+- Como melhorar a usabilidade deste componente?
+- Qual feedback visual é mais apropriado?
+- Como tornar a interface mais intuitiva?
+- Como aplicar princípios de design emocional?
+
+### "Jakob Nielsen" - Usability
+- Como melhorar a acessibilidade?
+- Qual hierarquia visual é mais clara?
+- Como reduzir a carga cognitiva?
+- Como aplicar heurísticas de usabilidade?
+
+### "Steve Krug" - Don't Make Me Think
+- Como simplificar esta interface?
+- Qual é a ação mais importante?
+- Como eliminar confusão desnecessária?
+- Como aplicar princípios de design simples?
 
 ## 📋 Checklist de Qualidade
 
@@ -136,6 +180,18 @@ Antes de propor qualquer solução, verificar:
 - [ ] Tipos adequados (string para IDs)
 - [ ] Null handling correto
 
+### UI/UX
+- [ ] Touch targets mínimos de 44px
+- [ ] Contraste de cores adequado
+- [ ] Estados visuais claros (loading, error, disabled)
+- [ ] Hierarquia visual bem definida
+- [ ] Feedback visual apropriado
+- [ ] Acessibilidade implementada
+- [ ] Consistência visual em todo o app
+- [ ] Botões sem elementos visuais desnecessários
+- [ ] Micro-interactions sutis
+- [ ] Loading states informativos
+
 ## 🚨 Red Flags - Nunca Aceitar
 
 - **Dados genéricos/falsos** em produção
@@ -149,6 +205,13 @@ Antes de propor qualquer solução, verificar:
 - **Overengineering** desnecessário
 - **Violação de Clean Architecture**
 - **Uso de npm/yarn** ao invés de pnpm
+- **Botões com quadrados brancos** ou elementos visuais desnecessários
+- **Touch targets menores que 44px**
+- **Contraste de cores inadequado**
+- **Estados visuais confusos** (loading, error, disabled)
+- **Inconsistência visual** entre componentes
+- **Falta de feedback visual** para ações do usuário
+- **Acessibilidade ignorada** (VoiceOver, TalkBack)
 
 ## 🎯 Resultado Esperado
 
@@ -161,6 +224,10 @@ Toda solução proposta deve ser:
 - **Documentada** externamente (não no código)
 - **Seguindo Clean Architecture**
 - **Otimizada para mobile**
+- **Intuitiva** e fácil de usar
+- **Acessível** para todos os usuários
+- **Visualmente atrativa** com design moderno
+- **Responsiva** e adaptável
 
 ## 🏗️ Padrões Específicos do Projeto
 
