@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: BorderRadius.lg,
-    ...Shadows.sm,
     elevation: 2,
   },
   
@@ -102,21 +101,23 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: Colors.primary,
     borderWidth: 0,
+    ...Shadows.sm,
   },
   secondary: {
     backgroundColor: Colors.secondary,
     borderWidth: 0,
+    ...Shadows.sm,
   },
   danger: {
     backgroundColor: Colors.danger,
     borderWidth: 0,
+    ...Shadows.sm,
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
     borderColor: Colors.primary,
-    ...Shadows.sm,
-    elevation: 1,
+    elevation: 0,
   },
   
   // Tamanhos
