@@ -1,78 +1,101 @@
+import { supabase } from '../config/supabase';
+import { Donation, UpdateDonationData, CreateCultoDonationData, CreateManualDonationData } from '../../domain/entities/Donation';
 import { IDonationRepository } from '../../application/interfaces/repositories/IDonationRepository';
-import { Donation, UpdateDonationData, CreateGasofilacoData } from '../../domain/entities/Donation';
-import { supabase, DatabaseDonation } from '../config/supabase';
 
 export class SupabaseDonationRepository implements IDonationRepository {
-  async findById(id: string): Promise<Donation | null> {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
-
-    if (error) {
-      throw new Error(`Error finding donation by id: ${error.message}`);
-    }
-
-    return data ? this.mapToDonation(data) : null;
-  }
-
-  async findByUserId(userId: string, params?: { limit?: number; offset?: number }): Promise<Donation[]> {
-    let query = supabase
-      .from('donations')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-
-    if (params?.limit) {
-      query = query.limit(params.limit);
-    }
-
-    if (params?.offset) {
-      query = query.range(params.offset, params.offset + (params.limit || 50) - 1);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw new Error(`Error finding donations by user id: ${error.message}`);
-    }
-
-    return data.map(donation => this.mapToDonation(donation));
-  }
-
-  async createGasofilaco(gasofilacoData: CreateGasofilacoData): Promise<Donation> {
-    const { data, error } = await supabase
+  async createCultoDonation(data: CreateCultoDonationData): Promise<Donation> {
+    const { data: donation, error } = await supabase
       .from('donations')
       .insert({
-        type: 'gasofilaco',
+        type: 'culto',
         source: 'manual',
-        amount: gasofilacoData.amount,
-        description: gasofilacoData.description,
-        gasofilaco_data: {
-          cult_date: gasofilacoData.cultDate.toISOString(),
-          registered_by: gasofilacoData.registeredBy,
-          notes: gasofilacoData.notes,
+        amount: data.amount,
+        date: data.date.toISOString(),
+        registered_by: data.registeredBy,
+        description: data.description,
+        culto_data: {
+          bill_counts: data.billCounts,
+          coin_counts: data.coinCounts,
+          counting_method: data.countingMethod,
+          notes: data.notes,
         },
-        date: gasofilacoData.cultDate.toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
 
     if (error) {
-      throw new Error(`Error creating gasofilaco donation: ${error.message}`);
+      throw new Error(`Error creating culto donation: ${error.message}`);
     }
 
-    return this.mapToDonation(data);
+    return this.mapDatabaseDonationToDonation(donation);
   }
 
-  async update(id: string, donationData: UpdateDonationData): Promise<Donation> {
-    const updateData: Partial<DatabaseDonation> = {};
-    
-    if (donationData.amount !== undefined) updateData.amount = donationData.amount;
-    if (donationData.description !== undefined) updateData.description = donationData.description;
+  async createManualDonation(data: CreateManualDonationData): Promise<Donation> {
+    const { data: donation, error } = await supabase
+      .from('donations')
+      .insert({
+        type: data.type,
+        source: 'manual',
+        amount: data.amount,
+        date: data.date.toISOString(),
+        user_id: data.userId,
+        registered_by: data.registeredBy,
+        description: data.description,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
 
-    const { data, error } = await supabase
+    if (error) {
+      throw new Error(`Error creating manual donation: ${error.message}`);
+    }
+
+    return this.mapDatabaseDonationToDonation(donation);
+  }
+
+  async findAll(): Promise<Donation[]> {
+    const { data: donations, error } = await supabase
+      .from('donations')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Error fetching donations: ${error.message}`);
+    }
+
+    return donations.map(this.mapDatabaseDonationToDonation);
+  }
+
+  async findById(id: string): Promise<Donation | null> {
+    const { data: donation, error } = await supabase
+      .from('donations')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      throw new Error(`Error fetching donation: ${error.message}`);
+    }
+
+    return this.mapDatabaseDonationToDonation(donation);
+  }
+
+  async update(id: string, data: UpdateDonationData): Promise<Donation> {
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (data.amount !== undefined) updateData.amount = data.amount;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.notes !== undefined) updateData.notes = data.notes;
+
+    const { data: donation, error } = await supabase
       .from('donations')
       .update(updateData)
       .eq('id', id)
@@ -83,7 +106,7 @@ export class SupabaseDonationRepository implements IDonationRepository {
       throw new Error(`Error updating donation: ${error.message}`);
     }
 
-    return this.mapToDonation(data);
+    return this.mapDatabaseDonationToDonation(donation);
   }
 
   async delete(id: string): Promise<void> {
@@ -97,40 +120,21 @@ export class SupabaseDonationRepository implements IDonationRepository {
     }
   }
 
-  async findAll(params?: { limit?: number; offset?: number }): Promise<Donation[]> {
-    let query = supabase
-      .from('donations')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (params?.limit) {
-      query = query.limit(params.limit);
-    }
-
-    if (params?.offset) {
-      query = query.range(params.offset, params.offset + (params.limit || 50) - 1);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw new Error(`Error finding donations: ${error.message}`);
-    }
-
-    return data.map(donation => this.mapToDonation(donation));
-  }
-
-  private mapToDonation(databaseDonation: DatabaseDonation): Donation {
+  private mapDatabaseDonationToDonation(databaseDonation: any): Donation {
     return {
       id: databaseDonation.id,
-      type: databaseDonation.type as Donation['type'],
-      source: databaseDonation.source as Donation['source'],
+      type: databaseDonation.type,
+      source: databaseDonation.source,
       amount: databaseDonation.amount,
-      description: databaseDonation.description || undefined,
-      gasofilacoData: databaseDonation.gasofilaco_data ? {
-        cultDate: new Date(databaseDonation.gasofilaco_data.cult_date),
-        registeredBy: databaseDonation.gasofilaco_data.registered_by,
-        notes: databaseDonation.gasofilaco_data.notes,
+      date: new Date(databaseDonation.date),
+      userId: databaseDonation.user_id,
+      description: databaseDonation.description,
+      registeredBy: databaseDonation.registered_by,
+      cultoData: databaseDonation.culto_data ? {
+        billCounts: databaseDonation.culto_data.bill_counts || [],
+        coinCounts: databaseDonation.culto_data.coin_counts || [],
+        countingMethod: databaseDonation.culto_data.counting_method,
+        notes: databaseDonation.culto_data.notes,
       } : undefined,
       electronicData: databaseDonation.electronic_data ? {
         transactionId: databaseDonation.electronic_data.transaction_id,

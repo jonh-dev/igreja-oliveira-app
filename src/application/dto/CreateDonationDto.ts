@@ -1,21 +1,50 @@
-import { DonationType, DonationSource } from '../../domain/entities/Donation';
+import { DonationType, DonationSource, CountingMethod, BillCount, CoinCount } from '../../domain/entities/Donation';
 
-export interface CreateGasofilacoDto {
-  cultDate: string; // ISO string
+export interface CreateDonationDto {
+  type: DonationType;
+  source: DonationSource;
   amount: number;
-  registeredBy: string; // userId do líder/diácono
+  date: string; // DD/MM/YYYY
+  userId?: string; // Para dízimos e doações especiais
   description?: string;
-  notes?: string;
+  registeredBy: string;
+  
+  // Para doações de culto
+  cultoData?: {
+    billCounts: BillCount[];
+    coinCounts: CoinCount[];
+    countingMethod: CountingMethod;
+    notes?: string;
+  };
+  
+  // Para doações eletrônicas
+  electronicData?: {
+    transactionId: string;
+    donorId?: string;
+    donorName?: string;
+    paymentMethod: 'pix' | 'cartao' | 'transferencia';
+    bankInfo?: string;
+    transactionDate: string; // ISO string
+  };
 }
 
-export interface CreateElectronicDonationDto {
-  transactionId: string;
+export interface CreateCultoDonationDto {
   amount: number;
-  paymentMethod: 'pix' | 'cartao' | 'transferencia';
-  donorId?: string;
-  donorName?: string;
-  bankInfo?: string;
-  transactionDate: string; // ISO string
+  date: string; // DD/MM/YYYY
+  registeredBy: string;
+  billCounts?: BillCount[];
+  coinCounts?: CoinCount[];
+  countingMethod: CountingMethod;
+  notes?: string;
+  description?: string;
+}
+
+export interface CreateManualDonationDto {
+  type: 'tithe' | 'special';
+  amount: number;
+  date: string; // DD/MM/YYYY
+  userId: string;
+  registeredBy: string;
   description?: string;
 }
 

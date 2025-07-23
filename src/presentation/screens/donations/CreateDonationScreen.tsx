@@ -13,23 +13,30 @@ import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
 import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
+import { DonationType, CountingMethod, BillCount, CoinCount } from '../../../domain/entities/Donation';
 
 interface CreateDonationScreenProps {
   onNavigateBack: () => void;
   onDonationCreated: () => void;
 }
 
-type DonationType = 'tithe' | 'offering' | 'special';
+const BILL_VALUES = [200, 100, 50, 20, 10, 5, 2];
+const COIN_VALUES = [1, 0.5, 0.25, 0.1, 0.05, 0.01];
 
 export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   onNavigateBack,
   onDonationCreated,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [donationType, setDonationType] = useState<DonationType>('tithe');
+  const [donationType, setDonationType] = useState<DonationType>('culto');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const [userId, setUserId] = useState('');
+  const [countingMethod, setCountingMethod] = useState<CountingMethod>('detailed');
+  const [billCounts, setBillCounts] = useState<BillCount[]>([]);
+  const [coinCounts, setCoinCounts] = useState<CoinCount[]>([]);
+  const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -53,8 +60,75 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
       }
     }
 
+    if (donationType === 'tithe' || donationType === 'special') {
+      if (!userId.trim()) {
+        newErrors.userId = 'Identificação do doador é obrigatória';
+      }
+    }
+
+    if (donationType === 'culto' && countingMethod === 'detailed') {
+      const totalFromCounts = calculateTotalFromCounts();
+      if (totalFromCounts === 0) {
+        newErrors.counting = 'Adicione pelo menos uma cédula ou moeda';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const calculateTotalFromCounts = () => {
+    const billTotal = billCounts.reduce((sum, bill) => sum + (bill.value * bill.count), 0);
+    const coinTotal = coinCounts.reduce((sum, coin) => sum + (coin.value * coin.count), 0);
+    return billTotal + coinTotal;
+  };
+
+  const handleBillCountChange = (value: number, count: number) => {
+    const newBillCounts = [...billCounts];
+    const existingIndex = newBillCounts.findIndex(bill => bill.value === value);
+    
+    if (count === 0) {
+      if (existingIndex !== -1) {
+        newBillCounts.splice(existingIndex, 1);
+      }
+    } else {
+      if (existingIndex !== -1) {
+        newBillCounts[existingIndex].count = count;
+      } else {
+        newBillCounts.push({ value, count });
+      }
+    }
+    
+    setBillCounts(newBillCounts);
+    
+    if (countingMethod === 'detailed') {
+      const total = calculateTotalFromCounts();
+      setAmount(formatCurrency(total.toString()));
+    }
+  };
+
+  const handleCoinCountChange = (value: number, count: number) => {
+    const newCoinCounts = [...coinCounts];
+    const existingIndex = newCoinCounts.findIndex(coin => coin.value === value);
+    
+    if (count === 0) {
+      if (existingIndex !== -1) {
+        newCoinCounts.splice(existingIndex, 1);
+      }
+    } else {
+      if (existingIndex !== -1) {
+        newCoinCounts[existingIndex].count = count;
+      } else {
+        newCoinCounts.push({ value, count });
+      }
+    }
+    
+    setCoinCounts(newCoinCounts);
+    
+    if (countingMethod === 'detailed') {
+      const total = calculateTotalFromCounts();
+      setAmount(formatCurrency(total.toString()));
+    }
   };
 
   const handleSubmit = async () => {
@@ -93,21 +167,21 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
 
   const getDonationTypeLabel = (type: DonationType) => {
     switch (type) {
+      case 'culto':
+        return '⛪ Doação de Culto';
       case 'tithe':
         return '💰 Dízimo';
-      case 'offering':
-        return '💵 Oferta';
       case 'special':
-        return '🎁 Especial';
+        return '🎁 Doação Especial';
     }
   };
 
   const getDonationTypeDescription = (type: DonationType) => {
     switch (type) {
+      case 'culto':
+        return 'Ofertas coletadas durante o culto';
       case 'tithe':
         return 'Contribuição regular de 10% da renda';
-      case 'offering':
-        return 'Contribuição voluntária para a obra';
       case 'special':
         return 'Doação específica para projetos especiais';
     }
@@ -126,6 +200,9 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   };
 
   const handleAmountChange = (value: string) => {
+    if (countingMethod === 'detailed') {
+      return; // Não permitir edição manual quando em modo detalhado
+    }
     const formatted = formatCurrency(value);
     setAmount(formatted);
   };
@@ -153,6 +230,104 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
     </TouchableOpacity>
   );
 
+  const renderCountingMethodToggle = () => (
+    <View style={styles.countingMethodContainer}>
+      <Text style={styles.countingMethodLabel}>Método de Contagem:</Text>
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[
+            styles.toggleButton,
+            countingMethod === 'detailed' && styles.toggleButtonActive
+          ]}
+          onPress={() => setCountingMethod('detailed')}
+        >
+          <Text style={[
+            styles.toggleButtonText,
+            countingMethod === 'detailed' && styles.toggleButtonTextActive
+          ]}>
+            📊 Detalhada
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.toggleButton,
+            countingMethod === 'total' && styles.toggleButtonActive
+          ]}
+          onPress={() => setCountingMethod('total')}
+        >
+          <Text style={[
+            styles.toggleButtonText,
+            countingMethod === 'total' && styles.toggleButtonTextActive
+          ]}>
+            💰 Valor Total
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const renderBillCounting = () => (
+    <View style={styles.countingSection}>
+      <Text style={styles.countingTitle}>Cédulas</Text>
+      <View style={styles.countingGrid}>
+        {BILL_VALUES.map(value => {
+          const billCount = billCounts.find(bill => bill.value === value)?.count || 0;
+          return (
+            <View key={value} style={styles.countingItem}>
+              <Text style={styles.countingItemLabel}>R$ {value}</Text>
+              <View style={styles.countingControls}>
+                <TouchableOpacity
+                  style={styles.countingButton}
+                  onPress={() => handleBillCountChange(value, Math.max(0, billCount - 1))}
+                >
+                  <Text style={styles.countingButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.countingValue}>{billCount}</Text>
+                <TouchableOpacity
+                  style={styles.countingButton}
+                  onPress={() => handleBillCountChange(value, billCount + 1)}
+                >
+                  <Text style={styles.countingButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+
+  const renderCoinCounting = () => (
+    <View style={styles.countingSection}>
+      <Text style={styles.countingTitle}>Moedas</Text>
+      <View style={styles.countingGrid}>
+        {COIN_VALUES.map(value => {
+          const coinCount = coinCounts.find(coin => coin.value === value)?.count || 0;
+          return (
+            <View key={value} style={styles.countingItem}>
+              <Text style={styles.countingItemLabel}>R$ {value.toFixed(2)}</Text>
+              <View style={styles.countingControls}>
+                <TouchableOpacity
+                  style={styles.countingButton}
+                  onPress={() => handleCoinCountChange(value, Math.max(0, coinCount - 1))}
+                >
+                  <Text style={styles.countingButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.countingValue}>{coinCount}</Text>
+                <TouchableOpacity
+                  style={styles.countingButton}
+                  onPress={() => handleCoinCountChange(value, coinCount + 1)}
+                >
+                  <Text style={styles.countingButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -172,11 +347,38 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
           </Text>
           
           <View style={styles.typeButtonsContainer}>
+            {renderTypeButton('culto')}
             {renderTypeButton('tithe')}
-            {renderTypeButton('offering')}
             {renderTypeButton('special')}
           </View>
         </Card>
+
+        {/* Counting Method for Culto */}
+        {donationType === 'culto' && (
+          <Card variant="elevated" style={styles.countingMethodCard}>
+            {renderCountingMethodToggle()}
+          </Card>
+        )}
+
+        {/* Detailed Counting for Culto */}
+        {donationType === 'culto' && countingMethod === 'detailed' && (
+          <Card variant="elevated" style={styles.countingCard}>
+            <Text style={styles.sectionTitle}>Contagem Detalhada</Text>
+            <Text style={styles.sectionSubtitle}>
+              Conte as cédulas e moedas coletadas
+            </Text>
+            
+            {renderBillCounting()}
+            {renderCoinCounting()}
+            
+            <View style={styles.totalSection}>
+              <Text style={styles.totalLabel}>Total Calculado:</Text>
+              <Text style={styles.totalValue}>
+                {formatCurrency(calculateTotalFromCounts().toString())}
+              </Text>
+            </View>
+          </Card>
+        )}
 
         {/* Donation Details */}
         <Card variant="elevated" style={styles.detailsCard}>
@@ -192,6 +394,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
               error={errors.amount}
               required
               style={styles.input}
+              editable={donationType !== 'culto' || countingMethod === 'total'}
             />
 
             <Input
@@ -205,6 +408,19 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
               style={styles.input}
             />
 
+            {(donationType === 'tithe' || donationType === 'special') && (
+              <Input
+                label="Identificação do Doador"
+                value={userId}
+                onChangeText={setUserId}
+                placeholder="Nome ou ID do doador"
+                type="text"
+                error={errors.userId}
+                required
+                style={styles.input}
+              />
+            )}
+
             <Input
               label="Descrição (opcional)"
               value={description}
@@ -213,6 +429,17 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
               type="text"
               style={styles.input}
             />
+
+            {donationType === 'culto' && (
+              <Input
+                label="Observações (opcional)"
+                value={notes}
+                onChangeText={setNotes}
+                placeholder="Observações sobre a coleta..."
+                type="text"
+                style={styles.input}
+              />
+            )}
           </View>
         </Card>
 
@@ -240,10 +467,24 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
               </Text>
             </View>
             
+            {(donationType === 'tithe' || donationType === 'special') && userId && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Doador:</Text>
+                <Text style={styles.summaryValue}>{userId}</Text>
+              </View>
+            )}
+            
             {description && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Descrição:</Text>
                 <Text style={styles.summaryValue}>{description}</Text>
+              </View>
+            )}
+
+            {donationType === 'culto' && countingMethod === 'detailed' && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Método:</Text>
+                <Text style={styles.summaryValue}>Contagem Detalhada</Text>
               </View>
             )}
           </View>
@@ -313,6 +554,12 @@ const styles = StyleSheet.create({
   typeCard: {
     marginBottom: Spacing.lg,
   },
+  countingMethodCard: {
+    marginBottom: Spacing.lg,
+  },
+  countingCard: {
+    marginBottom: Spacing.lg,
+  },
   detailsCard: {
     marginBottom: Spacing.lg,
   },
@@ -358,6 +605,108 @@ const styles = StyleSheet.create({
     color: Colors.gray,
   },
   typeButtonDescriptionActive: {
+    color: Colors.primary,
+  },
+  countingMethodContainer: {
+    marginBottom: Spacing.md,
+  },
+  countingMethodLabel: {
+    fontSize: Typography.fontSizeBase,
+    fontWeight: Typography.fontWeightMedium,
+    color: Colors.black,
+    marginBottom: Spacing.sm,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  toggleButton: {
+    flex: 1,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.lightGray,
+    alignItems: 'center',
+  },
+  toggleButtonActive: {
+    backgroundColor: Colors.primary,
+  },
+  toggleButtonText: {
+    fontSize: Typography.fontSizeSm,
+    fontWeight: Typography.fontWeightMedium,
+    color: Colors.gray,
+  },
+  toggleButtonTextActive: {
+    color: Colors.white,
+  },
+  countingSection: {
+    marginBottom: Spacing.lg,
+  },
+  countingTitle: {
+    fontSize: Typography.fontSizeBase,
+    fontWeight: Typography.fontWeightSemibold,
+    color: Colors.black,
+    marginBottom: Spacing.md,
+  },
+  countingGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+  },
+  countingItem: {
+    width: '30%',
+    padding: Spacing.sm,
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+  },
+  countingItemLabel: {
+    fontSize: Typography.fontSizeSm,
+    fontWeight: Typography.fontWeightMedium,
+    color: Colors.black,
+    marginBottom: Spacing.xs,
+  },
+  countingControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  countingButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  countingButtonText: {
+    fontSize: Typography.fontSizeSm,
+    fontWeight: Typography.fontWeightBold,
+    color: Colors.white,
+  },
+  countingValue: {
+    fontSize: Typography.fontSizeBase,
+    fontWeight: Typography.fontWeightSemibold,
+    color: Colors.black,
+    minWidth: 20,
+    textAlign: 'center',
+  },
+  totalSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: Colors.primary + '10',
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.md,
+  },
+  totalLabel: {
+    fontSize: Typography.fontSizeBase,
+    fontWeight: Typography.fontWeightSemibold,
+    color: Colors.black,
+  },
+  totalValue: {
+    fontSize: Typography.fontSizeLg,
+    fontWeight: Typography.fontWeightBold,
     color: Colors.primary,
   },
   formContainer: {

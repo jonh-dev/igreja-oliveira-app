@@ -1,10 +1,10 @@
-import { Donation, UpdateDonationData, CreateGasofilacoData } from '../../../domain/entities/Donation';
+import { Donation, UpdateDonationData, CreateCultoDonationData, CreateManualDonationData } from '../../../domain/entities/Donation';
 
 export interface IDonationRepository {
+  createCultoDonation(data: CreateCultoDonationData): Promise<Donation>;
+  createManualDonation(data: CreateManualDonationData): Promise<Donation>;
+  findAll(): Promise<Donation[]>;
   findById(id: string): Promise<Donation | null>;
-  findByUserId(userId: string, params?: { limit?: number; offset?: number }): Promise<Donation[]>;
-  createGasofilaco(gasofilacoData: CreateGasofilacoData): Promise<Donation>;
-  update(id: string, donationData: UpdateDonationData): Promise<Donation>;
+  update(id: string, data: UpdateDonationData): Promise<Donation>;
   delete(id: string): Promise<void>;
-  findAll(params?: { limit?: number; offset?: number }): Promise<Donation[]>;
 }
