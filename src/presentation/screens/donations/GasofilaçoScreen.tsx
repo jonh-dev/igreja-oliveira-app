@@ -11,6 +11,8 @@ import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
 import { Colors } from '../../components/shared/design-system';
+import { CreateGasofilacoUseCase } from '../../../application/use-cases/donation/CreateGasofilacoUseCase';
+import { container } from '../../../infrastructure/config/container';
 
 interface GasofilaçoScreenProps {
   onNavigateBack: () => void;
@@ -123,17 +125,24 @@ export const GasofilaçoScreen: React.FC<GasofilaçoScreenProps> = ({
     setLoading(true);
 
     try {
-      const gasofilaçoData = {
-        cultDate: new Date(cultDate.split('/').reverse().join('-')),
+      // Converter data do formato DD/MM/AAAA para Date
+      const [day, month, year] = cultDate.split('/');
+      const cultDateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+      const gasofilacoData = {
+        cultDate: cultDateObj,
         amount: calculateTotal(),
         registeredBy: 'current-user-id', // TODO: Pegar do contexto de autenticação
+        description: `Gasofilaço - ${cultDate}`,
         notes: notes.trim() || undefined,
-        billCounts,
-        coinCounts,
       };
 
-      // TODO: Implementar chamada real para o repository
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Usar o use case para criar gasofilaço
+      const createGasofilacoUseCase = new CreateGasofilacoUseCase(
+        container.get('DonationRepository')
+      );
+
+      await createGasofilacoUseCase.execute(gasofilacoData);
 
       Alert.alert(
         'Sucesso!',
@@ -150,7 +159,7 @@ export const GasofilaçoScreen: React.FC<GasofilaçoScreenProps> = ({
     } catch (error) {
       Alert.alert(
         'Erro',
-        'Erro ao registrar gasofilaço. Tente novamente.',
+        error instanceof Error ? error.message : 'Erro ao registrar gasofilaço. Tente novamente.',
         [{ text: 'OK' }]
       );
     } finally {

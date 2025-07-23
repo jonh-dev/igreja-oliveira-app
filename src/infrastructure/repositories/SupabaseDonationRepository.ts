@@ -1,5 +1,5 @@
 import { IDonationRepository } from '../../application/interfaces/repositories/IDonationRepository';
-import { Donation, CreateDonationData, UpdateDonationData } from '../../domain/entities/Donation';
+import { Donation, UpdateDonationData, CreateGasofilacoData } from '../../domain/entities/Donation';
 import { supabase, DatabaseDonation } from '../config/supabase';
 
 export class SupabaseDonationRepository implements IDonationRepository {
@@ -41,21 +41,26 @@ export class SupabaseDonationRepository implements IDonationRepository {
     return data.map(donation => this.mapToDonation(donation));
   }
 
-  async create(donationData: CreateDonationData): Promise<Donation> {
+  async createGasofilaco(gasofilacoData: CreateGasofilacoData): Promise<Donation> {
     const { data, error } = await supabase
       .from('donations')
       .insert({
-        user_id: donationData.userId,
-        amount: donationData.amount,
-        type: 'offering', // TODO: Adicionar tipo na interface CreateDonationData
-        description: donationData.description,
-        date: new Date().toISOString(),
+        type: 'gasofilaco',
+        source: 'manual',
+        amount: gasofilacoData.amount,
+        description: gasofilacoData.description,
+        gasofilaco_data: {
+          cult_date: gasofilacoData.cultDate.toISOString(),
+          registered_by: gasofilacoData.registeredBy,
+          notes: gasofilacoData.notes,
+        },
+        date: gasofilacoData.cultDate.toISOString(),
       })
       .select()
       .single();
 
     if (error) {
-      throw new Error(`Error creating donation: ${error.message}`);
+      throw new Error(`Error creating gasofilaco donation: ${error.message}`);
     }
 
     return this.mapToDonation(data);
@@ -118,9 +123,23 @@ export class SupabaseDonationRepository implements IDonationRepository {
   private mapToDonation(databaseDonation: DatabaseDonation): Donation {
     return {
       id: databaseDonation.id,
-      userId: databaseDonation.user_id,
+      type: databaseDonation.type as Donation['type'],
+      source: databaseDonation.source as Donation['source'],
       amount: databaseDonation.amount,
       description: databaseDonation.description || undefined,
+      gasofilacoData: databaseDonation.gasofilaco_data ? {
+        cultDate: new Date(databaseDonation.gasofilaco_data.cult_date),
+        registeredBy: databaseDonation.gasofilaco_data.registered_by,
+        notes: databaseDonation.gasofilaco_data.notes,
+      } : undefined,
+      electronicData: databaseDonation.electronic_data ? {
+        transactionId: databaseDonation.electronic_data.transaction_id,
+        donorId: databaseDonation.electronic_data.donor_id,
+        donorName: databaseDonation.electronic_data.donor_name,
+        paymentMethod: databaseDonation.electronic_data.payment_method,
+        bankInfo: databaseDonation.electronic_data.bank_info,
+        transactionDate: new Date(databaseDonation.electronic_data.transaction_date),
+      } : undefined,
       createdAt: new Date(databaseDonation.created_at),
       updatedAt: new Date(databaseDonation.updated_at),
     };
