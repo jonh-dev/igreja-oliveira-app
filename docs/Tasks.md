@@ -69,6 +69,7 @@
   - [x] GIT-WORKFLOW.md - Fluxo de desenvolvimento
   - [x] STATUS.md - Status atual do projeto
   - [x] .cursor/rules/igreja-oliveira-rules.mdc - Regras para IA
+- [x] docs/OpenFinance-Integration.md - Análise completa de Open Finance
 
 - [x] **Commits e Push**
   - [x] Commits granulares seguindo convenção
@@ -210,13 +211,30 @@
 - [ ] **Interface de Relatórios** - Tela para visualizar relatórios
 - [ ] **Exportação de Dados** - PDF/CSV dos relatórios
 
-#### **2. Sistema de Doações Eletrônicas**
-- [ ] **OpenFinanceScreen** - Integração com sistema bancário
-- [ ] **Captura automática** - Transações PIX/cartão
-- [ ] **Mapeamento de doadores** - Identificação por transação
-- [ ] **Sincronização em tempo real** - Com relatórios consolidados
-- [ ] **Configuração de APIs** - Bancárias para Open Finance
-- [ ] **Monitoramento** - Transações e status
+#### **2. Sistema de Doações Eletrônicas (Open Finance)**
+- [ ] **Pesquisa e Configuração Mercado Pago**
+  - [ ] Criar conta business no Mercado Pago
+  - [ ] Configurar webhooks para notificações
+  - [ ] Testar API de pagamentos
+  - [ ] Documentar endpoints necessários
+
+- [ ] **Implementação Backend**
+  - [ ] Criar PaymentProcessor interface
+  - [ ] Implementar MercadoPagoService
+  - [ ] Criar webhook handlers
+  - [ ] Integrar com Supabase
+
+- [ ] **Interface Mobile**
+  - [ ] Implementar OpenFinanceScreen
+  - [ ] Criar formulário de doação
+  - [ ] Adicionar monitoramento de status
+  - [ ] Implementar notificações push
+
+- [ ] **Relatórios Consolidados**
+  - [ ] Integrar dados eletrônicos nos relatórios
+  - [ ] Criar métricas comparativas
+  - [ ] Implementar filtros por método de pagamento
+  - [ ] Adicionar exportação de dados
 
 #### **3. Relatórios e Exportação**
 - [ ] **ReportsScreen** - Interface para geração de relatórios
@@ -337,11 +355,12 @@
    - Adicionar exportação PDF/CSV dos relatórios
    - Implementar gráficos e métricas visuais
 
-2. **Sistema de Doações Eletrônicas**
-   - Pesquisar APIs bancárias para Open Finance
-   - Implementar OpenFinanceScreen para configuração
-   - Criar sistema de captura automática de transações
-   - Mapear doadores por transação
+2. **Sistema de Doações Eletrônicas (Mercado Pago)**
+   - Configurar conta business no Mercado Pago
+   - Implementar PaymentProcessor interface
+   - Criar MercadoPagoService para integração
+   - Desenvolver webhook handlers para notificações
+   - Implementar OpenFinanceScreen com formulário de doação
 
 3. **Integração Completa**
    - Conectar gasofilaço + eletrônicas nos relatórios
