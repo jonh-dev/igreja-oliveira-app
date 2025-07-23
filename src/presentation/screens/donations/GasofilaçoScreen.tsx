@@ -349,11 +349,11 @@ export const GasofilaçoScreen: React.FC<GasofilaçoScreenProps> = ({
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.lightGray,
   },
   header: {
     flexDirection: 'row' as const,
-    alignItems: 'center',
+    alignItems: 'center' as const,
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: Colors.white,
@@ -371,7 +371,7 @@ const styles = {
     flex: 1,
     fontSize: 18,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: Colors.black,
     textAlign: 'center' as const,
   },
   headerSpacer: {
@@ -393,7 +393,7 @@ const styles = {
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: Colors.black,
     marginBottom: 4,
   },
   sectionSubtitle: {
@@ -412,8 +412,8 @@ const styles = {
   },
   counterItem: {
     flexDirection: 'row' as const,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
     paddingVertical: 12,
     paddingHorizontal: 16,
     backgroundColor: Colors.lightGray,
@@ -425,7 +425,7 @@ const styles = {
   counterLabel: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: Colors.black,
   },
   counterSubtitle: {
     fontSize: 12,
@@ -434,7 +434,7 @@ const styles = {
   },
   counterControls: {
     flexDirection: 'row' as const,
-    alignItems: 'center',
+    alignItems: 'center' as const,
     gap: 12,
   },
   counterButton: {
@@ -453,7 +453,7 @@ const styles = {
   counterValue: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: Colors.black,
     minWidth: 30,
     textAlign: 'center' as const,
   },
@@ -462,8 +462,8 @@ const styles = {
   },
   summaryRow: {
     flexDirection: 'row' as const,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
   },
   summaryLabel: {
     fontSize: 14,
@@ -472,7 +472,7 @@ const styles = {
   summaryValue: {
     fontSize: 14,
     fontWeight: '500' as const,
-    color: Colors.text,
+    color: Colors.gray,
     textAlign: 'right' as const,
   },
   totalAmount: {
@@ -485,6 +485,6 @@ const styles = {
     marginBottom: 32,
   },
   submitButton: {
-    width: '100%',
+    width: '100%' as const,
   },
 }; 
