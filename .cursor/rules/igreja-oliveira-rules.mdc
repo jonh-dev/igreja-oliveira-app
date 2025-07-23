@@ -11,6 +11,14 @@ Antes de responder qualquer pergunta, SEMPRE leia estes arquivos:
 - **docs/Regras.md** - Regras que devem ser seguidas
 - **docs/Tasks.md** - Tasks e implementações
 
+### **📝 ATUALIZAÇÃO OBRIGATÓRIA DE DOCUMENTAÇÃO**
+- **SEMPRE** atualizar docs/Tasks.md após implementar funcionalidades
+- **SEMPRE** marcar tasks como concluídas [x] quando implementadas
+- **SEMPRE** adicionar novas tasks descobertas durante desenvolvimento
+- **SEMPRE** manter documentação sincronizada com o código
+- **SEMPRE** documentar decisões arquiteturais importantes
+- **NUNCA** deixar documentação desatualizada
+
 ## 🚨 REGRA CRÍTICA: DESENVOLVIMENTO INCREMENTAL E TESTÁVEL
 
 ### **⚠️ DESENVOLVIMENTO UMA TASK POR VEZ**
