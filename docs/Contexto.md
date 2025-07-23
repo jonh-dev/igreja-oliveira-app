@@ -45,10 +45,9 @@
 O sistema de doações é **unificado** com duas fontes de dados:
 
 #### **1. Doações Manuais** (Registradas pelos líderes/diáconos/pastores)
-- **Dízimos entregues fisicamente** - Membro entrega o dízimo e líder registra
-- **Ofertas do culto** - Coleta durante o culto e registro manual
+- **Doações de culto** - Contagem de cédulas/moedas OU valor total
+- **Dízimos manuais** - Entregues fisicamente pelos membros
 - **Doações especiais** - Projetos específicos, missões, etc.
-- **Gasofilaço** - Contagem manual de cédulas e moedas coletadas
 
 #### **2. Doações Eletrônicas** (Via Open Finance)
 - **Transferências automáticas** da conta do usuário
@@ -67,10 +66,10 @@ O sistema de doações é **unificado** com duas fontes de dados:
 │   Doações       │    │   Doações       │    │   Interface     │
 │   Manuais       │    │   Eletrônicas   │    │   Unificada     │
 │                 │    │                 │    │                 │
-│ • Dízimos       │    │ • Open Finance  │    │ • Lista Total   │
-│ • Ofertas       │    │ • APIs Bancárias│    │ • Filtros       │
+│ • Doações culto │    │ • Open Finance  │    │ • Lista Total   │
+│ • Dízimos       │    │ • APIs Bancárias│    │ • Filtros       │
 │ • Especiais     │    │ • Sincronização │    │ • Relatórios    │
-│ • Gasofilaço    │    │   Automática    │    │ • Dashboard     │
+│ • Contagem      │    │   Automática    │    │ • Dashboard     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          └───────────────────────┼───────────────────────┘
@@ -89,7 +88,7 @@ O sistema de doações é **unificado** com duas fontes de dados:
 ```typescript
 interface Donation {
   id: string;
-  type: 'tithe' | 'offering' | 'special' | 'gasofilaço';
+  type: 'culto' | 'tithe' | 'special';
   amount: number;
   date: Date;
   userId: string;
@@ -101,11 +100,22 @@ interface Donation {
     transactionId: string;
     accountInfo: string;
   };
-  gasofilaçoData?: {     // Dados específicos do gasofilaço
+  cultoData?: {          // Dados específicos de doações de culto
     billCounts: BillCount[];
     coinCounts: CoinCount[];
     notes?: string;
+    countingMethod: 'detailed' | 'total'; // Contagem detalhada ou valor total
   };
+}
+
+interface BillCount {
+  value: number; // 200, 100, 50, 20, 10, 5, 2
+  count: number;
+}
+
+interface CoinCount {
+  value: number; // 1, 0.5, 0.25, 0.1, 0.05, 0.01
+  count: number;
 }
 ```
 
@@ -140,8 +150,8 @@ src/
 │   │   └── donation/
 │   │       ├── CreateDonationUseCase.ts ✅
 │   │       ├── GetDonationsUseCase.ts ✅
-│   │       ├── CreateGasofilacoUseCase.ts ✅
-│   │       └── GetGasofilacoReportsUseCase.ts ✅
+│   │       ├── CreateCultoDonationUseCase.ts ✅
+│   │       └── GetDonationReportsUseCase.ts ✅
 │   └── dto/
 │       ├── CreateUserDto.ts ✅
 │       ├── CreateAddressDto.ts ✅
@@ -192,66 +202,46 @@ enum UserRole {
 
 ---
 
-## 🗄️ Configuração Supabase
-
-### **Variáveis de Ambiente Obrigatórias**
-```bash
-# .env (NUNCA commitar)
-EXPO_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ... (publishable key)
-```
-
-### **Regras de Segurança**
-- **NUNCA** usar fallbacks de variáveis de ambiente
-- **SEMPRE** validar existência das variáveis
-- **NUNCA** expor service_role key no frontend
-- **SEMPRE** usar Row Level Security (RLS)
-
-### **Schema do Banco**
-```sql
--- Tabela de usuários
-CREATE TABLE users (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'pastor', 'deacon', 'leader', 'member')),
-  church_id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  cpf VARCHAR(11) UNIQUE,
-  phone VARCHAR(20),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Tabela de doações
-CREATE TABLE donations (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
-  type VARCHAR(50) NOT NULL CHECK (type IN ('tithe', 'offering', 'special')),
-  description TEXT,
-  date DATE NOT NULL DEFAULT CURRENT_DATE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
 ## 💰 Contexto Real das Doações - Igreja Oliveira
 
 ### **Fluxo Atual de Doações**
 
-#### **1. Cultos Dominicais - Gasofilaço (Dinheiro Vivo)**
+#### **1. Cultos Dominicais - Doações de Culto**
 - **Frequência**: Apenas aos domingos
 - **Processo**: 
-  - Pessoas fazem ofertas no gasofilaço durante o culto
-  - Líderes e diáconos recolhem o gasofilaço
-  - Contabilização manual em sala fechada
-  - Registro de valores totais sem identificação individual
+  - Pessoas fazem ofertas durante o culto
+  - Líderes e diáconos recolhem as ofertas
+  - **Opção A**: Contagem manual de cédulas e moedas
+  - **Opção B**: Registro do valor total contabilizado
+  - Registro de valores por culto
 - **Características**:
   - Não há controle de quem doou especificamente
   - Valores são consolidados por culto
-  - Processo manual sujeito a erros
+  - Flexibilidade na forma de contagem
 
-#### **2. Doações Eletrônicas (PIX/Cartão)**
+#### **2. Dízimos Manuais**
+- **Frequência**: Semanal/Mensal
+- **Processo**:
+  - Membro entrega dízimo fisicamente
+  - Líder/diácono registra no sistema
+  - Identificação do doador
+- **Características**:
+  - Controle individual de doadores
+  - Rastreabilidade completa
+  - Registro manual
+
+#### **3. Doações Especiais**
+- **Frequência**: Eventual
+- **Processo**:
+  - Projetos específicos (missões, reformas, etc.)
+  - Registro manual por líderes
+  - Identificação do doador
+- **Características**:
+  - Controle individual
+  - Categorização por projeto
+  - Registro manual
+
+#### **4. Doações Eletrônicas (PIX/Cartão)**
 - **Frequência**: Diária (24/7)
 - **Processo**:
   - Doações via PIX ou cartão de crédito/débito
@@ -263,8 +253,8 @@ CREATE TABLE donations (
   - Rastreabilidade completa
   - Processo automatizado
 
-#### **3. Relatórios e Controle**
-- **Consolidação**: Valores de gasofilaço + eletrônicos
+#### **5. Relatórios e Controle**
+- **Consolidação**: Valores manuais + eletrônicos
 - **Exportação**: PDF e CSV para análise
 - **Métricas**: Por culto, período, tipo de doação
 - **Acesso**: Hierárquico por role (admin, pastor, diáconos)
@@ -428,26 +418,6 @@ class MercadoPagoService implements PaymentProcessor {
 - ✅ **Auditoria**: Logs de transações
 - ✅ **Backup**: Recuperação de dados
 
-### **Requisitos Técnicos**
-
-#### **Sistema de Gasofilaço**
-- Interface para contabilização manual
-- Registro de valores por culto/domingo
-- Controle de quem registrou (liderança)
-- Validações de valores e datas
-
-#### **Integração Open Finance**
-- Conexão com APIs bancárias
-- Captura automática de transações
-- Mapeamento de doadores
-- Sincronização em tempo real
-
-#### **Relatórios Consolidados**
-- Geração de PDF profissionais
-- Exportação CSV para Excel
-- Filtros avançados
-- Métricas e gráficos
-
 ---
 
 ## 🎯 Funcionalidades MVP
@@ -461,19 +431,20 @@ class MercadoPagoService implements PaymentProcessor {
 - [x] Implementar repositories
 - [x] Configurar injeção de dependências
 
-### **Fase 2: Interface do Usuário 🔄**
+### **Fase 2: Interface do Usuário ✅**
 - [x] Criar componentes compartilhados
 - [x] Implementar navegação com Strategy Pattern
 - [x] Desenvolver telas principais
 - [x] Integrar com Supabase
 
-### **Fase 3: Sistema de Doações (Contexto Real)**
+### **Fase 3: Sistema de Doações Unificado**
 - [x] Implementar telas de doações básicas
-- [ ] **Sistema de Gasofilaço (Dinheiro Vivo)**
-  - [ ] Tela para contabilização manual de ofertas em dinheiro
-  - [ ] Registro por líderes/diáconos após culto dominical
-  - [ ] Controle de valores sem identificação individual
-  - [ ] Relatórios consolidados por data/culto
+- [ ] **Sistema de Doações Manuais**
+  - [ ] Tela unificada de criação de doações
+  - [ ] Suporte a contagem de cédulas/moedas
+  - [ ] Suporte a registro de valor total
+  - [ ] Registro de dízimos manuais
+  - [ ] Registro de doações especiais
 - [ ] **Sistema de Doações Eletrônicas**
   - [ ] Integração com Open Finance da igreja
   - [ ] Captura automática de valores via PIX/cartão
@@ -605,380 +576,6 @@ pnpm run test        # Quando disponível
 **📧 Email**: jonh.dev.br@gmail.com  
 **🏢 Organização**: Igreja Oliveira  
 **📅 Criado em**: 2025-01-14  
-
----
-
-**🎯 Objetivo**: Sistema de gestão eclesiástica escalável, mantível e seguro, seguindo boas práticas de desenvolvimento mobile.
-
----
-
-## 🎨 Protótipo e Design System
-
-### **Paleta de Cores - Igreja Oliveira**
-```css
-/* Cores Principais - Verde Oliveira */
---primary-color: #556B2F;         /* Verde oliveira escuro - tradição */
---secondary-color: #8FBC8F;       /* Verde oliveira claro - paz */
---accent-color: #6B8E23;          /* Verde oliveira médio - harmonia */
-
-/* Cores Neutras */
---white: #ffffff;
---light-gray: #f8f9fa;
---gray: #6c757d;
---dark-gray: #343a40;
---black: #000000;
-
-/* Cores de Status */
---success: #556B2F;               /* Verde oliveira escuro - sucesso */
---warning: #DAA520;               /* Dourado - aviso */
---danger: #DC143C;                /* Vermelho - erro */
---info: #4682B4;                  /* Azul aço - informação */
-
-/* Gradientes */
---primary-gradient: linear-gradient(135deg, #556B2F 0%, #8FBC8F 100%);
---secondary-gradient: linear-gradient(135deg, #8FBC8F 0%, #6B8E23 100%);
-```
-
-### **Tipografia**
-```css
-/* Fontes */
---font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
---font-family-secondary: 'Poppins', sans-serif;
-
-/* Tamanhos */
---font-size-xs: 12px;
---font-size-sm: 14px;
---font-size-base: 16px;
---font-size-lg: 18px;
---font-size-xl: 20px;
---font-size-2xl: 24px;
---font-size-3xl: 30px;
---font-size-4xl: 36px;
-
-/* Pesos */
---font-weight-light: 300;
---font-weight-normal: 400;
---font-weight-medium: 500;
---font-weight-semibold: 600;
---font-weight-bold: 700;
-```
-
-### **Espaçamentos e Layout**
-```css
-/* Espaçamentos */
---spacing-xs: 4px;
---spacing-sm: 8px;
---spacing-md: 16px;
---spacing-lg: 24px;
---spacing-xl: 32px;
---spacing-2xl: 48px;
-
-/* Border Radius */
---border-radius-sm: 4px;
---border-radius-md: 8px;
---border-radius-lg: 12px;
---border-radius-xl: 16px;
-
-/* Shadows */
---shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
---shadow-md: 0 4px 6px rgba(0,0,0,0.1);
---shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-```
-
-### **Telas Principais - Wireframes**
-
-#### **1. Tela de Login**
-```
-┌─────────────────────────────────┐
-│                                 │
-│        [Logo Igreja]            │
-│                                 │
-│    Bem-vindo à Igreja Oliveira │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │         📧 Email            │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │         🔒 Senha            │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │        [Entrar]             │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│        Esqueceu a senha?        │
-│                                 │
-│        Criar nova conta         │
-│                                 │
-└─────────────────────────────────┘
-```
-
-#### **2. Dashboard - Admin**
-```
-┌─────────────────────────────────┐
-│ 🔔 [João Silva] [Logout]       │
-├─────────────────────────────────┤
-│                                 │
-│    📊 Dashboard Administrativo  │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 👥 Membros  │ │ 💰 Doações │ │
-│  │    150      │ │   R$ 15k   │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 📅 Eventos  │ │ 📋 Relatórios│ │
-│  │     12      │ │     5       │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│    📈 Atividade Recente         │
-│  ┌─────────────────────────────┐ │
-│  │ • Novo membro: Maria Silva  │ │
-│  │ • Doação: R$ 500 - João     │ │
-│  │ • Evento: Culto Domingo     │ │
-│  └─────────────────────────────┘ │
-│                                 │
-└─────────────────────────────────┘
-```
-
-#### **3. Dashboard - Pastor**
-```
-┌─────────────────────────────────┐
-│ 🔔 [Pastor Silva] [Logout]     │
-├─────────────────────────────────┤
-│                                 │
-│    📊 Dashboard Pastoral        │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 👥 Membros  │ │ 💰 Dízimos │ │
-│  │    120      │ │   R$ 12k   │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 🎭 Ministérios│ │ 📅 Cultos  │ │
-│  │     8       │ │    4/semana │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│    📈 Membros por Ministério    │
-│  ┌─────────────────────────────┐ │
-│  │ • Louvor: 25 membros        │ │
-│  │ • Jovens: 30 membros        │ │
-│  │ • Crianças: 20 membros      │ │
-│  └─────────────────────────────┘ │
-│                                 │
-└─────────────────────────────────┘
-```
-
-#### **4. Dashboard - Membro**
-```
-┌─────────────────────────────────┐
-│ 🔔 [Maria Silva] [Logout]      │
-├─────────────────────────────────┤
-│                                 │
-│    📊 Meu Dashboard             │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 💰 Meus     │ │ 📅 Próximo  │ │
-│  │ Dízimos     │ │ Evento      │ │
-│  │ R$ 1.200    │ │ Culto 19h   │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│  ┌─────────────┐ ┌─────────────┐ │
-│  │ 🎭 Meus     │ │ 📋 Minhas   │ │
-│  │ Ministérios │ │ Doações     │ │
-│  │ Louvor      │ │ R$ 500      │ │
-│  └─────────────┘ └─────────────┘ │
-│                                 │
-│    📈 Minha Atividade           │
-│  ┌─────────────────────────────┐ │
-│  │ • Última doação: R$ 200     │ │
-│  │ • Próximo evento: 15/01     │ │
-│  │ • Ministério: Louvor        │ │
-│  └─────────────────────────────┘ │
-│                                 │
-└─────────────────────────────────┘
-```
-
-#### **5. Tela de Doações**
-```
-┌─────────────────────────────────┐
-│ ← [Doações] [➕ Nova]           │
-├─────────────────────────────────┤
-│                                 │
-│  🔍 [Pesquisar doações...]     │
-│                                 │
-│  📅 Janeiro 2025               │
-│  ┌─────────────────────────────┐ │
-│  │ 💰 Dízimo - R$ 500          │ │
-│  │ 📅 15/01/2025               │ │
-│  │ 👤 João Silva               │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │ 💰 Oferta - R$ 200          │ │
-│  │ 📅 12/01/2025               │ │
-│  │ 👤 Maria Silva              │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │ 💰 Especial - R$ 1.000      │ │
-│  │ 📅 10/01/2025               │ │
-│  │ 👤 Pedro Santos             │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  📊 Total: R$ 1.700            │
-│                                 │
-└─────────────────────────────────┘
-```
-
-#### **6. Formulário de Nova Doação**
-```
-┌─────────────────────────────────┐
-│ ← [Nova Doação]                │
-├─────────────────────────────────┤
-│                                 │
-│  💰 Nova Doação                │
-│                                 │
-│  Tipo de Doação:                │
-│  ○ Dízimo  ○ Oferta  ● Especial│
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │ 💵 Valor (R$)               │ │
-│  │        500,00               │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │ 📅 Data                     │ │
-│  │      15/01/2025            │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │ 📝 Descrição (opcional)     │ │
-│  │                            │ │
-│  └─────────────────────────────┘ │
-│                                 │
-│  ┌─────────────────────────────┐ │
-│  │        [Salvar]             │ │
-│  └─────────────────────────────┘ │
-│                                 │
-└─────────────────────────────────┘
-```
-
-### **Componentes UI - Especificações**
-
-#### **Button Component**
-```typescript
-interface ButtonProps {
-  title: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
-  size?: 'small' | 'medium' | 'large';
-  loading?: boolean;
-  disabled?: boolean;
-  icon?: React.ReactNode;
-}
-```
-
-#### **Input Component**
-```typescript
-interface InputProps {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
-  type?: 'text' | 'email' | 'password' | 'cpf' | 'phone' | 'cep';
-  error?: string;
-  required?: boolean;
-  mask?: string;
-}
-```
-
-#### **Card Component**
-```typescript
-interface CardProps {
-  title?: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  variant?: 'default' | 'elevated' | 'outlined';
-  onPress?: () => void;
-  icon?: React.ReactNode;
-}
-```
-
-### **Navegação - Strategy Pattern**
-```typescript
-// Navegação baseada em role
-enum NavigationStack {
-  ADMIN_STACK = 'AdminStack',
-  PASTOR_STACK = 'PastorStack',
-  DEACON_STACK = 'DeaconStack',
-  LEADER_STACK = 'LeaderStack',
-  MEMBER_STACK = 'MemberStack',
-  GUEST_STACK = 'GuestStack'
-}
-
-// Telas por stack
-const AdminScreens = [
-  'AdminDashboard',
-  'MembersManagement',
-  'DonationsManagement',
-  'Reports',
-  'Settings'
-];
-
-const PastorScreens = [
-  'PastorDashboard',
-  'MembersView',
-  'DonationsView',
-  'Ministries',
-  'Settings'
-];
-
-const MemberScreens = [
-  'MemberDashboard',
-  'MyDonations',
-  'MyProfile',
-  'Events'
-];
-```
-
-### **Estados de Loading e Error**
-```typescript
-// Estados globais
-interface AppState {
-  isLoading: boolean;
-  error: string | null;
-  user: User | null;
-  isAuthenticated: boolean;
-}
-
-// Estados específicos
-interface AuthState {
-  isLoading: boolean;
-  error: string | null;
-  isAuthenticated: boolean;
-}
-
-interface DonationsState {
-  isLoading: boolean;
-  error: string | null;
-  donations: Donation[];
-  totalAmount: number;
-}
-```
-
-### **Responsividade**
-- **Mobile First**: Design otimizado para smartphones
-- **Tablet Support**: Layout adaptativo para tablets
-- **Accessibility**: Suporte a VoiceOver e TalkBack
-- **Dark Mode**: Suporte futuro para modo escuro
-
-### **Performance UI**
-- **Lazy Loading**: Componentes carregados sob demanda
-- **Image Optimization**: Imagens otimizadas e cacheadas
-- **Smooth Animations**: Transições suaves (60fps)
-- **Memory Management**: Limpeza automática de recursos
 
 ---
 

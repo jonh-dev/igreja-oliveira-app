@@ -2,7 +2,7 @@
 
 ## 🎯 Status Atual: **FASE 3 - Sistema de Doações Unificado** 🔄
 
-### 📅 Última Atualização: 2025-01-16 - 18:00
+### 📅 Última Atualização: 2025-01-16 - 18:30
 
 ---
 
@@ -26,8 +26,6 @@
   - [x] AuthenticateUserUseCase - Autenticação
   - [x] CreateDonationUseCase - Registro de doações manuais
   - [x] GetDonationsUseCase - Listagem unificada de doações
-  - [x] CreateGasofilacoUseCase - Registro específico de gasofilaço
-  - [x] GetGasofilacoReportsUseCase - Relatórios de gasofilaço
 
 - [x] **Configurar Interfaces (Application Layer)**
   - [x] IUserRepository - Contrato para repositório de usuários
@@ -39,8 +37,7 @@
 - [x] **Criar DTOs**
   - [x] CreateUserDto - Dados para criação de usuário
   - [x] CreateAddressDto - Dados para criação de endereço
-  - [x] CreateGasofilacoDto - Dados para criação de gasofilaço
-  - [x] GetGasofilacoReportsDto - Dados para relatórios de gasofilaço
+  - [x] CreateDonationDto - Dados para criação de doações
 
 - [x] **Configurar Supabase**
   - [x] Criar projeto no Supabase
@@ -148,45 +145,29 @@
   - [x] Integração com repositories
   - [x] Busca e filtros por data/tipo
 
-#### **5. Sistema de Gasofilaço**
-- [x] **GasofilaçoScreen**
-  - [x] Interface para contagem manual de cédulas e moedas
-  - [x] Validação de dados e cálculos automáticos
-  - [x] Integração com CreateGasofilacoUseCase
-  - [x] Testes unitários para lógica de validação
-
-- [x] **GasofilacoReportsScreen**
-  - [x] Interface para visualizar relatórios consolidados
-  - [x] Filtros por período (máximo 2 anos)
-  - [x] Métricas gerais (total, média, maior, menor)
-  - [x] Lista de cultos com valores
-  - [x] Placeholder para exportação PDF/CSV
-  - [x] Testes unitários para validações
-
-- [x] **TestHarness Integration**
-  - [x] GasofilaçoScreenTest - Componente de teste unificado
-  - [x] Navegação entre registro e relatórios
-  - [x] Integração com TestHarness principal
-
 ---
 
 ## 🔄 TAREFAS EM ANDAMENTO
 
 ### **💰 Fase 3: Sistema de Doações Unificado**
 
-#### **1. Sistema de Doações Manuais** ✅
-- [x] **Gasofilaço (Contagem Manual)**
-  - [x] Interface para contagem de cédulas e moedas
-  - [x] Registro de gasofilaço com validações
-  - [x] Relatórios consolidados por período
-  - [x] Testes unitários completos
-
-- [ ] **Doações Manuais Gerais**
-  - [ ] Unificar CreateDonationScreen com GasofilaçoScreen
-  - [ ] Criar interface única para registro de doações manuais
-  - [ ] Suportar dízimos, ofertas, doações especiais
-  - [ ] Integrar com sistema de usuários para identificar doador
+#### **1. Sistema de Doações Manuais** 🔄
+- [ ] **CreateDonationScreen Unificado**
+  - [ ] Refatorar para suportar todos os tipos de doação
+  - [ ] Integrar funcionalidade de contagem de cédulas/moedas
+  - [ ] Suportar registro de valor total
   - [ ] Implementar validações específicas por tipo
+  - [ ] Criar testes unitários
+
+- [ ] **Tipos de Doação Manual**
+  - [ ] **Doações de culto** - Contagem de cédulas/moedas OU valor total
+  - [ ] **Dízimos manuais** - Entregues fisicamente pelos membros
+  - [ ] **Doações especiais** - Projetos específicos, missões, etc.
+
+- [ ] **Use Cases Atualizados**
+  - [ ] CreateCultoDonationUseCase - Para doações de culto
+  - [ ] CreateManualDonationUseCase - Para dízimos e especiais
+  - [ ] GetDonationReportsUseCase - Relatórios unificados
 
 #### **2. Sistema de Doações Eletrônicas (Open Finance)**
 - [ ] **Pesquisa e Configuração Mercado Pago**
@@ -211,7 +192,7 @@
 - [ ] **DonationsListScreen Unificada**
   - [ ] Exibir doações manuais e eletrônicas na mesma lista
   - [ ] Filtros por fonte (manual/eletrônico)
-  - [ ] Filtros por tipo (dízimo, oferta, especial, gasofilaço)
+  - [ ] Filtros por tipo (culto, dízimo, especial)
   - [ ] Indicadores visuais de fonte da doação
   - [ ] Busca unificada
 
@@ -240,10 +221,11 @@
 ## 📋 PRÓXIMAS TAREFAS
 
 ### **🎯 Prioridade Imediata**
-1. **Unificar Sistema de Doações**
-   - Refatorar CreateDonationScreen para ser mais genérico
-   - Integrar GasofilaçoScreen como um tipo específico
-   - Criar interface única para todas as doações manuais
+1. **Refatorar CreateDonationScreen**
+   - Integrar funcionalidade de contagem de cédulas/moedas
+   - Suportar todos os tipos de doação manual
+   - Implementar validações específicas
+   - Criar testes unitários
 
 2. **Implementar Open Finance**
    - Configurar Mercado Pago
@@ -267,10 +249,10 @@
 
 - **Fase 1 (Setup e Core)**: ✅ 100% Concluído
 - **Fase 2 (Interface do Usuário)**: ✅ 100% Concluído
-- **Fase 3 (Sistema de Doações)**: 🔄 60% Concluído
-  - ✅ Sistema de Gasofilaço (100%)
-  - 🔄 Sistema Unificado (30%)
+- **Fase 3 (Sistema de Doações)**: 🔄 40% Concluído
+  - ✅ Sistema Básico (100%)
+  - 🔄 Sistema Unificado (20%)
   - ⏳ Open Finance (0%)
   - ⏳ Interface Unificada (0%)
 
-**Total Geral**: 75% Concluído 
+**Total Geral**: 70% Concluído 
