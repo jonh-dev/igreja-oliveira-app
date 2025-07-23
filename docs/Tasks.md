@@ -1,8 +1,8 @@
 # 📋 Tasks e Implementações - Igreja Oliveira App
 
-## 🎯 Status Atual: **FASE 3 - Sistema de Doações (Contexto Real)** 🔄
+## 🎯 Status Atual: **FASE 3 - Sistema de Doações Unificado** 🔄
 
-### 📅 Última Atualização: 2025-01-16 - 17:45
+### 📅 Última Atualização: 2025-01-16 - 18:00
 
 ---
 
@@ -18,21 +18,21 @@
 - [x] **Criar Entidades do Domínio**
   - [x] User.ts - Entidade principal com hierarquia de roles
   - [x] Address.ts - Entidade separada para endereços
-  - [x] Donation.ts - Entidade para doações/dízimos com tipos gasofilaço/eletrônicas
+  - [x] Donation.ts - Entidade unificada para doações (manuais + eletrônicas)
   - [x] CEP.ts - Value Object para CEP brasileiro
 
 - [x] **Implementar Use Cases Básicos**
   - [x] CreateUserUseCase - Registro de usuários
   - [x] AuthenticateUserUseCase - Autenticação
-  - [x] CreateDonationUseCase - Registro de doações (atualizado para gasofilaço)
-  - [x] GetDonationsUseCase - Listagem de doações
+  - [x] CreateDonationUseCase - Registro de doações manuais
+  - [x] GetDonationsUseCase - Listagem unificada de doações
   - [x] CreateGasofilacoUseCase - Registro específico de gasofilaço
   - [x] GetGasofilacoReportsUseCase - Relatórios de gasofilaço
 
 - [x] **Configurar Interfaces (Application Layer)**
   - [x] IUserRepository - Contrato para repositório de usuários
   - [x] IAddressRepository - Contrato para repositório de endereços
-  - [x] IDonationRepository - Contrato para repositório de doações (atualizado)
+  - [x] IDonationRepository - Contrato para repositório de doações unificado
   - [x] IAuthService - Contrato para serviço de autenticação
   - [x] ICEPValidationService - Contrato para validação de CEP
 
@@ -48,12 +48,12 @@
   - [x] Implementar validação rigorosa sem fallbacks
   - [x] Configurar Row Level Security (RLS)
   - [x] Criar schema do banco (users, donations)
-  - [x] Atualizar DatabaseDonation type para suportar gasofilaço
+  - [x] Atualizar DatabaseDonation type para suportar fontes manuais e eletrônicas
 
 - [x] **Implementar Repositories (Infrastructure Layer)**
   - [x] SupabaseUserRepository - Implementação com cache
   - [x] SupabaseAddressRepository - Implementação com validação
-  - [x] SupabaseDonationRepository - Implementação com RLS (atualizado para gasofilaço)
+  - [x] SupabaseDonationRepository - Implementação unificada com RLS
   - [x] SupabaseAuthService - Serviço de autenticação
   - [x] ViaCEPService - Validação de CEP via API
 
@@ -69,7 +69,6 @@
   - [x] GIT-WORKFLOW.md - Fluxo de desenvolvimento
   - [x] STATUS.md - Status atual do projeto
   - [x] .cursor/rules/igreja-oliveira-rules.mdc - Regras para IA
-
 
 - [x] **Commits e Push**
   - [x] Commits granulares seguindo convenção
@@ -149,67 +148,45 @@
   - [x] Integração com repositories
   - [x] Busca e filtros por data/tipo
 
-- [x] **Sistema de Gasofilaço (Contexto Real)**
-  - [x] GasofilaçoScreen - Contabilização manual de ofertas em dinheiro
-  - [x] Registro por culto dominical com data e valores
-  - [x] Controle de quem registrou (liderança autorizada)
-  - [x] Validações de valores e datas de culto
-  - [x] Interface para contagem de cédulas e moedas
-  - [x] Relatórios consolidados por culto (use case implementado)
+#### **5. Sistema de Gasofilaço**
+- [x] **GasofilaçoScreen**
+  - [x] Interface para contagem manual de cédulas e moedas
+  - [x] Validação de dados e cálculos automáticos
+  - [x] Integração com CreateGasofilacoUseCase
+  - [x] Testes unitários para lógica de validação
 
-- [ ] **Sistema de Doações Eletrônicas**
-  - [ ] OpenFinanceScreen - Integração com sistema bancário
-  - [ ] Captura automática de transações PIX/cartão
-  - [ ] Mapeamento de doadores por transação
-  - [ ] Sincronização em tempo real com relatórios
-  - [ ] Configuração de APIs bancárias
-  - [ ] Monitoramento de transações
+- [x] **GasofilacoReportsScreen**
+  - [x] Interface para visualizar relatórios consolidados
+  - [x] Filtros por período (máximo 2 anos)
+  - [x] Métricas gerais (total, média, maior, menor)
+  - [x] Lista de cultos com valores
+  - [x] Placeholder para exportação PDF/CSV
+  - [x] Testes unitários para validações
 
-- [ ] **Relatórios e Exportação**
-  - [ ] ReportsScreen - Geração de relatórios consolidados
-  - [ ] Exportação PDF com layout profissional
-  - [ ] Exportação CSV para análise externa
-  - [ ] Filtros avançados por período e tipo
-  - [ ] Métricas e gráficos por culto
-  - [ ] Comparativos entre gasofilaço e eletrônicas
-
-- [ ] **Navigation Setup**
-  - [ ] Configurar React Navigation 7.x
-  - [ ] Implementar Strategy Pattern por role
-  - [ ] Proteção de rotas baseada em hierarquia
-  - [ ] Bottom tabs para navegação principal
-  - [ ] Stack navigation para telas secundárias
-
-#### **5. Gerenciamento de Estado**
-- [ ] **Context API Setup**
-  - [ ] AuthContext - Estado de autenticação
-  - [ ] UserContext - Dados do usuário
-  - [ ] DonationsContext - Estado das doações
-  - [ ] Providers e hooks customizados
-  - [ ] Estados de loading e error handling
-  - [ ] Persistência de dados com AsyncStorage
-
-- [ ] **Hooks Customizados**
-  - [ ] useAuth - Hook para autenticação
-  - [ ] useUser - Hook para dados do usuário
-  - [ ] useDonations - Hook para doações
-  - [ ] useNavigation - Hook para navegação baseada em role
+- [x] **TestHarness Integration**
+  - [x] GasofilaçoScreenTest - Componente de teste unificado
+  - [x] Navegação entre registro e relatórios
+  - [x] Integração com TestHarness principal
 
 ---
 
 ## 🔄 TAREFAS EM ANDAMENTO
 
-### **📊 Prioridade Alta - Fase 3: Sistema de Doações (Contexto Real)**
+### **💰 Fase 3: Sistema de Doações Unificado**
 
-#### **1. Sistema de Gasofilaço (Parcialmente Concluído)**
-- [x] **GasofilaçoScreen** - Interface para contabilização manual
-- [x] **CreateGasofilacoUseCase** - Lógica de negócio para registro
-- [x] **GetGasofilacoReportsUseCase** - Sistema de relatórios
-- [x] **Validações de Domínio** - Datas, valores, usuário registrador
-- [x] **Repository Integration** - Salvamento no Supabase
-- [x] **Testes Unitários** - 23 testes passando (11 + 12)
-- [ ] **Interface de Relatórios** - Tela para visualizar relatórios
-- [ ] **Exportação de Dados** - PDF/CSV dos relatórios
+#### **1. Sistema de Doações Manuais** ✅
+- [x] **Gasofilaço (Contagem Manual)**
+  - [x] Interface para contagem de cédulas e moedas
+  - [x] Registro de gasofilaço com validações
+  - [x] Relatórios consolidados por período
+  - [x] Testes unitários completos
+
+- [ ] **Doações Manuais Gerais**
+  - [ ] Unificar CreateDonationScreen com GasofilaçoScreen
+  - [ ] Criar interface única para registro de doações manuais
+  - [ ] Suportar dízimos, ofertas, doações especiais
+  - [ ] Integrar com sistema de usuários para identificar doador
+  - [ ] Implementar validações específicas por tipo
 
 #### **2. Sistema de Doações Eletrônicas (Open Finance)**
 - [ ] **Pesquisa e Configuração Mercado Pago**
@@ -226,244 +203,74 @@
 
 - [ ] **Interface Mobile**
   - [ ] Implementar OpenFinanceScreen
-  - [ ] Criar formulário de doação
+  - [ ] Criar formulário de doação eletrônica
   - [ ] Adicionar monitoramento de status
   - [ ] Implementar notificações push
 
+#### **3. Interface Unificada de Doações**
+- [ ] **DonationsListScreen Unificada**
+  - [ ] Exibir doações manuais e eletrônicas na mesma lista
+  - [ ] Filtros por fonte (manual/eletrônico)
+  - [ ] Filtros por tipo (dízimo, oferta, especial, gasofilaço)
+  - [ ] Indicadores visuais de fonte da doação
+  - [ ] Busca unificada
+
 - [ ] **Relatórios Consolidados**
-  - [ ] Integrar dados eletrônicos nos relatórios
+  - [ ] Integrar dados manuais e eletrônicos
   - [ ] Criar métricas comparativas
   - [ ] Implementar filtros por método de pagamento
-  - [ ] Adicionar exportação de dados
+  - [ ] Adicionar exportação de dados unificada
 
-#### **3. Relatórios e Exportação**
-- [ ] **ReportsScreen** - Interface para geração de relatórios
-- [ ] **Exportação PDF** - Layout profissional
-- [ ] **Exportação CSV** - Para análise externa
-- [ ] **Filtros avançados** - Por período e tipo
-- [ ] **Métricas e gráficos** - Por culto
-- [ ] **Comparativos** - Entre gasofilaço e eletrônicas
+- [ ] **Dashboard Unificado**
+  - [ ] Métricas totais (manuais + eletrônicas)
+  - [ ] Gráficos comparativos por fonte
+  - [ ] Tendências de doações
+  - [ ] Alertas de baixa arrecadação
 
----
-
-## 📊 Prioridade Média - Fase 4: Testes e Qualidade
-
-### **🧪 Testes Automatizados**
-- [x] **Configurar Jest e Testing Library**
-  - [x] Instalar dependências de teste
-  - [x] Configurar jest.config.js
-  - [x] Setup de mocks para Supabase
-  - [x] Configurar coverage reports
-
-- [x] **Testes Unitários (Parcialmente Concluído)**
-  - [x] Use Cases (Parcial)
-    - [x] CreateGasofilacoUseCase.test.ts (11 testes)
-    - [x] GetGasofilacoReportsUseCase.test.ts (12 testes)
-    - [ ] CreateUserUseCase.test.ts
-    - [ ] AuthenticateUserUseCase.test.ts
-    - [ ] CreateDonationUseCase.test.ts
-    - [ ] GetDonationsUseCase.test.ts
-  - [ ] Entities (100% coverage)
-    - [ ] User.test.ts
-    - [ ] Address.test.ts
-    - [ ] Donation.test.ts
-    - [ ] CEP.test.ts
-  - [ ] Repositories (80% coverage)
-    - [ ] SupabaseUserRepository.test.ts
-    - [ ] SupabaseAddressRepository.test.ts
-    - [ ] SupabaseDonationRepository.test.ts
-  - [ ] Services (80% coverage)
-    - [ ] SupabaseAuthService.test.ts
-    - [ ] ViaCEPService.test.ts
-
-- [ ] **Testes de Integração**
-  - [ ] Supabase connection tests
-  - [ ] RLS policies tests
-  - [ ] API integration tests
-  - [ ] End-to-end flow tests
-
-### **🔧 Qualidade e Linting**
-- [x] **TypeScript Strict Mode**
-  - [x] Configurar tsconfig.json rigoroso
-  - [x] Corrigir todos os erros de tipagem
-  - [x] Manter strict mode ativo
-  - [x] Validação contínua com pnpm run type-check
-
-- [ ] **ESLint Configuration**
-  - [ ] Instalar ESLint e plugins
-  - [ ] Configurar regras rigorosas
-  - [ ] Integrar com TypeScript
-  - [ ] Configurar auto-fix
-
-- [ ] **Prettier Configuration**
-  - [ ] Instalar Prettier
-  - [ ] Configurar formatação
-  - [ ] Integrar com ESLint
-  - [ ] Configurar auto-format
-
-- [ ] **Husky Pre-commit Hooks**
-  - [ ] Instalar Husky
-  - [ ] Configurar pre-commit hooks
-  - [ ] Integrar lint, type-check, tests
-  - [ ] Configurar commit-msg hooks
-
-### **📊 CI/CD Pipeline**
-- [ ] **GitHub Actions**
-  - [ ] Criar .github/workflows/ci.yml
-  - [ ] Configurar jobs de qualidade
-  - [ ] Integrar com Supabase
-  - [ ] Configurar deployment
+#### **4. Relatórios e Exportação**
+- [ ] **ReportsScreen - Interface para geração de relatórios**
+- [ ] **Exportação PDF - Layout profissional**
+- [ ] **Exportação CSV - Para análise externa**
+- [ ] **Filtros avançados - Por período, tipo e fonte**
+- [ ] **Métricas e gráficos - Por culto e período**
+- [ ] **Comparativos - Entre fontes de doação**
 
 ---
 
-## 📊 Prioridade Baixa - Fase 5: Deploy e Monitoramento
+## 📋 PRÓXIMAS TAREFAS
 
-### **🚀 Build e Deploy**
-- [ ] **Expo Build Configuration**
-  - [ ] Configurar eas.json
-  - [ ] Setup de builds para Android/iOS
-  - [ ] Configurar environment variables
-  - [ ] Testar builds locais
+### **🎯 Prioridade Imediata**
+1. **Unificar Sistema de Doações**
+   - Refatorar CreateDonationScreen para ser mais genérico
+   - Integrar GasofilaçoScreen como um tipo específico
+   - Criar interface única para todas as doações manuais
 
-- [ ] **Store Deployment**
-  - [ ] Google Play Store setup
-  - [ ] Apple App Store setup
-  - [ ] Configurar certificates
-  - [ ] Submeter builds
+2. **Implementar Open Finance**
+   - Configurar Mercado Pago
+   - Implementar integração bancária
+   - Criar sistema de sincronização automática
 
-### **📈 Monitoramento e Analytics**
-- [ ] **Error Tracking**
-  - [ ] Integrar Sentry ou similar
-  - [ ] Configurar crash reporting
-  - [ ] Setup de alertas
-  - [ ] Dashboard de monitoramento
+3. **Interface Unificada**
+   - Consolidar todas as doações em uma única lista
+   - Implementar filtros por fonte e tipo
+   - Criar relatórios unificados
 
-- [ ] **Analytics**
-  - [ ] Integrar analytics (Firebase, etc.)
-  - [ ] Configurar eventos importantes
-  - [ ] Dashboard de métricas
-  - [ ] Relatórios de uso
+### **🔮 Próximas Fases**
+- **Fase 4**: Sistema de Membros e Ministérios
+- **Fase 5**: Sistema de Eventos e Calendário
+- **Fase 6**: Sistema de Comunicação
+- **Fase 7**: Relatórios Avançados e Analytics
 
 ---
 
-## 🎯 PRÓXIMOS PASSOS IMEDIATOS
+## 📊 Métricas de Progresso
 
-### **🔧 Esta Semana (Prioridade Alta)**
-1. **Interface de Relatórios de Gasofilaço**
-   - Implementar ReportsScreen para visualizar relatórios
-   - Criar filtros por período (data inicial/final)
-   - Adicionar exportação PDF/CSV dos relatórios
-   - Implementar gráficos e métricas visuais
+- **Fase 1 (Setup e Core)**: ✅ 100% Concluído
+- **Fase 2 (Interface do Usuário)**: ✅ 100% Concluído
+- **Fase 3 (Sistema de Doações)**: 🔄 60% Concluído
+  - ✅ Sistema de Gasofilaço (100%)
+  - 🔄 Sistema Unificado (30%)
+  - ⏳ Open Finance (0%)
+  - ⏳ Interface Unificada (0%)
 
-2. **Sistema de Doações Eletrônicas (Mercado Pago)**
-   - Configurar conta business no Mercado Pago
-   - Implementar PaymentProcessor interface
-   - Criar MercadoPagoService para integração
-   - Desenvolver webhook handlers para notificações
-   - Implementar OpenFinanceScreen com formulário de doação
-
-3. **Integração Completa**
-   - Conectar gasofilaço + eletrônicas nos relatórios
-   - Implementar métricas comparativas
-   - Criar dashboard unificado de doações
-
-### **📱 Próximas 2 Semanas (Prioridade Média)**
-1. **Sistema Completo de Doações**
-   - Integração completa gasofilaço + eletrônicas
-   - Relatórios consolidados com métricas
-   - Exportação PDF e CSV funcionais
-   - Validações e controles de acesso
-
-2. **Testes e Qualidade**
-   - Setup completo de testes para novos módulos
-   - Cobertura mínima de 80% para sistema de doações
-   - Testes de integração com APIs bancárias
-   - E2E tests para fluxos de gasofilaço
-
-### **🧪 Próximo Mês (Prioridade Baixa)**
-1. **Deploy e Produção**
-   - Build otimizado para produção
-   - Deploy nas stores
-   - Monitoramento e analytics
-   - Feedback dos usuários
-
----
-
-## 🚨 RISCOS E MITIGAÇÕES
-
-### **Riscos Técnicos**
-1. **Complexity Overhead**
-   - **Risco**: Clean Architecture pode ser over-engineering para MVP
-   - **Mitigação**: Manter simplicidade nos Use Cases iniciais ✅
-
-2. **Supabase Learning Curve**
-   - **Risco**: Primeira implementação com Supabase
-   - **Mitigação**: Documentação e exemplos bem estruturados ✅
-
-3. **React Native Updates**
-   - **Risco**: Versão recente pode ter instabilidades
-   - **Mitigação**: Versões validadas e testadas ✅
-
-### **Riscos de Cronograma**
-1. **Perfectionism**
-   - **Risco**: Tendência a over-engineer
-   - **Mitigação**: Focar no MVP essencial ✅
-
-2. **Scope Creep**
-   - **Risco**: Adicionar funcionalidades não essenciais
-   - **Mitigação**: Seguir rigorosamente o documento mesa-redonda ✅
-
----
-
-## 📊 MÉTRICAS DE PROGRESSO
-
-### **Cobertura de Código**
-- **Use Cases**: 40% (2 de 5 implementados com testes)
-- **Repositories**: 0% (Ainda não testados)
-- **Entities**: 0% (Ainda não testados)
-- **Meta**: 80% de cobertura mínima
-
-### **Bundle Size**
-- **Atual**: ~15MB (dependencies instaladas)
-- **Meta**: <10MB para produção
-
-### **Performance**
-- **Load Time**: Ainda não medido
-- **Meta**: <2s para tela inicial
-
-### **Funcionalidades Implementadas**
-- **Gasofilaço**: 80% (UI + Backend + Relatórios)
-- **Autenticação**: 100% (UI + Backend)
-- **Dashboard**: 100% (UI por roles)
-- **Relatórios**: 60% (Backend implementado, UI pendente)
-
----
-
-## 💡 LIÇÕES APRENDIDAS
-
-### **✅ Decisões Acertadas**
-1. **Validação de Stack**: Evitou problemas de compatibilidade ✅
-2. **Clean Architecture**: Estrutura escalável desde o início ✅
-3. **Documentação Primeiro**: Base sólida para desenvolvimento ✅
-4. **Boas Práticas Research**: Padrões atualizados e validados ✅
-5. **Desenvolvimento Incremental**: Uma task por vez com testes ✅
-6. **TypeScript Strict**: Código mais seguro e maintível ✅
-
-### **🔄 Ajustes Necessários**
-1. **Simplificar MVPs**: Focar no essencial primeiro ✅
-2. **Iteração Rápida**: Validar funcionalidades com usuários
-3. **Testes Paralelos**: Implementar testes junto com features ✅
-
----
-
-## 📞 CONTATOS DO PROJETO
-
-**👤 Admin Inicial**: João Carlos Schwab Zanardi  
-**📧 Email**: jonh.dev.br@gmail.com  
-**🏢 Organização**: Igreja Oliveira  
-
----
-
-**📊 Conclusão**: Projeto está bem estruturado e seguindo boas práticas. Sistema de gasofilaço 80% implementado com backend completo e testes. Próximo foco: interface de relatórios e sistema eletrônico.
-
-**🎯 Próxima Atualização**: Após implementação da interface de relatórios 
+**Total Geral**: 75% Concluído 

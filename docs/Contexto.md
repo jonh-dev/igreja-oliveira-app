@@ -39,6 +39,78 @@
 
 ---
 
+## 💰 Sistema Unificado de Doações
+
+### **Visão Arquitetural**
+O sistema de doações é **unificado** com duas fontes de dados:
+
+#### **1. Doações Manuais** (Registradas pelos líderes/diáconos/pastores)
+- **Dízimos entregues fisicamente** - Membro entrega o dízimo e líder registra
+- **Ofertas do culto** - Coleta durante o culto e registro manual
+- **Doações especiais** - Projetos específicos, missões, etc.
+- **Gasofilaço** - Contagem manual de cédulas e moedas coletadas
+
+#### **2. Doações Eletrônicas** (Via Open Finance)
+- **Transferências automáticas** da conta do usuário
+- **Integração com APIs bancárias** via Open Finance
+- **Sincronização automática** com o sistema
+
+### **Interface Unificada**
+- **Uma única tela** para visualizar todas as doações
+- **Filtros** por tipo (manual/eletrônico), período, membro
+- **Relatórios consolidados** incluindo ambas as fontes
+- **Dashboard unificado** com métricas totais
+
+### **Fluxo de Dados**
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Doações       │    │   Doações       │    │   Interface     │
+│   Manuais       │    │   Eletrônicas   │    │   Unificada     │
+│                 │    │                 │    │                 │
+│ • Dízimos       │    │ • Open Finance  │    │ • Lista Total   │
+│ • Ofertas       │    │ • APIs Bancárias│    │ • Filtros       │
+│ • Especiais     │    │ • Sincronização │    │ • Relatórios    │
+│ • Gasofilaço    │    │   Automática    │    │ • Dashboard     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │   Supabase      │
+                    │   (PostgreSQL)  │
+                    │                 │
+                    │ • donations     │
+                    │ • users         │
+                    │ • RLS           │
+                    └─────────────────┘
+```
+
+### **Estrutura de Dados**
+```typescript
+interface Donation {
+  id: string;
+  type: 'tithe' | 'offering' | 'special' | 'gasofilaço';
+  amount: number;
+  date: Date;
+  userId: string;
+  source: 'manual' | 'electronic'; // Fonte da doação
+  description?: string;
+  registeredBy: string; // Quem registrou (para manuais)
+  electronicData?: {     // Dados específicos eletrônicos
+    bankName: string;
+    transactionId: string;
+    accountInfo: string;
+  };
+  gasofilaçoData?: {     // Dados específicos do gasofilaço
+    billCounts: BillCount[];
+    coinCounts: CoinCount[];
+    notes?: string;
+  };
+}
+```
+
+---
+
 ## 🏗️ Estrutura de Pastas Atual
 
 ```
@@ -67,7 +139,9 @@ src/
 │   │   │   └── AuthenticateUserUseCase.ts ✅
 │   │   └── donation/
 │   │       ├── CreateDonationUseCase.ts ✅
-│   │       └── GetDonationsUseCase.ts ✅
+│   │       ├── GetDonationsUseCase.ts ✅
+│   │       ├── CreateGasofilacoUseCase.ts ✅
+│   │       └── GetGasofilacoReportsUseCase.ts ✅
 │   └── dto/
 │       ├── CreateUserDto.ts ✅
 │       ├── CreateAddressDto.ts ✅
