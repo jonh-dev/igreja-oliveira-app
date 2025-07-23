@@ -69,7 +69,7 @@
   - [x] GIT-WORKFLOW.md - Fluxo de desenvolvimento
   - [x] STATUS.md - Status atual do projeto
   - [x] .cursor/rules/igreja-oliveira-rules.mdc - Regras para IA
-- [x] docs/OpenFinance-Integration.md - Análise completa de Open Finance
+
 
 - [x] **Commits e Push**
   - [x] Commits granulares seguindo convenção

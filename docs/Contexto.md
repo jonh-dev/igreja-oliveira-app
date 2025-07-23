@@ -195,6 +195,165 @@ CREATE TABLE donations (
 - **Métricas**: Por culto, período, tipo de doação
 - **Acesso**: Hierárquico por role (admin, pastor, diáconos)
 
+---
+
+## 🏦 Integração Open Finance - Análise Técnica
+
+### **📊 Análise do Ecossistema Brasileiro**
+
+#### **Open Finance (OF) - Regulamentação BCB**
+- **Definição**: Sistema de compartilhamento de dados e serviços financeiros regulado pelo Banco Central do Brasil
+- **Objetivo**: Permitir que clientes compartilhem dados bancários com terceiros autorizados
+- **Regulamentação**: Resolução BCB nº 4.943/2021
+
+#### **Participantes do Ecossistema**
+1. **Iniciadores (TPP - Third Party Providers)**
+   - Empresas que iniciam transações
+   - Precisam de autorização do BCB
+   - Exemplo: PagSeguro, Mercado Pago
+
+2. **Instituições Financeiras**
+   - Bancos tradicionais e digitais
+   - Cooperativas de crédito
+   - Sociedades de crédito
+
+3. **Usuários Finais**
+   - Pessoas físicas e jurídicas
+   - Autorizam compartilhamento de dados
+
+### **🔍 Opções de Implementação**
+
+#### **Opção 1: Integração Direta com APIs Bancárias** ⚠️ **COMPLEXA**
+- **Requisitos Legais**:
+  - Autorização BCB: Necessário registro como TPP
+  - Certificação: Processo longo e custoso
+  - Compliance: Rigoroso controle de segurança
+  - Custos: Alto investimento inicial (R$ 50k-200k)
+- **Desvantagens**:
+  - ❌ Custo Proibitivo: R$ 50k-200k para certificação
+  - ❌ Tempo: 6-12 meses para aprovação
+  - ❌ Complexidade: Infraestrutura robusta necessária
+  - ❌ Manutenção: Equipe dedicada para compliance
+
+#### **Opção 2: Integração via Processadores de Pagamento** ✅ **RECOMENDADA**
+
+##### **Mercado Pago (Escolhido)**
+- **Vantagens**:
+  - ✅ API bem documentada
+  - ✅ Suporte a PIX, cartão, boleto
+  - ✅ Webhooks para notificações
+  - ✅ Dashboard de gestão
+  - ✅ Taxas competitivas (2.99% + R$ 0.60)
+
+##### **PagSeguro (Alternativa)**
+- **Vantagens**:
+  - ✅ Tradição no mercado brasileiro
+  - ✅ Suporte completo a PIX
+  - ✅ API REST bem estruturada
+  - ✅ Relatórios detalhados
+  - ✅ Integração com principais bancos
+
+##### **Stripe (Internacional)**
+- **Vantagens**:
+  - ✅ API muito bem documentada
+  - ✅ SDKs para React Native
+  - ✅ Suporte a PIX (recente)
+  - ✅ Dashboard avançado
+  - ✅ Webhooks robustos
+- **Desvantagens**:
+  - ❌ Taxas mais altas
+  - ❌ Suporte limitado a PIX
+  - ❌ Documentação em inglês
+
+### **🎯 Arquitetura Proposta**
+
+#### **Fluxo de Integração**
+```
+📱 App (React Native)
+    ↓
+🔗 API Gateway (Supabase Edge Functions)
+    ↓
+💳 Mercado Pago API
+    ↓
+📊 Webhook → Supabase Database
+    ↓
+📈 Relatórios Consolidados
+```
+
+#### **Estrutura Técnica**
+```typescript
+// Domain Layer
+interface PaymentProcessor {
+  createDonation(donation: CreateElectronicDonationData): Promise<PaymentResult>;
+  getTransactionStatus(transactionId: string): Promise<PaymentStatus>;
+  handleWebhook(notification: WebhookNotification): Promise<void>;
+}
+
+// Infrastructure Layer
+class MercadoPagoService implements PaymentProcessor {
+  async createDonation(donation: CreateElectronicDonationData): Promise<PaymentResult> {
+    // Implementação específica do Mercado Pago
+  }
+  
+  async handleWebhook(notification: WebhookNotification): Promise<void> {
+    // Processar notificação e salvar no Supabase
+  }
+}
+```
+
+### **📋 Fases de Implementação**
+
+#### **Fase 1: Configuração Mercado Pago**
+- [ ] Criar conta business no Mercado Pago
+- [ ] Configurar webhooks para notificações
+- [ ] Testar API de pagamentos
+- [ ] Documentar endpoints necessários
+
+#### **Fase 2: Desenvolvimento Backend**
+- [ ] Criar PaymentProcessor interface
+- [ ] Implementar MercadoPagoService
+- [ ] Criar webhook handlers
+- [ ] Integrar com Supabase
+
+#### **Fase 3: Interface Mobile**
+- [ ] Implementar OpenFinanceScreen
+- [ ] Criar formulário de doação
+- [ ] Adicionar monitoramento de status
+- [ ] Implementar notificações push
+
+#### **Fase 4: Relatórios Consolidados**
+- [ ] Integrar dados eletrônicos nos relatórios
+- [ ] Criar métricas comparativas
+- [ ] Implementar filtros por método de pagamento
+- [ ] Adicionar exportação de dados
+
+### **💰 Estimativas de Custo**
+
+#### **Mercado Pago**
+- **Taxa por transação**: 2.99% + R$ 0.60
+- **Setup**: Gratuito
+- **Webhooks**: Gratuito
+- **Dashboard**: Gratuito
+
+#### **Desenvolvimento**
+- **Tempo estimado**: 2-3 semanas
+- **Complexidade**: Média
+- **Testes**: Necessários para webhooks
+
+### **🚨 Considerações Legais**
+
+#### **LGPD (Lei Geral de Proteção de Dados)**
+- ✅ **Consentimento**: Usuário deve autorizar
+- ✅ **Minimização**: Coletar apenas dados necessários
+- ✅ **Segurança**: Criptografia e proteção
+- ✅ **Transparência**: Política de privacidade clara
+
+#### **Compliance Bancário**
+- ✅ **PCI DSS**: Para dados de cartão
+- ✅ **Criptografia**: Dados sensíveis
+- ✅ **Auditoria**: Logs de transações
+- ✅ **Backup**: Recuperação de dados
+
 ### **Requisitos Técnicos**
 
 #### **Sistema de Gasofilaço**

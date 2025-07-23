@@ -18,6 +18,9 @@ Antes de responder qualquer pergunta, SEMPRE leia estes arquivos:
 - **SEMPRE** manter documentação sincronizada com o código
 - **SEMPRE** documentar decisões arquiteturais importantes
 - **NUNCA** deixar documentação desatualizada
+- **NUNCA** criar novos arquivos .md - sempre inserir contexto nos arquivos existentes
+- **SEMPRE** organizar informações nos arquivos: Contexto.md, Regras.md, Tasks.md
+- **SEMPRE** manter documentação centralizada e coesa
 
 ## 🚨 REGRA CRÍTICA: DESENVOLVIMENTO INCREMENTAL E TESTÁVEL
 
