@@ -261,6 +261,32 @@ pnpm run test CreateUserUseCase.test.ts
 - **Organization**: Igreja Oliveira
 - **Created**: 2025-01-14
 
+## 🔄 Git Workflow Obrigatório
+
+### Fluxo de Trabalho Git
+1. **Desenvolver** na branch `develop`
+2. **Testar** completamente a funcionalidade
+3. **Commit** com mensagem descritiva
+4. **Push** para `develop`
+5. **Merge** para `main` quando estável
+6. **Push** para `main`
+
+### Regras Git
+- **SEMPRE** commitar em `develop` primeiro
+- **SEMPRE** testar antes de commitar
+- **SEMPRE** fazer push em ambas as branches (`develop` e `main`)
+- **NUNCA** commitar código que não funciona
+- **SEMPRE** resolver conflitos antes de merge
+
+### Template de Commit
+```
+feat(donations): implementar sistema unificado de doações
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ---
 
 **Remember**: This is a production church management system. Always prioritize data security, user privacy, and system reliability. Follow Clean Architecture principles religiously and maintain the highest code quality standards.
