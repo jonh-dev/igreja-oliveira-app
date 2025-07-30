@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperação de Senha - Igreja Oliveira</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .recovery-message {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .instructions {
+            background-color: #fff5f5;
+            border-left: 4px solid #f093fb;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .instructions h2 {
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .instructions p {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        
+        .recovery-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .recovery-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .security-tips {
+            background-color: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .security-tips h3 {
+            color: #276749;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .security-tips ul {
+            color: #2f855a;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-left: 16px;
+        }
+        
+        .security-tips li {
+            margin-bottom: 4px;
+        }
+        
+        .warning-notice {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .warning-notice h3 {
+            color: #c53030;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .warning-notice p {
+            color: #742a2a;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .footer {
+            background-color: #2d3748;
+            color: #cbd5e0;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .footer p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .footer .contact-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #4a5568;
+        }
+        
+        .social-links {
+            margin-top: 16px;
+        }
+        
+        .social-links a {
+            color: #81c784;
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 14px;
+        }
+        
+        .expiry-notice {
+            background-color: #fffbeb;
+            border: 1px solid #f6e05e;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: center;
+        }
+        
+        .expiry-notice p {
+            color: #744210;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .device-info {
+            background-color: #f7fafc;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+            font-size: 12px;
+            color: #4a5568;
+        }
+        
+        /* Mobile Responsive */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .header,
+            .content,
+            .footer {
+                padding: 24px 20px !important;
+            }
+            
+            .header h1 {
+                font-size: 24px !important;
+            }
+            
+            .recovery-message {
+                font-size: 16px !important;
+            }
+            
+            .recovery-button {
+                padding: 14px 24px !important;
+                font-size: 15px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td>
+                <div class="container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1>🏛️ Igreja Oliveira</h1>
+                        <p>Recuperação segura de senha</p>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="content">
+                        <div class="recovery-message">
+                            Olá! 🔒<br>
+                            Recebemos uma solicitação para redefinir a senha da sua conta no aplicativo da Igreja Oliveira.
+                        </div>
+                        
+                        <div class="instructions">
+                            <h2>🔑 Redefinir Senha</h2>
+                            <p>Para criar uma nova senha segura para sua conta, clique no botão abaixo. Você será direcionado para uma página segura onde poderá definir sua nova senha:</p>
+                        </div>
+                        
+                        <div class="button-container">
+                            <a href="{{ .ConfirmationURL }}" class="recovery-button">
+                                🛡️ Redefinir Senha
+                            </a>
+                        </div>
+                        
+                        <div class="expiry-notice">
+                            <p>⏰ Este link expira em 1 hora por questões de segurança</p>
+                        </div>
+                        
+                        <div class="security-tips">
+                            <h3>💡 Dicas para uma Senha Segura</h3>
+                            <ul>
+                                <li>Use pelo menos 8 caracteres</li>
+                                <li>Combine letras maiúsculas e minúsculas</li>
+                                <li>Inclua números e símbolos especiais</li>
+                                <li>Evite informações pessoais óbvias</li>
+                                <li>Não reutilize senhas de outras contas</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="device-info">
+                            <p><strong>📱 Informações da solicitação:</strong></p>
+                            <p>• Solicitação feita em: {{ .CreatedAt }}</p>
+                            <p>• IP: {{ .ClientIP }}</p>
+                            <p>• Dispositivo: {{ .UserAgent }}</p>
+                        </div>
+                        
+                        <div class="warning-notice">
+                            <h3>⚠️ Não foi você?</h3>
+                            <p>Se você não solicitou a redefinição de senha, pode ignorar este e-mail com segurança. Sua senha atual permanece inalterada. Para maior segurança, entre em contato conosco se suspeitar de atividade não autorizada.</p>
+                        </div>
+                        
+                        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                            <p style="font-size: 14px; color: #718096; line-height: 1.5;">
+                                <strong>Problemas com o botão?</strong><br>
+                                Copie e cole este link no seu navegador:<br>
+                                <span style="word-break: break-all; color: #f093fb;">{{ .ConfirmationURL }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="footer">
+                        <h3>Igreja Oliveira</h3>
+                        <p>Sua segurança é nossa prioridade.</p>
+                        
+                        <div class="contact-info">
+                            <p>📍 Endereço da Igreja • Cidade, Estado</p>
+                            <p>📞 (11) 9999-9999 • ✉️ contato@igreja-oliveira.com.br</p>
+                            
+                            <div class="social-links">
+                                <a href="#">Facebook</a> •
+                                <a href="#">Instagram</a> •
+                                <a href="#">YouTube</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #4a5568; font-size: 12px; color: #a0aec0;">
+                            © {{ .CurrentYear }} Igreja Oliveira. Todos os direitos reservados.<br>
+                            Este é um e-mail automático, não responda a esta mensagem.<br>
+                            Para suporte com senha, entre em contato pelo nosso canal oficial.
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

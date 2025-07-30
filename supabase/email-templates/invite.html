@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite Especial - Igreja Oliveira</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .invite-message {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .inviter-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .inviter-info h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .inviter-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .instructions {
+            background-color: #f0f9ff;
+            border-left: 4px solid #4facfe;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .instructions h2 {
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .instructions p {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        
+        .accept-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .accept-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .benefits {
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        
+        .benefits h3 {
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .benefits-list {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .benefit-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .benefit-text {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .role-info {
+            background-color: #fef5e7;
+            border: 1px solid #f6ad55;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .role-info h3 {
+            color: #c05621;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .role-info p {
+            color: #9c4221;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .footer {
+            background-color: #2d3748;
+            color: #cbd5e0;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .footer p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .footer .contact-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #4a5568;
+        }
+        
+        .social-links {
+            margin-top: 16px;
+        }
+        
+        .social-links a {
+            color: #81c784;
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 14px;
+        }
+        
+        .expiry-notice {
+            background-color: #fffbeb;
+            border: 1px solid #f6e05e;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: center;
+        }
+        
+        .expiry-notice p {
+            color: #744210;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        /* Mobile Responsive */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .header,
+            .content,
+            .footer {
+                padding: 24px 20px !important;
+            }
+            
+            .header h1 {
+                font-size: 24px !important;
+            }
+            
+            .invite-message {
+                font-size: 16px !important;
+            }
+            
+            .accept-button {
+                padding: 14px 24px !important;
+                font-size: 15px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td>
+                <div class="container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1>🏛️ Igreja Oliveira</h1>
+                        <p>Você foi convidado para nossa comunidade!</p>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="content">
+                        <div class="invite-message">
+                            Que bênção! 🎉<br>
+                            Você foi especialmente convidado para fazer parte da comunidade digital da Igreja Oliveira!
+                        </div>
+                        
+                        <div class="inviter-info">
+                            <h2>👤 Convidado por:</h2>
+                            <p><strong>{{ .InviterName }}</strong> ({{ .InviterRole }})</p>
+                            <p style="margin-top: 8px; font-size: 13px;">{{ .InviterEmail }}</p>
+                        </div>
+                        
+                        <div class="role-info">
+                            <h3>🎭 Seu Papel na Comunidade</h3>
+                            <p>Você foi convidado como <strong>{{ .UserRole }}</strong>. Este papel define suas permissões e responsabilidades dentro do aplicativo da igreja.</p>
+                        </div>
+                        
+                        <div class="benefits">
+                            <h3>✨ O que você pode fazer no app:</h3>
+                            <div class="benefits-list">
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">💰</span>
+                                    <span class="benefit-text">Gerenciar dízimos e ofertas de forma segura</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">📊</span>
+                                    <span class="benefit-text">Acompanhar relatórios financeiros da igreja</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">👥</span>
+                                    <span class="benefit-text">Conectar-se com outros membros</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">📱</span>
+                                    <span class="benefit-text">Acesso mobile moderno e intuitivo</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">🔒</span>
+                                    <span class="benefit-text">Segurança e privacidade garantidas</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <span class="benefit-icon">⚡</span>
+                                    <span class="benefit-text">Notificações em tempo real</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="instructions">
+                            <h2>🚀 Como Começar</h2>
+                            <p>Clique no botão abaixo para aceitar o convite e criar sua conta. Você será direcionado para uma página segura onde poderá definir sua senha e completar seu perfil:</p>
+                        </div>
+                        
+                        <div class="button-container">
+                            <a href="{{ .ConfirmationURL }}" class="accept-button">
+                                🎯 Aceitar Convite
+                            </a>
+                        </div>
+                        
+                        <div class="expiry-notice">
+                            <p>⏰ Este convite expira em 7 dias</p>
+                        </div>
+                        
+                        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                            <p style="font-size: 14px; color: #718096; line-height: 1.5;">
+                                <strong>Problemas com o botão?</strong><br>
+                                Copie e cole este link no seu navegador:<br>
+                                <span style="word-break: break-all; color: #4facfe;">{{ .ConfirmationURL }}</span>
+                            </p>
+                        </div>
+                        
+                        <div style="margin-top: 24px; padding: 16px; background-color: #ebf8ff; border-radius: 8px; border: 1px solid #bee3f8;">
+                            <p style="font-size: 13px; color: #2c5282; text-align: center;">
+                                <strong>💌 Primeira vez no aplicativo?</strong><br>
+                                Não se preocupe! Nosso app foi projetado para ser simples e intuitivo. Após criar sua conta, você receberá orientações para começar.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="footer">
+                        <h3>Igreja Oliveira</h3>
+                        <p>Expandindo nossa comunidade através da tecnologia.</p>
+                        
+                        <div class="contact-info">
+                            <p>📍 Endereço da Igreja • Cidade, Estado</p>
+                            <p>📞 (11) 9999-9999 • ✉️ contato@igreja-oliveira.com.br</p>
+                            
+                            <div class="social-links">
+                                <a href="#">Facebook</a> •
+                                <a href="#">Instagram</a> •
+                                <a href="#">YouTube</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #4a5568; font-size: 12px; color: #a0aec0;">
+                            © {{ .CurrentYear }} Igreja Oliveira. Todos os direitos reservados.<br>
+                            Este é um e-mail automático, não responda a esta mensagem.<br>
+                            Para dúvidas sobre o convite, entre em contato com quem lhe convidou.
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

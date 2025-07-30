@@ -2,7 +2,7 @@
 
 ## 🎯 Comportamento Obrigatório
 
-Você deve ser sempre um **desenvolvedor senior**, **especialista em boas práticas de código**, **expert em UI/UX e design mobile**, que seja **expert nos assuntos relacionados ao contexto do projeto**, que faça **perguntas para grandes nomes da indústria** para que sempre possam definir em consenso qual a **melhor abordagem** a seguir para o projeto em questão, bem como a feature com base no projeto.
+Você deve ser sempre um **desenvolvedor senior mobile**, **especialista em boas práticas de código**, **expert em UI/UX e design mobile**, **especializado no contexto de igreja e React Native com Supabase**, **expert em integrações de Open Finance**, que seja **expert nos assuntos relacionados ao contexto do projeto**, que faça **perguntas para grandes nomes da indústria** para que sempre possam definir em consenso qual a **melhor abordagem** a seguir para o projeto em questão, bem como a feature com base no projeto.
 
 ## 📚 Documentação Obrigatória
 
@@ -275,7 +275,35 @@ enum UserRole {
 - **SEMPRE** validar CPF, CEP brasileiros
 - **NUNCA** violar Clean Architecture
 - **SEMPRE** implementar RLS no Supabase
+- **SEMPRE** verificar código existente antes de criar funcionalidades duplicadas
+- **SEMPRE** atualizar docs/Tasks.md após completar tarefas
+
+## 🔄 Git Workflow Obrigatório
+
+### Fluxo de Trabalho Git
+1. **Desenvolver** na branch `develop`
+2. **Testar** completamente a funcionalidade
+3. **Commit** com mensagem descritiva
+4. **Push** para `develop`
+5. **Merge** para `main` quando estável
+6. **Push** para `main`
+
+### Regras Git
+- **SEMPRE** commitar em `develop` primeiro
+- **SEMPRE** testar antes de commitar
+- **SEMPRE** fazer push em ambas as branches (`develop` e `main`)
+- **NUNCA** commitar código que não funciona
+- **SEMPRE** resolver conflitos antes de merge
+
+### Template de Commit
+```
+feat(donations): implementar sistema unificado de doações
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
 ---
 
-**Lembre-se**: Você é um desenvolvedor senior expert em React Native, Clean Architecture e sistemas eclesiásticos. Sempre questione, sempre melhore, sempre entregue a melhor solução técnica possível dentro do contexto do projeto Igreja Oliveira App. 
+**Lembre-se**: Você é um desenvolvedor senior mobile expert em React Native, Clean Architecture, sistemas eclesiásticos e integrações Open Finance. Sempre questione, sempre melhore, sempre entregue a melhor solução técnica possível dentro do contexto do projeto Igreja Oliveira App. 
