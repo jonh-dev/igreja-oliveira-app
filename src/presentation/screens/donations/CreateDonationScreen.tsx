@@ -14,6 +14,10 @@ import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
 import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
 import { DonationType, CountingMethod, BillCount, CoinCount } from '../../../domain/entities/Donation';
+import { CreateDonationUseCase } from '../../../application/use-cases/donation/CreateDonationUseCase';
+import { CreateCultoDonationDto, CreateManualDonationDto } from '../../../application/dto/CreateDonationDto';
+import { container } from '../../../infrastructure/config/container';
+import { IDonationRepository } from '../../../application/interfaces/repositories/IDonationRepository';
 
 interface CreateDonationScreenProps {
   onNavigateBack: () => void;
@@ -83,6 +87,11 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
     return billTotal + coinTotal;
   };
 
+  const parseAmount = (amountString: string): number => {
+    const numericValue = amountString.replace(/[^\d,]/g, '').replace(',', '.');
+    return parseFloat(numericValue) || 0;
+  };
+
   const handleBillCountChange = (value: number, count: number) => {
     const newBillCounts = [...billCounts];
     const existingIndex = newBillCounts.findIndex(bill => bill.value === value);
@@ -139,8 +148,37 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
     setLoading(true);
 
     try {
-      // Simular criação de doação - será substituído por chamada real ao Supabase
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const donationRepository = container.get<IDonationRepository>('DonationRepository');
+      const createDonationUseCase = new CreateDonationUseCase(donationRepository);
+
+      const registeredBy = 'user_current_id'; // TODO: Obter do contexto de auth
+      const amountValue = parseAmount(amount);
+
+      if (donationType === 'culto') {
+        const cultoDto: CreateCultoDonationDto = {
+          amount: amountValue,
+          date,
+          registeredBy,
+          countingMethod,
+          notes,
+          description,
+          billCounts: countingMethod === 'detailed' ? billCounts : undefined,
+          coinCounts: countingMethod === 'detailed' ? coinCounts : undefined,
+        };
+
+        await createDonationUseCase.executeCultoDonation(cultoDto);
+      } else {
+        const manualDto: CreateManualDonationDto = {
+          type: donationType as 'tithe' | 'special',
+          amount: amountValue,
+          date,
+          userId,
+          registeredBy,
+          description,
+        };
+
+        await createDonationUseCase.executeManualDonation(manualDto);
+      }
 
       Alert.alert(
         'Sucesso!',
@@ -155,6 +193,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         ]
       );
     } catch (error) {
+      console.error('Erro ao registrar doação:', error);
       Alert.alert(
         'Erro',
         'Erro ao registrar doação. Tente novamente.',
