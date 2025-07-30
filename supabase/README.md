@@ -43,6 +43,8 @@ Execute este script no SQL Editor do Supabase para criar toda a estrutura do ban
 2. **`magic-link.html`** - Login sem senha
 3. **`recovery.html`** - Recuperação de senha
 4. **`invite.html`** - Convite para usuários
+5. **`change-email.html`** - Alteração de endereço de email
+6. **`reauthentication.html`** - Reautenticação por segurança
 
 ### Como Configurar no Supabase:
 
