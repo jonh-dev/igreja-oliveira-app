@@ -48,11 +48,25 @@ export interface DatabaseAddress {
 
 export interface DatabaseDonation {
   id: string;
-  user_id: string;
+  user_id?: string;
   amount: number;
-  type: 'tithe' | 'offering' | 'special';
+  type: 'gasofilaco' | 'pix' | 'cartao' | 'transferencia' | 'tithe' | 'offering' | 'special';
+  source: 'manual' | 'automatic';
   description?: string;
   date: string;
+  gasofilaco_data?: {
+    cult_date: string;
+    registered_by: string;
+    notes?: string;
+  };
+  electronic_data?: {
+    transaction_id: string;
+    donor_id?: string;
+    donor_name?: string;
+    payment_method: 'pix' | 'cartao' | 'transferencia';
+    bank_info?: string;
+    transaction_date: string;
+  };
   created_at: string;
   updated_at: string;
 }

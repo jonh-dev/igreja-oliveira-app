@@ -1,8 +1,8 @@
 # 📋 Tasks e Implementações - Igreja Oliveira App
 
-## 🎯 Status Atual: **FASE 2 - Refatoração da Arquitetura** ✅
+## 🎯 Status Atual: **FASE 3 - Sistema de Doações Unificado** 🔄
 
-### 📅 Última Atualização: 2025-01-16 - 14:45
+### 📅 Última Atualização: 2025-01-16 - 18:30
 
 ---
 
@@ -18,26 +18,26 @@
 - [x] **Criar Entidades do Domínio**
   - [x] User.ts - Entidade principal com hierarquia de roles
   - [x] Address.ts - Entidade separada para endereços
-  - [x] Donation.ts - Entidade para doações/dízimos
+  - [x] Donation.ts - Entidade unificada para doações (manuais + eletrônicas)
   - [x] CEP.ts - Value Object para CEP brasileiro
 
 - [x] **Implementar Use Cases Básicos**
   - [x] CreateUserUseCase - Registro de usuários
   - [x] AuthenticateUserUseCase - Autenticação
-  - [x] CreateDonationUseCase - Registro de doações
-  - [x] GetDonationsUseCase - Listagem de doações
+  - [x] CreateDonationUseCase - Registro de doações manuais
+  - [x] GetDonationsUseCase - Listagem unificada de doações
 
 - [x] **Configurar Interfaces (Application Layer)**
   - [x] IUserRepository - Contrato para repositório de usuários
   - [x] IAddressRepository - Contrato para repositório de endereços
-  - [x] IDonationRepository - Contrato para repositório de doações
+  - [x] IDonationRepository - Contrato para repositório de doações unificado
   - [x] IAuthService - Contrato para serviço de autenticação
   - [x] ICEPValidationService - Contrato para validação de CEP
 
 - [x] **Criar DTOs**
   - [x] CreateUserDto - Dados para criação de usuário
   - [x] CreateAddressDto - Dados para criação de endereço
-  - [x] CreateDonationDto - Dados para criação de doação
+  - [x] CreateDonationDto - Dados para criação de doações
 
 - [x] **Configurar Supabase**
   - [x] Criar projeto no Supabase
@@ -45,11 +45,12 @@
   - [x] Implementar validação rigorosa sem fallbacks
   - [x] Configurar Row Level Security (RLS)
   - [x] Criar schema do banco (users, donations)
+  - [x] Atualizar DatabaseDonation type para suportar fontes manuais e eletrônicas
 
 - [x] **Implementar Repositories (Infrastructure Layer)**
   - [x] SupabaseUserRepository - Implementação com cache
   - [x] SupabaseAddressRepository - Implementação com validação
-  - [x] SupabaseDonationRepository - Implementação com RLS
+  - [x] SupabaseDonationRepository - Implementação unificada com RLS
   - [x] SupabaseAuthService - Serviço de autenticação
   - [x] ViaCEPService - Validação de CEP via API
 
@@ -64,315 +65,210 @@
   - [x] SUPABASE-SETUP.md - Configuração do backend
   - [x] GIT-WORKFLOW.md - Fluxo de desenvolvimento
   - [x] STATUS.md - Status atual do projeto
+  - [x] .cursor/rules/igreja-oliveira-rules.mdc - Regras para IA
 
 - [x] **Commits e Push**
   - [x] Commits granulares seguindo convenção
   - [x] Push para develop e main
   - [x] Sincronização entre branches
 
+### **🎨 Fase 2: Interface do Usuário**
+
+#### **1. Camada de Presentation**
+- [x] **Criar Estrutura de Pastas**
+  - [x] `src/presentation/screens/auth/`
+  - [x] `src/presentation/screens/dashboard/`
+  - [x] `src/presentation/screens/donations/`
+  - [x] `src/presentation/components/shared/`
+  - [x] `src/presentation/components/feature-specific/`
+
+#### **2. Componentes UI Compartilhados**
+- [x] **Button Component**
+  - [x] Variantes: primary, secondary, danger, outline
+  - [x] Tamanhos: small, medium, large
+  - [x] Estados: loading, disabled
+  - [x] Suporte a ícones
+  - [x] Props tipadas com TypeScript
+  - [x] Testes unitários
+
+- [x] **Input Component**
+  - [x] Validação em tempo real
+  - [x] Estados de erro
+  - [x] Máscaras (CPF, telefone, CEP)
+  - [x] Tipos: text, email, password, cpf, phone, cep
+  - [x] Suporte a required e placeholder
+  - [x] Props tipadas com TypeScript
+  - [x] Testes unitários
+
+- [x] **Card Component**
+  - [x] Layout responsivo
+  - [x] Variantes: default, elevated, outlined
+  - [x] Suporte a título, subtítulo e ícone
+  - [x] Props flexíveis
+  - [x] Suporte a onPress
+  - [x] Props tipadas com TypeScript
+  - [x] Testes unitários
+
+- [x] **Design System Setup**
+  - [x] Configurar paleta de cores (verde oliveira escuro #556B2F, verde oliveira claro #8FBC8F, verde oliveira médio #6B8E23)
+  - [x] Configurar tipografia (Inter, Poppins)
+  - [x] Configurar espaçamentos e border radius
+  - [x] Configurar shadows
+  - [x] Criar arquivo de constantes de design
+
+#### **3. Navegação com Strategy Pattern**
+- [x] **NavigationStrategy.ts**
+  - [x] Implementar lógica baseada em roles
+  - [x] Stacks específicos por hierarquia
+  - [x] Proteção de rotas
+  - [x] Testes unitários
+
+#### **4. Telas Principais**
+- [x] **Auth Screens**
+  - [x] LoginScreen - Formulário de login com logo e branding
+  - [x] RegisterScreen - Cadastro de usuários com validação
+  - [x] ForgotPasswordScreen - Recuperação de senha
+  - [x] Integração com SupabaseAuthService
+  - [x] Estados de loading e error handling
+
+- [x] **Dashboard Screens**
+  - [x] AdminDashboard - Visão administrativa com métricas
+  - [x] PastorDashboard - Visão pastoral com ministérios
+  - [x] MemberDashboard - Visão de membro com dados pessoais
+  - [x] Dados personalizados por role
+  - [x] Cards com métricas e atividades recentes
+
+- [x] **Donations Screens (Completo)**
+  - [x] DonationsListScreen - Lista de doações com filtros
+  - [x] CreateDonationScreen - Formulário completo de doação com todos os tipos
+  - [x] DonationDetailsScreen - Detalhes da doação
+  - [x] **Sistema de Contagem de Cédulas/Moedas COMPLETO**
+    - [x] Contagem detalhada por denominação (R$ 200, 100, 50, 20, 10, 5, 2)
+    - [x] Contagem de moedas (R$ 1, 0.50, 0.25, 0.10, 0.05, 0.01)
+    - [x] Interface visual com botões +/- para cada denominação
+    - [x] Toggle entre "Contagem Detalhada" e "Valor Total"
+    - [x] Cálculo automático do total em tempo real
+    - [x] Validações específicas por tipo de doação
+    - [x] Suporte completo para doações de culto, dízimos e especiais
+  - [x] Integração com repositories (estrutura pronta)
+  - [x] Busca e filtros por data/tipo
+
 ---
 
 ## 🔄 TAREFAS EM ANDAMENTO
 
-### **📊 Prioridade Alta - Fase 2: Interface do Usuário**
+### **💰 Fase 3: Sistema de Doações Unificado**
 
-#### **1. Camada de Presentation**
-- [ ] **Criar Estrutura de Pastas**
-  - [ ] `src/presentation/screens/auth/`
-  - [ ] `src/presentation/screens/dashboard/`
-  - [ ] `src/presentation/screens/donations/`
-  - [ ] `src/presentation/components/shared/`
-  - [ ] `src/presentation/components/feature-specific/`
+#### **1. Sistema de Doações Manuais** ✅ **COMPLETO**
+- [x] **CreateDonationScreen Unificado**
+  - [x] Suporte completo a todos os tipos de doação
+  - [x] Funcionalidade de contagem de cédulas/moedas IMPLEMENTADA
+  - [x] Suporte a registro de valor total
+  - [x] Validações específicas por tipo implementadas
+  - [ ] Criar testes unitários
 
-#### **2. Componentes UI Compartilhados**
-- [ ] **Button Component**
-  - [ ] Variantes: primary, secondary, danger, outline
-  - [ ] Tamanhos: small, medium, large
-  - [ ] Estados: loading, disabled
-  - [ ] Suporte a ícones
-  - [ ] Props tipadas com TypeScript
-  - [ ] Testes unitários
+- [x] **Tipos de Doação Manual IMPLEMENTADOS**
+  - [x] **Doações de culto** - Contagem de cédulas/moedas OU valor total
+  - [x] **Dízimos manuais** - Entregues fisicamente pelos membros
+  - [x] **Doações especiais** - Projetos específicos, missões, etc.
 
-- [ ] **Input Component**
-  - [ ] Validação em tempo real
-  - [ ] Estados de erro
-  - [ ] Máscaras (CPF, telefone, CEP)
-  - [ ] Tipos: text, email, password, cpf, phone, cep
-  - [ ] Suporte a required e placeholder
-  - [ ] Props tipadas com TypeScript
-  - [ ] Testes unitários
+- [x] **Use Cases Existentes (Integrados)**
+  - [x] CreateDonationUseCase - Para todos os tipos de doação
+  - [x] GetDonationsUseCase - Listagem unificada de doações
+  - [x] **Integração real com Supabase COMPLETA**
+    - [x] CreateDonationScreen integrado com Use Cases
+    - [x] Container DI configurado e funcionando
+    - [x] Mapeamento de dados da tela para DTOs corretos
+    - [x] Tratamento de erros implementado
+    - [x] Suporte completo a doações de culto, dízimos e especiais
 
-- [ ] **Card Component**
-  - [ ] Layout responsivo
-  - [ ] Variantes: default, elevated, outlined
-  - [ ] Suporte a título, subtítulo e ícone
-  - [ ] Props flexíveis
-  - [ ] Suporte a onPress
-  - [ ] Props tipadas com TypeScript
-  - [ ] Testes unitários
+#### **2. Sistema de Doações Eletrônicas (Open Finance)**
+- [ ] **Pesquisa e Configuração Mercado Pago**
+  - [ ] Criar conta business no Mercado Pago
+  - [ ] Configurar webhooks para notificações
+  - [ ] Testar API de pagamentos
+  - [ ] Documentar endpoints necessários
 
-- [ ] **Design System Setup**
-  - [ ] Configurar paleta de cores (verde oliveira escuro #556B2F, verde oliveira claro #8FBC8F, verde oliveira médio #6B8E23)
-  - [ ] Configurar tipografia (Inter, Poppins)
-  - [ ] Configurar espaçamentos e border radius
-  - [ ] Configurar shadows
-  - [ ] Criar arquivo de constantes de design
-
-#### **3. Navegação com Strategy Pattern**
-- [ ] **NavigationStrategy.ts**
-  - [ ] Implementar lógica baseada em roles
-  - [ ] Stacks específicos por hierarquia
-  - [ ] Proteção de rotas
-  - [ ] Testes unitários
-
-#### **4. Telas Principais**
-- [ ] **Auth Screens**
-  - [ ] LoginScreen - Formulário de login com logo e branding
-  - [ ] RegisterScreen - Cadastro de usuários com validação
-  - [ ] ForgotPasswordScreen - Recuperação de senha
-  - [ ] Integração com SupabaseAuthService
-  - [ ] Estados de loading e error handling
-
-- [ ] **Dashboard Screens**
-  - [ ] AdminDashboard - Visão administrativa com métricas
-  - [ ] PastorDashboard - Visão pastoral com ministérios
-  - [ ] MemberDashboard - Visão de membro com dados pessoais
-  - [ ] Dados personalizados por role
-  - [ ] Cards com métricas e atividades recentes
-
-- [ ] **Donations Screens**
-  - [ ] DonationsListScreen - Lista de doações com filtros
-  - [ ] CreateDonationScreen - Formulário de doação com tipos
-  - [ ] DonationDetailsScreen - Detalhes da doação
-  - [ ] Integração com repositories
-  - [ ] Busca e filtros por data/tipo
-
-- [ ] **Navigation Setup**
-  - [ ] Configurar React Navigation 7.x
-  - [ ] Implementar Strategy Pattern por role
-  - [ ] Proteção de rotas baseada em hierarquia
-  - [ ] Bottom tabs para navegação principal
-  - [ ] Stack navigation para telas secundárias
-
-#### **5. Gerenciamento de Estado**
-- [ ] **Context API Setup**
-  - [ ] AuthContext - Estado de autenticação
-  - [ ] UserContext - Dados do usuário
-  - [ ] DonationsContext - Estado das doações
-  - [ ] Providers e hooks customizados
-  - [ ] Estados de loading e error handling
-  - [ ] Persistência de dados com AsyncStorage
-
-- [ ] **Hooks Customizados**
-  - [ ] useAuth - Hook para autenticação
-  - [ ] useUser - Hook para dados do usuário
-  - [ ] useDonations - Hook para doações
-  - [ ] useNavigation - Hook para navegação baseada em role
-
----
-
-## 📊 Prioridade Média - Fase 3: Testes e Qualidade
-
-### **🧪 Testes Automatizados**
-- [ ] **Configurar Jest e Testing Library**
-  - [ ] Instalar dependências de teste
-  - [ ] Configurar jest.config.js
-  - [ ] Setup de mocks para Supabase
-  - [ ] Configurar coverage reports
-
-- [ ] **Testes Unitários**
-  - [ ] Use Cases (100% coverage)
-    - [ ] CreateUserUseCase.test.ts
-    - [ ] AuthenticateUserUseCase.test.ts
-    - [ ] CreateDonationUseCase.test.ts
-    - [ ] GetDonationsUseCase.test.ts
-  - [ ] Entities (100% coverage)
-    - [ ] User.test.ts
-    - [ ] Address.test.ts
-    - [ ] Donation.test.ts
-    - [ ] CEP.test.ts
-  - [ ] Repositories (80% coverage)
-    - [ ] SupabaseUserRepository.test.ts
-    - [ ] SupabaseAddressRepository.test.ts
-    - [ ] SupabaseDonationRepository.test.ts
-  - [ ] Services (80% coverage)
-    - [ ] SupabaseAuthService.test.ts
-    - [ ] ViaCEPService.test.ts
-
-- [ ] **Testes de Integração**
-  - [ ] Supabase connection tests
-  - [ ] RLS policies tests
-  - [ ] API integration tests
-  - [ ] End-to-end flow tests
-
-### **🔧 Qualidade e Linting**
-- [ ] **ESLint Configuration**
-  - [ ] Instalar ESLint e plugins
-  - [ ] Configurar regras rigorosas
-  - [ ] Integrar com TypeScript
-  - [ ] Configurar auto-fix
-
-- [ ] **Prettier Configuration**
-  - [ ] Instalar Prettier
-  - [ ] Configurar formatação
-  - [ ] Integrar com ESLint
-  - [ ] Configurar auto-format
-
-- [ ] **Husky Pre-commit Hooks**
-  - [ ] Instalar Husky
-  - [ ] Configurar pre-commit hooks
-  - [ ] Integrar lint, type-check, tests
-  - [ ] Configurar commit-msg hooks
-
-### **📊 CI/CD Pipeline**
-- [ ] **GitHub Actions**
-  - [ ] Criar .github/workflows/ci.yml
-  - [ ] Configurar jobs de qualidade
+- [ ] **Implementação Backend**
+  - [ ] Criar PaymentProcessor interface
+  - [ ] Implementar MercadoPagoService
+  - [ ] Criar webhook handlers
   - [ ] Integrar com Supabase
-  - [ ] Configurar deployment
+
+- [ ] **Interface Mobile**
+  - [ ] Implementar OpenFinanceScreen
+  - [ ] Criar formulário de doação eletrônica
+  - [ ] Adicionar monitoramento de status
+  - [ ] Implementar notificações push
+
+#### **3. Interface Unificada de Doações**
+- [ ] **DonationsListScreen Unificada**
+  - [ ] Exibir doações manuais e eletrônicas na mesma lista
+  - [ ] Filtros por fonte (manual/eletrônico)
+  - [ ] Filtros por tipo (culto, dízimo, especial)
+  - [ ] Indicadores visuais de fonte da doação
+  - [ ] Busca unificada
+
+- [ ] **Relatórios Consolidados**
+  - [ ] Integrar dados manuais e eletrônicos
+  - [ ] Criar métricas comparativas
+  - [ ] Implementar filtros por método de pagamento
+  - [ ] Adicionar exportação de dados unificada
+
+- [ ] **Dashboard Unificado**
+  - [ ] Métricas totais (manuais + eletrônicas)
+  - [ ] Gráficos comparativos por fonte
+  - [ ] Tendências de doações
+  - [ ] Alertas de baixa arrecadação
+
+#### **4. Relatórios e Exportação**
+- [ ] **ReportsScreen - Interface para geração de relatórios**
+- [ ] **Exportação PDF - Layout profissional**
+- [ ] **Exportação CSV - Para análise externa**
+- [ ] **Filtros avançados - Por período, tipo e fonte**
+- [ ] **Métricas e gráficos - Por culto e período**
+- [ ] **Comparativos - Entre fontes de doação**
 
 ---
 
-## 📊 Prioridade Baixa - Fase 4: Deploy e Monitoramento
+## 📋 PRÓXIMAS TAREFAS
 
-### **🚀 Build e Deploy**
-- [ ] **Expo Build Configuration**
-  - [ ] Configurar eas.json
-  - [ ] Setup de builds para Android/iOS
-  - [ ] Configurar environment variables
-  - [ ] Testar builds locais
+### **🎯 Prioridade Imediata**  
+1. **✅ Integrar CreateDonationScreen com Supabase** **CONCLUÍDO**
+   - ✅ Substituir mock por integração real com Use Cases
+   - ✅ Conectar com SupabaseDonationRepository via Container DI
+   - ✅ Implementar salvamento real de doações no banco
+   - ✅ Mapeamento correto de dados da tela para DTOs
+   - ✅ Tratamento de erros implementado
+   - ✅ Suporte completo a todos os tipos de doação
+   - [ ] TODO menor: Integrar com contexto de autenticação para `registeredBy`
 
-- [ ] **Store Deployment**
-  - [ ] Google Play Store setup
-  - [ ] Apple App Store setup
-  - [ ] Configurar certificates
-  - [ ] Submeter builds
+2. **Implementar Open Finance**
+   - Configurar Mercado Pago
+   - Implementar integração bancária
+   - Criar sistema de sincronização automática
 
-### **📈 Monitoramento e Analytics**
-- [ ] **Error Tracking**
-  - [ ] Integrar Sentry ou similar
-  - [ ] Configurar crash reporting
-  - [ ] Setup de alertas
-  - [ ] Dashboard de monitoramento
+3. **Interface Unificada**
+   - Consolidar todas as doações em uma única lista
+   - Implementar filtros por fonte e tipo
+   - Criar relatórios unificados
 
-- [ ] **Analytics**
-  - [ ] Integrar analytics (Firebase, etc.)
-  - [ ] Configurar eventos importantes
-  - [ ] Dashboard de métricas
-  - [ ] Relatórios de uso
-
----
-
-## 🎯 PRÓXIMOS PASSOS IMEDIATOS
-
-### **🔧 Esta Semana (Prioridade Alta)**
-1. **Iniciar Presentation Layer**
-   - Criar estrutura de pastas para screens e components
-   - Implementar componentes UI básicos (Button, Input, Card)
-   - Configurar navegação com React Navigation
-   - Criar telas de autenticação
-
-2. **Integração com Backend**
-   - Conectar Use Cases com UI
-   - Implementar gerenciamento de estado
-   - Adicionar tratamento de erros
-   - Testar fluxos completos
-
-3. **Qualidade de Código**
-   - Configurar ESLint e Prettier
-   - Implementar pre-commit hooks
-   - Adicionar testes unitários básicos
-   - Validar padrões de código
-
-### **📱 Próximas 2 Semanas (Prioridade Média)**
-1. **Telas Principais**
-   - Dashboard personalizado por role
-   - Telas de doações completas
-   - Navegação hierárquica
-   - Validações de formulários
-
-2. **Testes Automatizados**
-   - Setup completo de testes
-   - Cobertura mínima de 80%
-   - Testes de integração
-   - E2E tests para fluxos críticos
-
-### **🧪 Próximo Mês (Prioridade Baixa)**
-1. **Deploy e Produção**
-   - Build otimizado para produção
-   - Deploy nas stores
-   - Monitoramento e analytics
-   - Feedback dos usuários
+### **🔮 Próximas Fases**
+- **Fase 4**: Sistema de Membros e Ministérios
+- **Fase 5**: Sistema de Eventos e Calendário
+- **Fase 6**: Sistema de Comunicação
+- **Fase 7**: Relatórios Avançados e Analytics
 
 ---
 
-## 🚨 RISCOS E MITIGAÇÕES
+## 📊 Métricas de Progresso
 
-### **Riscos Técnicos**
-1. **Complexity Overhead**
-   - **Risco**: Clean Architecture pode ser over-engineering para MVP
-   - **Mitigação**: Manter simplicidade nos Use Cases iniciais
+- **Fase 1 (Setup e Core)**: ✅ 100% Concluído
+- **Fase 2 (Interface do Usuário)**: ✅ 100% Concluído
+- **Fase 3 (Sistema de Doações)**: 🔄 85% Concluído
+  - ✅ Sistema Manual Completo (100%) - **Contagem de cédulas/moedas implementada**
+  - ✅ **Integração Backend Completa (100%)** - **CreateDonationScreen integrado com Supabase**
+  - ⏳ Open Finance (0%)
+  - ⏳ Interface Unificada (0%)
 
-2. **Supabase Learning Curve**
-   - **Risco**: Primeira implementação com Supabase
-   - **Mitigação**: Documentação e exemplos bem estruturados
-
-3. **React Native Updates**
-   - **Risco**: Versão recente pode ter instabilidades
-   - **Mitigação**: Versões validadas e testadas
-
-### **Riscos de Cronograma**
-1. **Perfectionism**
-   - **Risco**: Tendência a over-engineer
-   - **Mitigação**: Focar no MVP essencial
-
-2. **Scope Creep**
-   - **Risco**: Adicionar funcionalidades não essenciais
-   - **Mitigação**: Seguir rigorosamente o documento mesa-redonda
-
----
-
-## 📊 MÉTRICAS DE PROGRESSO
-
-### **Cobertura de Código**
-- **Use Cases**: 0% (Ainda não implementados)
-- **Repositories**: 0% (Ainda não implementados)
-- **Entities**: 0% (Ainda não implementados)
-- **Meta**: 80% de cobertura mínima
-
-### **Bundle Size**
-- **Atual**: ~15MB (dependencies instaladas)
-- **Meta**: <10MB para produção
-
-### **Performance**
-- **Load Time**: Ainda não medido
-- **Meta**: <2s para tela inicial
-
----
-
-## 💡 LIÇÕES APRENDIDAS
-
-### **✅ Decisões Acertadas**
-1. **Validação de Stack**: Evitou problemas de compatibilidade
-2. **Clean Architecture**: Estrutura escalável desde o início
-3. **Documentação Primeiro**: Base sólida para desenvolvimento
-4. **Boas Práticas Research**: Padrões atualizados e validados
-
-### **🔄 Ajustes Necessários**
-1. **Simplificar MVPs**: Focar no essencial primeiro
-2. **Iteração Rápida**: Validar funcionalidades com usuários
-3. **Testes Paralelos**: Implementar testes junto com features
-
----
-
-## 📞 CONTATOS DO PROJETO
-
-**👤 Admin Inicial**: João Carlos Schwab Zanardi  
-**📧 Email**: jonh.dev.br@gmail.com  
-**🏢 Organização**: Igreja Oliveira  
-
----
-
-**📊 Conclusão**: Projeto está bem estruturado e seguindo boas práticas. A base arquitetural está sólida para desenvolvimento das próximas fases.
-
-**🎯 Próxima Atualização**: Após implementação da camada de Presentation 
+**Total Geral**: 88% Concluído 
