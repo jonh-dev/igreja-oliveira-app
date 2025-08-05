@@ -14,8 +14,10 @@ import { Input } from '../../components/shared/Input';
 import { Card } from '../../components/shared/Card';
 import { Colors, Typography, Spacing } from '../../components/shared/design-system';
 
+type UserRole = 'admin' | 'pastor' | 'deacon' | 'leader' | 'member';
+
 interface LoginScreenProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (role: UserRole) => void;
   onNavigateToRegister: () => void;
   onNavigateToForgotPassword: () => void;
 }
@@ -64,10 +66,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       // const authService = container.get<IAuthService>('AuthService');
       // const result = await authService.signIn(email, password);
       
-      // Simulação de login para desenvolvimento
+      // Simulação de login para desenvolvimento com roles diferentes
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      onLoginSuccess();
+      // Simulação de roles baseado no email para teste
+      let role: UserRole = 'member';
+      if (email.includes('admin')) role = 'admin';
+      else if (email.includes('pastor')) role = 'pastor';
+      else if (email.includes('deacon')) role = 'deacon';
+      else if (email.includes('leader')) role = 'leader';
+      
+      onLoginSuccess(role);
     } catch (error) {
       setErrors({
         general: 'Email ou senha incorretos. Tente novamente.',

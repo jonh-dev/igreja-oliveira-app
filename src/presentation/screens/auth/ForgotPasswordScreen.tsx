@@ -15,11 +15,13 @@ import { Colors, Typography, Spacing } from '../../components/shared/design-syst
 
 interface ForgotPasswordScreenProps {
   onPasswordResetSent: () => void;
+  onNavigateBack: () => void;
   onNavigateToLogin: () => void;
 }
 
 export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   onPasswordResetSent,
+  onNavigateBack,
   onNavigateToLogin,
 }) => {
   const [email, setEmail] = useState('');

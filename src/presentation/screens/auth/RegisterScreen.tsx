@@ -16,18 +16,19 @@ import { Colors, Typography, Spacing } from '../../components/shared/design-syst
 
 interface RegisterScreenProps {
   onRegisterSuccess: () => void;
+  onNavigateBack: () => void;
   onNavigateToLogin: () => void;
 }
 
 interface FormData {
   name: string;
   email: string;
-  cpf: string;
   phone: string;
   password: string;
   confirmPassword: string;
   cep: string;
   address: string;
+  neighborhood: string;
   city: string;
   state: string;
 }
@@ -35,12 +36,12 @@ interface FormData {
 interface FormErrors {
   name?: string;
   email?: string;
-  cpf?: string;
   phone?: string;
   password?: string;
   confirmPassword?: string;
   cep?: string;
   address?: string;
+  neighborhood?: string;
   city?: string;
   state?: string;
   general?: string;
@@ -48,17 +49,18 @@ interface FormErrors {
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onRegisterSuccess,
+  onNavigateBack,
   onNavigateToLogin,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    cpf: '',
     phone: '',
     password: '',
     confirmPassword: '',
     cep: '',
     address: '',
+    neighborhood: '',
     city: '',
     state: '',
   });
@@ -66,23 +68,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateCPF = (cpf: string): boolean => {
-    const cleanCPF = cpf.replace(/\D/g, '');
-    if (cleanCPF.length !== 11) return false;
-    
-    // Validação básica de CPF
-    const digits = cleanCPF.split('').map(Number);
-    const firstDigit = digits.slice(0, 9).reduce((acc, digit, index) => {
-      return acc + digit * (10 - index);
-    }, 0) % 11;
-    
-    const secondDigit = digits.slice(0, 10).reduce((acc, digit, index) => {
-      return acc + digit * (11 - index);
-    }, 0) % 11;
-    
-    return digits[9] === (firstDigit < 2 ? 0 : 11 - firstDigit) &&
-           digits[10] === (secondDigit < 2 ? 0 : 11 - secondDigit);
-  };
 
   const validateCEP = (cep: string): boolean => {
     const cleanCEP = cep.replace(/\D/g, '');
@@ -104,11 +89,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       newErrors.email = 'Email inválido';
     }
 
-    if (!formData.cpf.trim()) {
-      newErrors.cpf = 'CPF é obrigatório';
-    } else if (!validateCPF(formData.cpf)) {
-      newErrors.cpf = 'CPF inválido';
-    }
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'Telefone é obrigatório';
@@ -138,6 +118,10 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       newErrors.address = 'Endereço é obrigatório';
     }
 
+    if (!formData.neighborhood.trim()) {
+      newErrors.neighborhood = 'Bairro é obrigatório';
+    }
+
     if (!formData.city.trim()) {
       newErrors.city = 'Cidade é obrigatória';
     }
@@ -163,12 +147,12 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       // const user = await useCase.execute({
       //   name: formData.name,
       //   email: formData.email,
-      //   cpf: formData.cpf,
       //   phone: formData.phone,
       //   password: formData.password,
       //   address: {
       //     cep: formData.cep,
       //     address: formData.address,
+      //     neighborhood: formData.neighborhood,
       //     city: formData.city,
       //     state: formData.state,
       //   },
@@ -246,15 +230,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
               required
             />
 
-            <Input
-              label="CPF"
-              value={formData.cpf}
-              onChangeText={(value) => updateFormData('cpf', value)}
-              placeholder="000.000.000-00"
-              type="cpf"
-              error={errors.cpf}
-              required
-            />
 
             <Input
               label="Telefone"
@@ -284,6 +259,15 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
               onChangeText={(value) => updateFormData('address', value)}
               placeholder="Rua, número, complemento"
               error={errors.address}
+              required
+            />
+
+            <Input
+              label="Bairro"
+              value={formData.neighborhood}
+              onChangeText={(value) => updateFormData('neighborhood', value)}
+              placeholder="Digite o bairro"
+              error={errors.neighborhood}
               required
             />
 

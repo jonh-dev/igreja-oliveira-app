@@ -12,6 +12,8 @@ import { Button } from '../../components/shared/Button';
 import { Colors, Typography, Spacing } from '../../components/shared/design-system';
 
 interface AdminDashboardProps {
+  onNavigateToCreateDonation: () => void;
+  onNavigateToDonationsList: () => void;
   onNavigateToMembers: () => void;
   onNavigateToDonations: () => void;
   onNavigateToReports: () => void;
@@ -37,6 +39,8 @@ interface ActivityItem {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
+  onNavigateToCreateDonation,
+  onNavigateToDonationsList,
   onNavigateToMembers,
   onNavigateToDonations,
   onNavigateToReports,

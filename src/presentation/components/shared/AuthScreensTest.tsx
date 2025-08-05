@@ -62,6 +62,7 @@ export const AuthScreensTest: React.FC = () => {
     return (
       <RegisterScreen
         onRegisterSuccess={handleRegisterSuccess}
+        onNavigateBack={handleNavigateToLogin}
         onNavigateToLogin={handleNavigateToLogin}
       />
     );
@@ -71,6 +72,7 @@ export const AuthScreensTest: React.FC = () => {
     return (
       <ForgotPasswordScreen
         onPasswordResetSent={handlePasswordResetSent}
+        onNavigateBack={handleNavigateToLogin}
         onNavigateToLogin={handleNavigateToLogin}
       />
     );

@@ -12,6 +12,8 @@ import { Button } from '../../components/shared/Button';
 import { Colors, Typography, Spacing } from '../../components/shared/design-system';
 
 interface PastorDashboardProps {
+  onNavigateToCreateDonation: () => void;
+  onNavigateToDonationsList: () => void;
   onNavigateToMembers: () => void;
   onNavigateToDonations: () => void;
   onNavigateToMinistries: () => void;

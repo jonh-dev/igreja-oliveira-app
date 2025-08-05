@@ -4,9 +4,9 @@ export const Environment = {
   
   // Configurações específicas por ambiente
   development: {
-    showTestHarness: true,
+    showTestHarness: false,
     enableLogs: true,
-    mockData: true,
+    mockData: false,
   },
   
   production: {

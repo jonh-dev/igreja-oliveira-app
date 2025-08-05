@@ -14,8 +14,33 @@
       "Bash(git merge:*)",
       "WebFetch(domain:supabase.com)",
       "Bash(find:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(rg:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude mcp add supabase:*)",
+      "Bash(claude mcp:*)",
+      "Bash(mkdir:*)",
+      "Bash(echo $HOME)",
+      "Bash(chmod:*)",
+      "Bash(node:*)",
+      "Bash(pnpm start:*)",
+      "Bash(expo --version)",
+      "Bash(npx expo:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm setup:*)",
+      "Bash(source:*)",
+      "Bash(pnpm install:*)",
+      "Bash(export PNPM_HOME=\"/home/ottap/.local/share/pnpm\")",
+      "Bash(export PATH=\"$PNPM_HOME:$PATH\")",
+      "Bash(echo $PNPM_HOME)",
+      "Bash(./node_modules/.bin/expo start:*)",
+      "Bash(ls:*)",
+      "Bash(timeout 30 pnpm start:lan)"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
 }

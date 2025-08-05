@@ -58,6 +58,8 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'admin') {
     return (
       <AdminDashboard
+        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
+        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
         onNavigateToMembers={handleNavigateToMembers}
         onNavigateToDonations={handleNavigateToDonations}
         onNavigateToReports={handleNavigateToReports}
@@ -70,6 +72,8 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'pastor') {
     return (
       <PastorDashboard
+        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
+        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
         onNavigateToMembers={handleNavigateToMembers}
         onNavigateToDonations={handleNavigateToDonations}
         onNavigateToMinistries={handleNavigateToMinistries}
@@ -82,6 +86,8 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'member') {
     return (
       <MemberDashboard
+        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
+        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
         onNavigateToMyDonations={handleNavigateToMyDonations}
         onNavigateToMyProfile={handleNavigateToMyProfile}
         onNavigateToEvents={handleNavigateToEvents}

@@ -12,6 +12,8 @@ import { Button } from '../../components/shared/Button';
 import { Colors, Typography, Spacing } from '../../components/shared/design-system';
 
 interface MemberDashboardProps {
+  onNavigateToCreateDonation: () => void;
+  onNavigateToDonationsList: () => void;
   onNavigateToMyDonations: () => void;
   onNavigateToMyProfile: () => void;
   onNavigateToEvents: () => void;

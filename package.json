@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start": "node node_modules/@expo/cli/build/bin/cli start",
+    "start:tunnel": "node node_modules/@expo/cli/build/bin/cli start --tunnel",
+    "start:tunnel-clear": "node node_modules/@expo/cli/build/bin/cli start --tunnel --clear",
+    "start:lan": "node node_modules/@expo/cli/build/bin/cli start --lan",
+    "start:clear": "node node_modules/@expo/cli/build/bin/cli start --clear",
+    "android": "node node_modules/@expo/cli/build/bin/cli start --android",
+    "android:tunnel": "node node_modules/@expo/cli/build/bin/cli start --android --tunnel",
+    "ios": "node node_modules/@expo/cli/build/bin/cli start --ios",
+    "ios:tunnel": "node node_modules/@expo/cli/build/bin/cli start --ios --tunnel",
+    "web": "node node_modules/@expo/cli/build/bin/cli start --web",
     "type-check": "tsc --noEmit",
     "lint": "echo 'ESLint não configurado ainda'",
     "test": "jest --passWithNoTests",
-    "build": "expo export"
+    "build": "node node_modules/@expo/cli/build/bin/cli export"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.4.2",

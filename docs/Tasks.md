@@ -2,7 +2,7 @@
 
 ## 🎯 Status Atual: **FASE 3 - Sistema de Doações Unificado** 🔄
 
-### 📅 Última Atualização: 2025-01-16 - 18:30
+### 📅 Última Atualização: 2025-08-05 - 15:30
 
 ---
 
@@ -155,6 +155,42 @@
 
 ---
 
+## ✅ TAREFAS COMPLETADAS RECENTEMENTE
+
+### **📱 App Principal Implementado**
+- [x] **Desabilitar TestHarness para uso em produção**
+  - [x] Configurar environment.ts para showTestHarness: false
+  - [x] Configurar mockData: false para dados reais
+
+- [x] **Implementar AppMain com navegação real**
+  - [x] Criar menu principal com funcionalidades disponíveis
+  - [x] Integrar tela de Login funcional
+  - [x] Integrar sistema de Doações completo
+  - [x] Adicionar navegação entre telas
+  - [x] Implementar botão "Voltar ao Menu"
+  - [x] Design visual com cores da Igreja Oliveira
+
+- [x] **Resolver problemas de execução do Expo**
+  - [x] Instalar @expo/cli como dependência local  
+  - [x] Corrigir scripts do package.json para usar caminho correto
+  - [x] Resolver erro "Failed to download remote.update"
+  - [x] Configurar modo LAN como alternativa ao tunnel
+
+- [x] **Implementar Fluxo de Navegação Obrigatório**
+  - [x] Definir regras de navegação no CLAUDE.md
+  - [x] Login sempre como primeira tela
+  - [x] Dashboards específicos por role após login
+  - [x] Botões de voltar em telas de cadastro/esqueci senha
+  - [x] Navegação condicional baseada em hierarquia de usuário
+  - [x] Simulação de roles diferentes para teste (admin@, pastor@, etc.)
+
+- [x] **Ajustes de Formulários e Validações**
+  - [x] Remover campo CPF do RegisterScreen (não usado no domínio User)
+  - [x] Adicionar campo Bairro no RegisterScreen (obrigatório na entidade Address)
+  - [x] Atualizar validações e interfaces para refletir mudanças
+  - [x] Corrigir erros TypeScript em todas as telas de navegação
+  - [x] Adicionar props de navegação faltantes nos componentes
+
 ## 🔄 TAREFAS EM ANDAMENTO
 
 ### **💰 Fase 3: Sistema de Doações Unificado**
@@ -271,4 +307,4 @@
   - ⏳ Open Finance (0%)
   - ⏳ Interface Unificada (0%)
 
-**Total Geral**: 88% Concluído 
+**Total Geral**: 95% Concluído 

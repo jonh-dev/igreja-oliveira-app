@@ -99,6 +99,7 @@ pnpm run build:verify
 - **Supabase**: PostgreSQL with Row Level Security (RLS)
 - **Authentication**: Supabase Auth with role-based access
 - **Real-time**: Supabase subscriptions for live updates
+- **MCP Integration**: Supabase MCP server configured for schema analysis and read-only queries
 
 ### Navigation & State
 - **React Navigation**: 7.x with strategy pattern
@@ -121,6 +122,35 @@ enum UserRole {
   MEMBER = 'member'    // Limited access to own data
 }
 ```
+
+## 📱 Navigation and UX Rules
+
+### Authentication Flow (MANDATORY)
+- **ALWAYS start with LoginScreen** - Never show any other screen first
+- **Registration screens** must have back button to return to Login
+- **ForgotPassword screens** must have back button to return to Login
+- **After successful login** redirect directly to role-specific Dashboard
+
+### Dashboard Rules by Role
+Each user role has a specific dashboard with different capabilities:
+
+- **Admin Dashboard**: Full access to all features, user management, system settings
+- **Pastor Dashboard**: Access to members, donations, reports, but no system admin
+- **Deacon Dashboard**: Access to donations, limited member management
+- **Leader Dashboard**: Basic member management, own group oversight
+- **Member Dashboard**: Personal data, own donations, limited access
+
+### Footer Navigation (MANDATORY)
+- **ALWAYS include footer menu** in dashboard screens
+- **Menu items vary by role** - show only accessible features
+- **Common items**: Dashboard, Donations, Profile, Logout
+- **Role-specific items**: Members (admin/pastor), Reports (admin/pastor/deacon)
+
+### Navigation Patterns
+- **Login → Dashboard → Feature screens**
+- **Back buttons** must always return to appropriate parent screen
+- **Footer menu** for main navigation within authenticated area
+- **Header back button** for feature screen navigation
 
 ### Unified Donations System
 The system handles both **manual donations** (cash/check collected during services) and **electronic donations** (PIX/card through Open Finance integration):
@@ -150,6 +180,7 @@ The system handles both **manual donations** (cash/check collected during servic
 - **ALWAYS** update progress percentages and status
 - **NEVER** assume functionality needs to be created without checking first
 - **ALWAYS** read the current task list before starting any work
+- **NEVER create new .md files** - always use existing files in `docs/` directory
 
 ### Environment Setup
 ```bash
@@ -219,6 +250,8 @@ pnpm run test CreateUserUseCase.test.ts
 - `package.json` - Dependencies and scripts
 - `jest.config.js` - Testing configuration
 - `src/config/environment.ts` - Environment management
+- `.mcp.json` - Supabase MCP server configuration
+- `supabase/schema.sql` - Complete database schema with RLS policies
 
 ### Core Architecture Files
 - `src/infrastructure/config/container.ts` - Dependency injection
@@ -240,6 +273,36 @@ pnpm run test CreateUserUseCase.test.ts
 - `src/presentation/components/shared/` - Atomic design components
 - `src/presentation/components/shared/design-system.ts` - Design tokens
 
+## 🔌 MCP Integration
+
+### Supabase MCP Server
+The project includes a configured Supabase MCP server for database analysis and queries:
+
+- **Configuration**: `.mcp.json` and `.cursor/mcp.json`
+- **Project Reference**: `cghxhewgelpcnglfeirw`
+- **Mode**: Read-only for safety
+- **Capabilities**: Schema introspection, data queries, RLS policy analysis
+
+### MCP Usage Examples
+- **Schema Analysis**: "Show me the structure of the users table"
+- **Data Queries**: "How many users do we have by role?"
+- **RLS Verification**: "What are the security policies for donations?"
+- **Performance**: "Which indexes exist on the donations table?"
+
+## 📊 Database Schema Context
+
+### Core Tables Structure
+- **users**: Church hierarchy (admin→pastor→deacon→leader→member) with Supabase Auth integration
+- **addresses**: Brazilian address management with CEP validation support
+- **donations**: Unified system for manual and electronic donations with amount tracking
+
+### Key Database Features
+- **Row Level Security**: Hierarchical access control based on user roles
+- **Triggers**: Auto-update timestamps on all tables
+- **Views**: `donation_statistics` and `user_statistics` for reporting
+- **Functions**: `can_access_user_data()` for permission checking
+- **Indexes**: Optimized for common queries (role, date, amount, user_id)
+
 ## 🚨 Critical Warnings
 
 ### Environment Variables
@@ -253,6 +316,9 @@ pnpm run test CreateUserUseCase.test.ts
 
 ### Data Integrity
 **ALWAYS use real data** in production. Never commit generic or test data to production databases.
+
+### MCP Security
+**ALWAYS use read-only mode** for MCP servers. Never configure write access in production.
 
 ## 📞 Project Contacts
 
