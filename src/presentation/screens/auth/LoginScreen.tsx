@@ -165,8 +165,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'position' : undefined}
           style={styles.keyboardView}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
           <View style={styles.content}>
             {/* Hero Section - Top Third */}
@@ -183,7 +184,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <View style={styles.logoGlow}>
                   <Image
                     source={{
-                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/sign/igreja-oliveira/imagens/logo.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81NGNmZWI4MS00NDFmLTRmODUtYWIyZC0wNjZhYjcwODY1YWMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpZ3JlamEtb2xpdmVpcmEvaW1hZ2Vucy9sb2dvLmpwZyIsImlhdCI6MTc1NDQ0ODUxMCwiZXhwIjo0ODc2NTEyNTEwfQ.fTXRVaV2etXr6vARoRKCWHhVA9v1QtKV40iYtIvEsEE'
+                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/sign/igreja-oliveira/imagens/logo-no-background.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81NGNmZWI4MS00NDFmLTRmODUtYWIyZC0wNjZhYjcwODY1YWMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpZ3JlamEtb2xpdmVpcmEvaW1hZ2Vucy9sb2dvLW5vLWJhY2tncm91bmQucG5nIiwiaWF0IjoxNzU0NTQwNjE0LCJleHAiOjQ4NzY2MDQ2MTR9.3oUDXJa-wNm63xTk778iZGgw7HAT45PybNjqd1OUrjE'
                     }}
                     style={styles.logo}
                     resizeMode="contain"
@@ -324,6 +325,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
+    justifyContent: 'space-between',
   },
   
   // TOP THIRD - Hero Section (30%)
@@ -337,8 +339,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   logoGlow: {
-    width: 70,
-    height: 70,
+    width: 100,
+    height: 100,
     borderRadius: BorderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
@@ -346,8 +348,8 @@ const styles = StyleSheet.create({
     ...Shadows.glow,
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     borderRadius: BorderRadius.full,
   },
   welcomeTitle: {
