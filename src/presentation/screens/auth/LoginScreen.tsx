@@ -6,15 +6,11 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   Image,
   Animated,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
-import { GlassCard } from '../../components/shared/GlassCard';
 import { Colors, Typography, Spacing, Shadows, BorderRadius } from '../../components/shared/design-system';
 import { container } from '../../../infrastructure/config/container';
 import { AuthenticateUserUseCase } from '../../../application/use-cases/user/AuthenticateUserUseCase';
@@ -49,7 +45,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   
-  const { width, height } = Dimensions.get('window');
 
   useEffect(() => {
     Animated.parallel([
@@ -184,7 +179,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <View style={styles.logoGlow}>
                   <Image
                     source={{
-                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/sign/igreja-oliveira/imagens/logo-no-background.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81NGNmZWI4MS00NDFmLTRmODUtYWIyZC0wNjZhYjcwODY1YWMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpZ3JlamEtb2xpdmVpcmEvaW1hZ2Vucy9sb2dvLW5vLWJhY2tncm91bmQucG5nIiwiaWF0IjoxNzU0NTQwNjE0LCJleHAiOjQ4NzY2MDQ2MTR9.3oUDXJa-wNm63xTk778iZGgw7HAT45PybNjqd1OUrjE'
+                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/public/igreja-oliveira/imagens/logo-no-background.png'
                     }}
                     style={styles.logo}
                     resizeMode="contain"
@@ -282,7 +277,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   );
 };
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -300,8 +294,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 120,
     height: 120,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.glow.primary,
+    borderRadius: 9999,
+    backgroundColor: 'rgba(85, 107, 47, 0.6)',
     top: '15%',
     right: -60,
     opacity: 0.2,
@@ -310,8 +304,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 80,
     height: 80,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.glow.secondary,
+    borderRadius: 9999,
+    backgroundColor: 'rgba(107, 142, 35, 0.4)',
     bottom: '25%',
     left: -40,
     opacity: 0.15,
@@ -341,16 +335,20 @@ const styles = StyleSheet.create({
   logoGlow: {
     width: 100,
     height: 100,
-    borderRadius: BorderRadius.full,
+    borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    ...Shadows.glow,
+    shadowColor: '#556B2F',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 10,
   },
   logo: {
     width: 80,
     height: 80,
-    borderRadius: BorderRadius.full,
+    borderRadius: 9999,
   },
   welcomeTitle: {
     fontSize: Typography.fontSize2xl,
@@ -379,7 +377,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    ...Shadows.glass,
+    shadowColor: 'rgba(255, 255, 255, 0.1)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 1,
+    shadowRadius: 32,
+    elevation: 6,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
   },
