@@ -17,13 +17,52 @@ export const Colors = {
   danger: '#DC143C',         // Vermelho
   info: '#4682B4',           // Azul aço
   
-  // Gradientes
-  primaryGradient: ['#556B2F', '#8FBC8F'],      // Verde oliveira escuro para claro
-  secondaryGradient: ['#8FBC8F', '#6B8E23'],    // Verde oliveira claro para médio
+  // Gradientes Modernos
+  primaryGradient: ['#556B2F', '#8FBC8F'],
+  secondaryGradient: ['#8FBC8F', '#6B8E23'],
+  backgroundGradient: ['#0F1419', '#1A2332', '#2D3748'],
+  glassGradient: ['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)'],
+  overlayGradient: ['rgba(85, 107, 47, 0.8)', 'rgba(107, 142, 35, 0.6)'],
+  
+  // Cores Glassmorphism
+  glass: {
+    background: 'rgba(255, 255, 255, 0.1)',
+    border: 'rgba(255, 255, 255, 0.2)',
+    shadow: 'rgba(0, 0, 0, 0.1)',
+  },
+  
+  // Cores de Glow
+  glow: {
+    primary: 'rgba(85, 107, 47, 0.6)',
+    secondary: 'rgba(107, 142, 35, 0.4)',
+    white: 'rgba(255, 255, 255, 0.3)',
+  },
+  
+  // Cores de Background
+  background: {
+    default: '#ffffff',
+    disabled: '#f5f5f5',
+  },
+  
+  // Cores de Texto
+  text: {
+    primary: '#000000',
+    secondary: '#6c757d',
+  },
+  
+  // Cores de Border
+  border: {
+    default: '#dee2e6',
+    light: '#f8f9fa',
+  },
 } as const;
 
 export const Typography = {
   // Fontes
+  fontFamily: {
+    primary: 'Inter',
+    secondary: 'Poppins',
+  },
   fontFamilyPrimary: 'Inter',
   fontFamilySecondary: 'Poppins',
   
@@ -59,6 +98,9 @@ export const BorderRadius = {
   md: 8,
   lg: 12,
   xl: 16,
+  xxl: 24,
+  xxxl: 32,
+  full: 9999,
 } as const;
 
 export const Shadows = {
@@ -82,6 +124,27 @@ export const Shadows = {
     shadowOpacity: 0.1,
     shadowRadius: 15,
     elevation: 5,
+  },
+  xl: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.15,
+    shadowRadius: 25,
+    elevation: 8,
+  },
+  glow: {
+    shadowColor: '#556B2F',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  glass: {
+    shadowColor: 'rgba(255, 255, 255, 0.1)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 1,
+    shadowRadius: 32,
+    elevation: 6,
   },
 } as const;
 
