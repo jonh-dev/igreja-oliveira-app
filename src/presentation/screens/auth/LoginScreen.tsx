@@ -8,7 +8,6 @@ import {
   Platform,
   Alert,
   Image,
-  ScrollView,
   Animated,
   Dimensions,
   TouchableOpacity,
@@ -169,13 +168,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
         >
-          <ScrollView 
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            bounces={false}
-          >
-            {/* Hero Section */}
+          <View style={styles.content}>
+            {/* Hero Section - Top Third */}
             <Animated.View 
               style={[
                 styles.heroSection,
@@ -197,14 +191,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 </View>
               </View>
               
-              <Text style={styles.welcomeTitle}>Bem-vindo de volta</Text>
-              <Text style={styles.welcomeSubtitle}>Igreja Oliveira</Text>
+              <Text style={styles.welcomeTitle}>Igreja Oliveira</Text>
+              <Text style={styles.welcomeSubtitle}>Bem-vindo de volta</Text>
             </Animated.View>
 
-            {/* Glass Form */}
+            {/* Form Section - Middle Third */}
             <Animated.View
               style={[
-                styles.formContainer,
+                styles.formSection,
                 {
                   opacity: fadeAnim,
                   transform: [{ translateY: slideAnim }]
@@ -212,69 +206,75 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               ]}
             >
               <View style={styles.glassForm}>
-                <View style={styles.formContent}>
-                  <Input
-                    label="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="seu@email.com"
-                    type="email"
-                    error={errors.email}
-                    style={styles.glassInput}
-                  />
+                <Input
+                  label="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="seu@email.com"
+                  type="email"
+                  error={errors.email}
+                  style={styles.compactInput}
+                />
 
-                  <Input
-                    label="Senha"
-                    value={password}
-                    onChangeText={setPassword}
-                    placeholder="••••••••"
-                    type="password"
-                    error={errors.password}
-                    style={styles.glassInput}
-                  />
+                <Input
+                  label="Senha"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="••••••••"
+                  type="password"
+                  error={errors.password}
+                  style={styles.compactInput}
+                />
 
-                  {errors.general && (
-                    <Text style={styles.errorText}>{errors.general}</Text>
-                  )}
+                {errors.general && (
+                  <Text style={styles.errorText}>{errors.general}</Text>
+                )}
 
-                  <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={handleLogin}
-                    disabled={isLoading}
-                  >
-                    <View style={styles.loginButtonGradient}>
-                      <Text style={styles.loginButtonText}>
-                        {isLoading ? 'Entrando...' : 'Entrar'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={handleLogin}
+                  disabled={isLoading}
+                >
+                  <View style={styles.loginButtonGradient}>
+                    <Text style={styles.loginButtonText}>
+                      {isLoading ? 'Entrando...' : 'Entrar'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-                  <TouchableOpacity
-                    onPress={onNavigateToForgotPassword}
-                    style={styles.forgotButton}
-                  >
-                    <Text style={styles.forgotText}>Esqueceu sua senha?</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  onPress={onNavigateToForgotPassword}
+                  style={styles.forgotButton}
+                >
+                  <Text style={styles.forgotText}>Esqueceu sua senha?</Text>
+                </TouchableOpacity>
               </View>
             </Animated.View>
 
-            {/* Register Link */}
+            {/* Actions Section - Bottom Third */}
             <Animated.View
               style={[
-                styles.registerContainer,
+                styles.actionsSection,
                 {
                   opacity: fadeAnim,
                   transform: [{ translateY: slideAnim }]
                 }
               ]}
             >
-              <Text style={styles.registerText}>Não tem uma conta?</Text>
-              <TouchableOpacity onPress={onNavigateToRegister}>
-                <Text style={styles.registerLink}>Criar conta</Text>
+              <View style={styles.divider} />
+              
+              <TouchableOpacity 
+                style={styles.createAccountButton}
+                onPress={onNavigateToRegister}
+              >
+                <View style={styles.createAccountGradient}>
+                  <Text style={styles.createAccountText}>Criar nova conta</Text>
+                </View>
               </TouchableOpacity>
+              
+              <Text style={styles.footerText}>Junte-se à nossa comunidade</Text>
             </Animated.View>
-          </ScrollView>
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
@@ -297,23 +297,23 @@ const styles = StyleSheet.create({
   },
   floatingElement1: {
     position: 'absolute',
-    width: 200,
-    height: 200,
+    width: 120,
+    height: 120,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.glow.primary,
-    top: screenHeight * 0.1,
-    right: -100,
-    opacity: 0.3,
+    top: '15%',
+    right: -60,
+    opacity: 0.2,
   },
   floatingElement2: {
     position: 'absolute',
-    width: 150,
-    height: 150,
+    width: 80,
+    height: 80,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.glow.secondary,
-    bottom: screenHeight * 0.2,
-    left: -75,
-    opacity: 0.2,
+    bottom: '25%',
+    left: -40,
+    opacity: 0.15,
   },
   safeArea: {
     flex: 1,
@@ -321,23 +321,24 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
+  content: {
+    flex: 1,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing['2xl'],
-    justifyContent: 'center',
-    minHeight: screenHeight,
   },
+  
+  // TOP THIRD - Hero Section (30%)
   heroSection: {
+    flex: 0.3,
     alignItems: 'center',
-    marginBottom: Spacing['2xl'],
+    justifyContent: 'center',
+    paddingTop: Spacing.md,
   },
   logoContainer: {
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.sm,
   },
   logoGlow: {
-    width: 120,
-    height: 120,
+    width: 70,
+    height: 70,
     borderRadius: BorderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
@@ -345,59 +346,60 @@ const styles = StyleSheet.create({
     ...Shadows.glow,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     borderRadius: BorderRadius.full,
   },
   welcomeTitle: {
-    fontSize: Typography.fontSize3xl,
+    fontSize: Typography.fontSize2xl,
     fontWeight: Typography.fontWeightBold,
     color: Colors.white,
     textAlign: 'center',
-    marginBottom: Spacing.xs,
+    marginBottom: 2,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   welcomeSubtitle: {
-    fontSize: Typography.fontSizeLg,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: Typography.fontSizeBase,
+    color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
     fontWeight: Typography.fontWeightMedium,
   },
-  formContainer: {
-    marginBottom: Spacing.xl,
+  
+  // MIDDLE THIRD - Form Section (45%)
+  formSection: {
+    flex: 0.45,
+    justifyContent: 'center',
   },
   glassForm: {
-    borderRadius: BorderRadius.xxl,
+    borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.glass.border,
-    backgroundColor: Colors.glass.background,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     ...Shadows.glass,
-    overflow: 'hidden',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
   },
-  formContent: {
-    padding: Spacing.xl,
-  },
-  glassInput: {
-    marginBottom: Spacing.lg,
+  compactInput: {
+    marginBottom: Spacing.xs,
   },
   loginButton: {
-    marginTop: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    marginTop: Spacing.sm,
+    borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.lg,
   },
   loginButtonGradient: {
-    paddingVertical: Spacing.md + 2,
-    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.xl,
+    borderRadius: BorderRadius.lg,
   },
   loginButtonText: {
-    fontSize: Typography.fontSizeLg,
+    fontSize: Typography.fontSizeBase,
     fontWeight: Typography.fontWeightSemibold,
     color: Colors.white,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -405,37 +407,62 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   forgotButton: {
-    marginTop: Spacing.lg,
-    padding: Spacing.sm,
+    marginTop: Spacing.xs,
+    padding: Spacing.xs,
     alignItems: 'center',
   },
   forgotText: {
-    fontSize: Typography.fontSizeBase,
-    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: Typography.fontSizeSm,
+    color: 'rgba(255, 255, 255, 0.6)',
     fontWeight: Typography.fontWeightMedium,
   },
   errorText: {
     color: '#FF6B6B',
     fontSize: Typography.fontSizeSm,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
     textAlign: 'center',
     fontWeight: Typography.fontWeightMedium,
   },
-  registerContainer: {
-    flexDirection: 'row',
+  
+  // BOTTOM THIRD - Actions Section (25%)
+  actionsSection: {
+    flex: 0.25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.lg,
   },
-  registerText: {
-    fontSize: Typography.fontSizeBase,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginRight: Spacing.xs,
+  divider: {
+    width: '60%',
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    marginBottom: Spacing.sm,
   },
-  registerLink: {
+  createAccountButton: {
+    width: '100%',
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  createAccountGradient: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  createAccountText: {
     fontSize: Typography.fontSizeBase,
+    fontWeight: Typography.fontWeightMedium,
     color: Colors.secondary,
-    fontWeight: Typography.fontWeightSemibold,
-    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+  },
+  footerText: {
+    fontSize: Typography.fontSizeSm,
+    color: 'rgba(255, 255, 255, 0.5)',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 }); 

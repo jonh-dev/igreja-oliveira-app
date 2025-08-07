@@ -174,7 +174,7 @@ export const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   inputContainer: {
     position: 'relative',
@@ -193,11 +193,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs,
     fontSize: Typography.fontSizeBase,
     color: Colors.white,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     ...Shadows.sm,
+    minHeight: 44,
   },
   inputFocused: {
     borderColor: Colors.secondary,
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     position: 'absolute',
     right: Spacing.md,
-    top: Spacing.sm,
+    top: Spacing.xs,
     justifyContent: 'center',
     alignItems: 'center',
     width: 30,
