@@ -2,6 +2,7 @@ export interface Address {
   id: string;
   userId: string;
   street: string;
+  number?: string;
   neighborhood: string;
   city: string;
   state?: string;
@@ -15,6 +16,7 @@ export interface Address {
 export interface CreateAddressData {
   userId: string;
   street: string;
+  number?: string;
   neighborhood: string;
   city: string;
   state?: string;
@@ -25,6 +27,7 @@ export interface CreateAddressData {
 
 export interface UpdateAddressData {
   street?: string;
+  number?: string;
   neighborhood?: string;
   city?: string;
   state?: string;

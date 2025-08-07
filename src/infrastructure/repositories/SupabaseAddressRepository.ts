@@ -57,6 +57,7 @@ export class SupabaseAddressRepository implements IAddressRepository {
       .insert({
         user_id: addressData.userId,
         street: addressData.street,
+        number: addressData.number || null,
         neighborhood: addressData.neighborhood,
         city: addressData.city,
         state: addressData.state || null,
@@ -78,6 +79,7 @@ export class SupabaseAddressRepository implements IAddressRepository {
     const updateData: Partial<DatabaseAddress> = {};
 
     if (addressData.street !== undefined) updateData.street = addressData.street;
+    if (addressData.number !== undefined) updateData.number = addressData.number;
     if (addressData.neighborhood !== undefined) updateData.neighborhood = addressData.neighborhood;
     if (addressData.city !== undefined) updateData.city = addressData.city;
     if (addressData.state !== undefined) updateData.state = addressData.state;
@@ -150,6 +152,7 @@ export class SupabaseAddressRepository implements IAddressRepository {
       id: databaseAddress.id,
       userId: databaseAddress.user_id,
       street: databaseAddress.street,
+      number: databaseAddress.number || undefined,
       neighborhood: databaseAddress.neighborhood,
       city: databaseAddress.city,
       state: databaseAddress.state || undefined,
