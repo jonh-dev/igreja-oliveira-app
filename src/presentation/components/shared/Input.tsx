@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextStyle,
   TextInputProps,
+  TouchableOpacity,
 } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
 
@@ -21,6 +22,7 @@ export interface InputProps extends Omit<TextInputProps, 'onChangeText'> {
   mask?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  showPasswordToggle?: boolean;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -37,6 +39,7 @@ export const Input: React.FC<InputProps> = ({
   ...textInputProps
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -49,6 +52,15 @@ export const Input: React.FC<InputProps> = ({
   };
 
   const applyMask = (text: string) => {
+    const cleanText = text.replace(/\D/g, '');
+    
+    if (type === 'cep') {
+      if (cleanText.length <= 5) {
+        return cleanText;
+      }
+      return `${cleanText.slice(0, 5)}-${cleanText.slice(5, 8)}`;
+    }
+    
     if (!mask) return text;
     
     let maskedText = '';
@@ -95,8 +107,15 @@ export const Input: React.FC<InputProps> = ({
   };
 
   const getSecureTextEntry = () => {
-    return type === 'password';
+    if (type === 'password') {
+      return !isPasswordVisible;
+    }
+    return false;
   };
+
+  const togglePasswordVisibility = useCallback(() => {
+    setIsPasswordVisible(prev => !prev);
+  }, []);
 
   const containerStyle = [
     styles.container,
@@ -119,19 +138,34 @@ export const Input: React.FC<InputProps> = ({
         {required && <Text style={styles.required}> *</Text>}
       </Text>
       
-      <TextInput
-        style={inputStyle}
-        value={value}
-        onChangeText={handleChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.gray}
-        keyboardType={getKeyboardType()}
-        autoCapitalize={getAutoCapitalize()}
-        secureTextEntry={getSecureTextEntry()}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        {...textInputProps}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={[inputStyle, type === 'password' && styles.passwordInput]}
+          value={value}
+          onChangeText={handleChangeText}
+          placeholder={placeholder}
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          keyboardType={getKeyboardType()}
+          autoCapitalize={getAutoCapitalize()}
+          secureTextEntry={getSecureTextEntry()}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          {...textInputProps}
+        />
+        
+        {type === 'password' && (
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={togglePasswordVisibility}
+            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.eyeText}>
+              {isPasswordVisible ? '👁️' : '🙈'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
       
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
@@ -142,10 +176,13 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.md,
   },
+  inputContainer: {
+    position: 'relative',
+  },
   label: {
     fontSize: Typography.fontSizeSm,
     fontWeight: Typography.fontWeightMedium,
-    color: Colors.darkGray,
+    color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: Spacing.xs,
   },
   required: {
@@ -153,17 +190,18 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.lightGray,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: Typography.fontSizeBase,
-    color: Colors.black,
-    backgroundColor: Colors.white,
+    color: Colors.white,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     ...Shadows.sm,
   },
   inputFocused: {
-    borderColor: Colors.primary,
+    borderColor: Colors.secondary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     ...Shadows.md,
   },
   inputError: {
@@ -179,5 +217,20 @@ const styles = StyleSheet.create({
   },
   error: {
     // Container error state if needed
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: Spacing.md,
+    top: Spacing.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+  },
+  eyeText: {
+    fontSize: 16,
   },
 }); 

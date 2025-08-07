@@ -8,11 +8,17 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
+import { PhoneInput } from '../../components/shared/PhoneInput';
 import { Card } from '../../components/shared/Card';
 import { Colors, Typography, Spacing } from '../../components/shared/design-system';
+import { container } from '../../../infrastructure/config/container';
+import { ICEPValidationService } from '../../../application/interfaces/services/ICEPValidationService';
+import { CreateUserUseCase } from '../../../application/use-cases/user/CreateUserUseCase';
+import { useLeadTracking } from '../../hooks/useLeadTracking';
 
 interface RegisterScreenProps {
   onRegisterSuccess: () => void;
@@ -28,6 +34,7 @@ interface FormData {
   confirmPassword: string;
   cep: string;
   address: string;
+  number: string;
   neighborhood: string;
   city: string;
   state: string;
@@ -41,6 +48,7 @@ interface FormErrors {
   confirmPassword?: string;
   cep?: string;
   address?: string;
+  number?: string;
   neighborhood?: string;
   city?: string;
   state?: string;
@@ -60,6 +68,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     confirmPassword: '',
     cep: '',
     address: '',
+    number: '',
     neighborhood: '',
     city: '',
     state: '',
@@ -67,11 +76,49 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isCEPLoading, setIsCEPLoading] = useState(false);
+  
+  const { captureUrlTrackingData, detectDeviceInfo } = useLeadTracking();
 
 
   const validateCEP = (cep: string): boolean => {
     const cleanCEP = cep.replace(/\D/g, '');
     return cleanCEP.length === 8;
+  };
+
+  const handleCEPChange = async (cep: string) => {
+    updateFormData('cep', cep);
+    
+    const cleanCEP = cep.replace(/\D/g, '');
+    if (cleanCEP.length === 8) {
+      setIsCEPLoading(true);
+      
+      try {
+        const cepService = container.get<ICEPValidationService>('CEPValidationService');
+        const cepData = await cepService.validateCEP(cleanCEP);
+        
+        if (cepData) {
+          setFormData(prev => ({
+            ...prev,
+            address: cepData.logradouro || prev.address,
+            neighborhood: cepData.bairro || prev.neighborhood,
+            city: cepData.localidade || prev.city,
+            state: cepData.uf || prev.state,
+          }));
+          
+          if (errors.cep) {
+            setErrors(prev => ({ ...prev, cep: undefined }));
+          }
+        } else {
+          setErrors(prev => ({ ...prev, cep: 'CEP não encontrado' }));
+        }
+      } catch (error) {
+        console.error('Erro ao validar CEP:', error);
+        setErrors(prev => ({ ...prev, cep: 'Erro ao buscar CEP' }));
+      } finally {
+        setIsCEPLoading(false);
+      }
+    }
   };
 
   const validateForm = (): boolean => {
@@ -118,6 +165,10 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       newErrors.address = 'Endereço é obrigatório';
     }
 
+    if (!formData.number.trim()) {
+      newErrors.number = 'Número é obrigatório';
+    }
+
     if (!formData.neighborhood.trim()) {
       newErrors.neighborhood = 'Bairro é obrigatório';
     }
@@ -141,29 +192,34 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     setErrors({});
 
     try {
-      // TODO: Integrar com CreateUserUseCase
-      // const userRepository = container.get<IUserRepository>('UserRepository');
-      // const useCase = new CreateUserUseCase(userRepository);
-      // const user = await useCase.execute({
-      //   name: formData.name,
-      //   email: formData.email,
-      //   phone: formData.phone,
-      //   password: formData.password,
-      //   address: {
-      //     cep: formData.cep,
-      //     address: formData.address,
-      //     neighborhood: formData.neighborhood,
-      //     city: formData.city,
-      //     state: formData.state,
-      //   },
-      // });
-
-      // Simulação de registro para desenvolvimento
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const createUserUseCase = container.get<CreateUserUseCase>('CreateUserUseCase');
+      
+      const deviceInfo = detectDeviceInfo();
+      const currentUrl = typeof window !== 'undefined' && window.location ? window.location.href : 'app://igreja-oliveira/register';
+      const urlData = captureUrlTrackingData(currentUrl);
+      
+      await createUserUseCase.execute({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.name,
+        phone: formData.phone,
+        address: {
+          street: formData.address,
+          number: formData.number,
+          neighborhood: formData.neighborhood,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.cep,
+        },
+        trackingData: {
+          ...urlData,
+          ...deviceInfo
+        }
+      });
       
       Alert.alert(
-        'Sucesso!',
-        'Conta criada com sucesso. Faça login para continuar.',
+        'Conta Criada!',
+        'Sua conta foi criada com sucesso! Verifique seu email para confirmar sua conta antes de fazer login.',
         [
           {
             text: 'OK',
@@ -172,8 +228,20 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         ]
       );
     } catch (error) {
+      console.error('Erro detalhado no cadastro:', error);
+      
+      let errorMessage = 'Erro ao criar conta. Tente novamente.';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error('Mensagem do erro:', error.message);
+        console.error('Stack trace:', error.stack);
+      } else {
+        console.error('Erro não identificado:', JSON.stringify(error));
+      }
+      
       setErrors({
-        general: 'Erro ao criar conta. Tente novamente.',
+        general: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -197,11 +265,18 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Text style={styles.logoText}>⛪</Text>
+              <Image
+                source={{
+                  uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/sign/igreja-oliveira/imagens/logo.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81NGNmZWI4MS00NDFmLTRmODUtYWIyZC0wNjZhYjcwODY1YWMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpZ3JlamEtb2xpdmVpcmEvaW1hZ2Vucy9sb2dvLmpwZyIsImlhdCI6MTc1NDQ0ODUxMCwiZXhwIjo0ODc2NTEyNTEwfQ.fTXRVaV2etXr6vARoRKCWHhVA9v1QtKV40iYtIvEsEE'
+                }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.title}>Criar Conta</Text>
             <Text style={styles.subtitle}>Junte-se à Igreja Oliveira</Text>
@@ -231,12 +306,11 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             />
 
 
-            <Input
+            <PhoneInput
               label="Telefone"
               value={formData.phone}
               onChangeText={(value) => updateFormData('phone', value)}
               placeholder="(00) 00000-0000"
-              type="phone"
               error={errors.phone}
               required
             />
@@ -246,21 +320,38 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             <Input
               label="CEP"
               value={formData.cep}
-              onChangeText={(value) => updateFormData('cep', value)}
+              onChangeText={handleCEPChange}
               placeholder="00000-000"
               type="cep"
               error={errors.cep}
               required
             />
+            {isCEPLoading && (
+              <Text style={styles.loadingText}>Buscando endereço...</Text>
+            )}
 
-            <Input
-              label="Endereço"
-              value={formData.address}
-              onChangeText={(value) => updateFormData('address', value)}
-              placeholder="Rua, número, complemento"
-              error={errors.address}
-              required
-            />
+            <View style={styles.row}>
+              <View style={styles.addressWidth}>
+                <Input
+                  label="Endereço"
+                  value={formData.address}
+                  onChangeText={(value) => updateFormData('address', value)}
+                  placeholder="Nome da rua"
+                  error={errors.address}
+                  required
+                />
+              </View>
+              <View style={styles.numberWidth}>
+                <Input
+                  label="Número"
+                  value={formData.number}
+                  onChangeText={(value) => updateFormData('number', value)}
+                  placeholder="123"
+                  error={errors.number}
+                  required
+                />
+              </View>
+            </View>
 
             <Input
               label="Bairro"
@@ -365,17 +456,19 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.primary,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
+    overflow: 'hidden',
   },
-  logoText: {
-    fontSize: 40,
-    color: Colors.white,
+  logo: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
   title: {
     fontSize: Typography.fontSizeXl,
@@ -412,6 +505,12 @@ const styles = StyleSheet.create({
   halfWidth: {
     flex: 1,
   },
+  addressWidth: {
+    flex: 3,
+  },
+  numberWidth: {
+    flex: 1,
+  },
   registerButton: {
     marginTop: Spacing.lg,
   },
@@ -429,5 +528,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizeBase,
     color: Colors.gray,
     marginBottom: Spacing.sm,
+  },
+  loadingText: {
+    fontSize: Typography.fontSizeSm,
+    color: Colors.primary,
+    textAlign: 'center',
+    marginTop: Spacing.xs,
   },
 }); 
