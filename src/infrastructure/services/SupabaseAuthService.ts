@@ -29,13 +29,14 @@ export class SupabaseAuthService implements IAuthService {
     };
   }
 
-  async register(email: string, password: string, fullName: string): Promise<AuthResult> {
+  async register(email: string, password: string, fullName: string, phone?: string): Promise<AuthResult> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          phone: phone,
         },
       },
     });
@@ -48,13 +49,16 @@ export class SupabaseAuthService implements IAuthService {
       throw new Error('Registration failed: No user data returned');
     }
 
-    const user = await this.getUserFromDatabase(data.user.id);
-    if (!user) {
-      throw new Error('User not found in database after registration');
-    }
-
     return {
-      user,
+      user: {
+        id: data.user.id,
+        email: data.user.email!,
+        fullName: fullName,
+        phone: phone,
+        role: 'member' as any,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
       token: data.session?.access_token || '',
       refreshToken: data.session?.refresh_token,
     };
@@ -121,7 +125,7 @@ export class SupabaseAuthService implements IAuthService {
     return {
       id: data.id,
       email: data.email,
-      fullName: data.name,
+      fullName: data.full_name,
       phone: data.phone || undefined,
       role: data.role as UserRole,
       createdAt: new Date(data.created_at),

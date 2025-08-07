@@ -106,30 +106,43 @@ export class SupabaseUserRepository implements IUserRepository {
     return {
       id: databaseUser.id,
       email: databaseUser.email,
-      fullName: databaseUser.name,
+      fullName: databaseUser.full_name,
       phone: databaseUser.phone,
+      countryCode: databaseUser.country_code,
       role: this.mapDatabaseRoleToUserRole(databaseUser.role),
       createdAt: new Date(databaseUser.created_at),
       updatedAt: new Date(databaseUser.updated_at),
     };
   }
 
-  private mapCreateUserDataToDatabase(userData: CreateUserData): Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'> {
-    return {
+  private mapCreateUserDataToDatabase(userData: CreateUserData): Omit<DatabaseUser, 'created_at' | 'updated_at'> {
+    const baseData = {
       email: userData.email,
-      name: userData.fullName,
+      full_name: userData.fullName,
       phone: userData.phone,
+      country_code: userData.countryCode || '+55',
       role: this.mapUserRoleToDatabaseRole(userData.role),
-      church_id: 'default', // TODO: Implementar lógica de church_id
-      cpf: undefined,
+    };
+
+    if (userData.id) {
+      return {
+        id: userData.id,
+        ...baseData,
+      };
+    }
+
+    return {
+      id: crypto.randomUUID(),
+      ...baseData,
     };
   }
 
   private mapUpdateUserDataToDatabase(userData: UpdateUserData): Partial<Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'>> {
     const updateData: any = {};
 
-    if (userData.fullName !== undefined) updateData.name = userData.fullName;
+    if (userData.fullName !== undefined) updateData.full_name = userData.fullName;
     if (userData.phone !== undefined) updateData.phone = userData.phone;
+    if (userData.countryCode !== undefined) updateData.country_code = userData.countryCode;
     if (userData.role !== undefined) updateData.role = this.mapUserRoleToDatabaseRole(userData.role);
 
     return updateData;

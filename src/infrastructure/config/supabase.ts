@@ -23,11 +23,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export interface DatabaseUser {
   id: string;
   email: string;
-  name: string;
+  full_name: string;
   role: 'admin' | 'pastor' | 'deacon' | 'leader' | 'member';
-  church_id: string;
-  cpf?: string;
   phone?: string;
+  country_code?: string;
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +35,7 @@ export interface DatabaseAddress {
   id: string;
   user_id: string;
   street: string;
+  number?: string;
   neighborhood: string;
   city: string;
   state: string | null;
@@ -76,7 +76,7 @@ export interface Database {
     Tables: {
       users: {
         Row: DatabaseUser;
-        Insert: Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<DatabaseUser, 'created_at' | 'updated_at'>;
         Update: Partial<Omit<DatabaseUser, 'id' | 'created_at' | 'updated_at'>>;
       };
       addresses: {

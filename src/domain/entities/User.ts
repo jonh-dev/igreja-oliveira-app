@@ -11,20 +11,24 @@ export interface User {
   email: string;
   fullName: string;
   phone?: string;
+  countryCode?: string;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface CreateUserData {
+  id?: string;
   email: string;
   fullName: string;
   phone?: string;
+  countryCode?: string;
   role: UserRole;
 }
 
 export interface UpdateUserData {
   fullName?: string;
   phone?: string;
+  countryCode?: string;
   role?: UserRole;
 }
