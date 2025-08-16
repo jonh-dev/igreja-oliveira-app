@@ -17,7 +17,7 @@ export const InputTest: React.FC = () => {
 
   const handleChangeText = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -55,72 +55,72 @@ export const InputTest: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Input Component Test</Text>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tipos de Input</Text>
-        
+
         <Input
           label="Nome"
           value={formData.name}
-          onChangeText={(text) => handleChangeText('name', text)}
+          onChangeText={text => handleChangeText('name', text)}
           placeholder="Digite seu nome"
           required
           error={errors.name}
         />
-        
+
         <Input
           label="Email"
           value={formData.email}
-          onChangeText={(text) => handleChangeText('email', text)}
+          onChangeText={text => handleChangeText('email', text)}
           placeholder="Digite seu email"
           type="email"
           required
           error={errors.email}
         />
-        
+
         <Input
           label="Senha"
           value={formData.password}
-          onChangeText={(text) => handleChangeText('password', text)}
+          onChangeText={text => handleChangeText('password', text)}
           placeholder="Digite sua senha"
           type="password"
           required
           error={errors.password}
         />
-        
+
         <Input
           label="CPF"
           value={formData.cpf}
-          onChangeText={(text) => handleChangeText('cpf', text)}
+          onChangeText={text => handleChangeText('cpf', text)}
           placeholder="000.000.000-00"
           type="cpf"
           mask="###.###.###-##"
           required
           error={errors.cpf}
         />
-        
+
         <Input
           label="Telefone"
           value={formData.phone}
-          onChangeText={(text) => handleChangeText('phone', text)}
+          onChangeText={text => handleChangeText('phone', text)}
           placeholder="(00) 00000-0000"
           type="phone"
           mask="(##) #####-####"
         />
-        
+
         <Input
           label="CEP"
           value={formData.cep}
-          onChangeText={(text) => handleChangeText('cep', text)}
+          onChangeText={text => handleChangeText('cep', text)}
           placeholder="00000-000"
           type="cep"
           mask="#####-###"
         />
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Estados</Text>
-        
+
         <Input
           label="Input com Erro"
           value=""
@@ -128,7 +128,7 @@ export const InputTest: React.FC = () => {
           placeholder="Este input tem erro"
           error="Este é um erro de exemplo"
         />
-        
+
         <Input
           label="Input Desabilitado"
           value="Valor fixo"
@@ -136,14 +136,24 @@ export const InputTest: React.FC = () => {
           editable={false}
         />
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Dados do Formulário</Text>
-        <Text style={styles.dataText}>Nome: {formData.name || 'Não preenchido'}</Text>
-        <Text style={styles.dataText}>Email: {formData.email || 'Não preenchido'}</Text>
-        <Text style={styles.dataText}>CPF: {formData.cpf || 'Não preenchido'}</Text>
-        <Text style={styles.dataText}>Telefone: {formData.phone || 'Não preenchido'}</Text>
-        <Text style={styles.dataText}>CEP: {formData.cep || 'Não preenchido'}</Text>
+        <Text style={styles.dataText}>
+          Nome: {formData.name || 'Não preenchido'}
+        </Text>
+        <Text style={styles.dataText}>
+          Email: {formData.email || 'Não preenchido'}
+        </Text>
+        <Text style={styles.dataText}>
+          CPF: {formData.cpf || 'Não preenchido'}
+        </Text>
+        <Text style={styles.dataText}>
+          Telefone: {formData.phone || 'Não preenchido'}
+        </Text>
+        <Text style={styles.dataText}>
+          CEP: {formData.cep || 'Não preenchido'}
+        </Text>
       </View>
     </ScrollView>
   );
@@ -176,4 +186,4 @@ const styles = StyleSheet.create({
     color: Colors.gray,
     marginBottom: Spacing.xs,
   },
-}); 
+});

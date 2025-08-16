@@ -1,6 +1,12 @@
 import { IDonationRepository } from '../../interfaces/repositories/IDonationRepository';
-import { CreateCultoDonationDto, CreateManualDonationDto } from '../../dto/CreateDonationDto';
-import { CreateCultoDonationData, CreateManualDonationData } from '../../../domain/entities/Donation';
+import {
+  CreateCultoDonationDto,
+  CreateManualDonationDto,
+} from '../../dto/CreateDonationDto';
+import {
+  CreateCultoDonationData,
+  CreateManualDonationData,
+} from '../../../domain/entities/Donation';
 
 export class CreateDonationUseCase {
   constructor(private donationRepository: IDonationRepository) {}

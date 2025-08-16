@@ -3,7 +3,7 @@ export enum UserRole {
   PASTOR = 'pastor',
   DEACON = 'deacon',
   LEADER = 'leader',
-  MEMBER = 'member'
+  MEMBER = 'member',
 }
 
 export interface User {

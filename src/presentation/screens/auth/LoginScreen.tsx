@@ -9,11 +9,20 @@ import {
   Image,
   Animated,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input } from '../../components/shared/Input';
-import { Colors, Typography, Spacing, Shadows, BorderRadius } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  Shadows,
+  BorderRadius,
+} from '../../components/shared/design-system';
 import { container } from '../../../infrastructure/config/container';
 import { AuthenticateUserUseCase } from '../../../application/use-cases/user/AuthenticateUserUseCase';
+import { CompleteUserProfileUseCase } from '../../../application/use-cases/user/CompleteUserProfileUseCase';
 import { useLeadTracking } from '../../hooks/useLeadTracking';
 
 type UserRole = 'admin' | 'pastor' | 'deacon' | 'leader' | 'member';
@@ -38,13 +47,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     general?: string;
   }>({});
 
-  const { trackFirstLogin, detectDeviceInfo, captureUrlTrackingData, isFirstLogin } = useLeadTracking();
-  
+  const {
+    trackFirstLogin,
+    detectDeviceInfo,
+    captureUrlTrackingData,
+    isFirstLogin,
+  } = useLeadTracking();
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  
 
   useEffect(() => {
     Animated.parallel([
@@ -98,66 +111,121 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   const handleLogin = async () => {
+  console.log('[Login] start', { email });
     if (!validateForm()) return;
 
     setIsLoading(true);
     setErrors({});
 
     try {
-      const authenticateUserUseCase = container.get<AuthenticateUserUseCase>('AuthenticateUserUseCase');
-      
+      const authenticateUserUseCase = container.get<AuthenticateUserUseCase>(
+        'AuthenticateUserUseCase'
+      );
+      console.log('[Login] authenticating...');
       const result = await authenticateUserUseCase.execute({
         email,
-        password
+        password,
       });
+      console.log('[Login] authenticated', { userId: result.user.id, role: result.user.role });
+
+      // Verificar se há dados pendentes do registro para completar o perfil
+      try {
+        const pendingData = await AsyncStorage.getItem('pendingUserProfile');
+        if (pendingData) {
+          const profileData = JSON.parse(pendingData);
+          console.log('🔍 DEBUG - Dados pendentes encontrados no login:', profileData);
+          
+          // Verificar se é o mesmo usuário
+          if (profileData.email === email) {
+            console.log('✅ DEBUG - Completando perfil no primeiro login...');
+            
+            const completeUserProfileUseCase = container.get<CompleteUserProfileUseCase>('CompleteUserProfileUseCase');
+            
+            await completeUserProfileUseCase.execute({
+              userId: result.user.id,
+              email: profileData.email,
+              fullName: profileData.fullName,
+              phone: profileData.phone,
+              address: profileData.address,
+            });
+            
+            // Remover dados pendentes após completar o perfil
+            await AsyncStorage.removeItem('pendingUserProfile');
+            console.log('✅ DEBUG - Perfil completado e dados pendentes removidos');
+          }
+        }
+      } catch (error) {
+        console.log('⚠️ DEBUG - Erro ao processar dados pendentes:', error);
+        // Não falha o login se houver erro nos dados pendentes
+      }
 
       const shouldTrackFirstLogin = await isFirstLogin(result.user.id);
       if (shouldTrackFirstLogin) {
         const deviceInfo = detectDeviceInfo();
-        const currentUrl = typeof window !== 'undefined' && window.location ? window.location.href : 'app://igreja-oliveira/login';
+        const currentUrl =
+          typeof window !== 'undefined' && window.location
+            ? window.location.href
+            : 'app://igreja-oliveira/login';
         const urlData = captureUrlTrackingData(currentUrl);
-        
+
         await trackFirstLogin({
           userId: result.user.id,
           ...urlData,
           ...deviceInfo,
-          conversionType: 'first_login'
+          conversionType: 'first_login',
         });
       }
-      
+
       onLoginSuccess(result.user.role, result.user.id);
     } catch (error) {
-      setErrors({
-        general: 'Email ou senha incorretos. Tente novamente.',
-      });
+      const message = (error as any)?.message || String(error);
+      console.log('[Login] error', { message });
+      let uiMessage = 'Email ou senha incorretos. Tente novamente.';
+      if (/infinite recursion detected/i.test(message)) {
+        uiMessage = 'Erro temporário nas regras de segurança. Aguarde um minuto e tente novamente.';
+      } else
+      if (/User not found in database/i.test(message)) {
+        uiMessage = 'Conta autenticada, mas perfil ainda não sincronizado. Tente novamente em alguns segundos.';
+      } else if (/Error fetching user from database/i.test(message)) {
+        uiMessage = 'Falha ao acessar seu perfil. Verifique sua conexão e tente novamente.';
+      } else if (/Authentication failed/i.test(message)) {
+        uiMessage = 'Email ou senha incorretos. Tente novamente.';
+      }
+      setErrors({ general: uiMessage });
     } finally {
       setIsLoading(false);
+      console.log('[Login] end');
     }
   };
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
       {/* Background com Gradiente */}
       <View style={styles.backgroundGradient} />
-      
+
       {/* Floating Elements */}
-      <Animated.View 
+      <Animated.View
         style={[
           styles.floatingElement1,
           {
-            transform: [{ rotate: rotateInterpolate }]
-          }
+            transform: [{ rotate: rotateInterpolate }],
+          },
         ]}
       />
-      <Animated.View 
+      <Animated.View
         style={[
           styles.floatingElement2,
           {
-            transform: [{ rotate: rotateInterpolate }]
-          }
+            transform: [{ rotate: rotateInterpolate }],
+          },
         ]}
       />
-      
+
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'position' : undefined}
@@ -166,27 +234,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         >
           <View style={styles.content}>
             {/* Hero Section - Top Third */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.heroSection,
                 {
                   opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }, { scale: scaleAnim }]
-                }
+                  transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+                },
               ]}
             >
               <View style={styles.logoContainer}>
                 <View style={styles.logoGlow}>
                   <Image
                     source={{
-                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/public/igreja-oliveira/imagens/logo-no-background.png'
+                      uri: 'https://cghxhewgelpcnglfeirw.supabase.co/storage/v1/object/public/igreja-oliveira/imagens/logo-withe-no-background.png',
                     }}
                     style={styles.logo}
                     resizeMode="contain"
                   />
                 </View>
               </View>
-              
+
               <Text style={styles.welcomeTitle}>Igreja Oliveira</Text>
               <Text style={styles.welcomeSubtitle}>Bem-vindo de volta</Text>
             </Animated.View>
@@ -197,8 +265,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 styles.formSection,
                 {
                   opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }]
-                }
+                  transform: [{ translateY: slideAnim }],
+                },
               ]}
             >
               <View style={styles.glassForm}>
@@ -253,13 +321,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 styles.actionsSection,
                 {
                   opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }]
-                }
+                  transform: [{ translateY: slideAnim }],
+                },
               ]}
             >
               <View style={styles.divider} />
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 style={styles.createAccountButton}
                 onPress={onNavigateToRegister}
               >
@@ -267,7 +335,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   <Text style={styles.createAccountText}>Criar nova conta</Text>
                 </View>
               </TouchableOpacity>
-              
+
               <Text style={styles.footerText}>Junte-se à nossa comunidade</Text>
             </Animated.View>
           </View>
@@ -276,7 +344,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -321,7 +388,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     justifyContent: 'space-between',
   },
-  
+
   // TOP THIRD - Hero Section (30%)
   heroSection: {
     flex: 0.3,
@@ -366,7 +433,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: Typography.fontWeightMedium,
   },
-  
+
   // MIDDLE THIRD - Form Section (45%)
   formSection: {
     flex: 0.45,
@@ -427,7 +494,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: Typography.fontWeightMedium,
   },
-  
+
   // BOTTOM THIRD - Actions Section (25%)
   actionsSection: {
     flex: 0.25,
@@ -469,4 +536,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
-}); 
+});

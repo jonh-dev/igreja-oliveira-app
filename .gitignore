@@ -52,6 +52,7 @@ logs/
 .idea/
 *.swp
 *.swo
+.cursor/
 
 # OS generated files
 Thumbs.db

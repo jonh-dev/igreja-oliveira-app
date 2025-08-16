@@ -1,3 +1,3 @@
 export { DonationsListScreen } from './DonationsListScreen';
 export { CreateDonationScreen } from './CreateDonationScreen';
-export { DonationDetailsScreen } from './DonationDetailsScreen'; 
+export { DonationDetailsScreen } from './DonationDetailsScreen';

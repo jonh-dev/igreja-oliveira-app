@@ -8,7 +8,13 @@ import {
   TextStyle,
   View,
 } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from './design-system';
 
 export interface ButtonProps {
   title: string;
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     elevation: 2,
   },
-  
+
   // Variantes
   primary: {
     backgroundColor: Colors.primary,
@@ -119,7 +125,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     elevation: 0,
   },
-  
+
   // Tamanhos
   small: {
     paddingHorizontal: Spacing.md,
@@ -136,12 +142,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     minHeight: 56,
   },
-  
+
   // Estados
   disabled: {
     opacity: 0.5,
   },
-  
+
   // Textos por variante
   primaryText: {
     color: Colors.white,
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: Typography.fontWeightSemibold,
   },
-  
+
   // Textos por tamanho
   smallText: {
     fontSize: Typography.fontSizeSm,
@@ -173,17 +179,17 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizeLg,
     fontWeight: Typography.fontWeightSemibold,
   },
-  
+
   // Estados de texto
   disabledText: {
     opacity: 0.7,
   },
-  
+
   // Texto base
   text: {
     textAlign: 'center',
   },
-  
+
   // Containers para loading e conteúdo
   loadingContainer: {
     flexDirection: 'row',
@@ -204,4 +210,4 @@ const styles = StyleSheet.create({
   loadingText: {
     opacity: 0.8,
   },
-}); 
+});

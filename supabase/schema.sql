@@ -18,8 +18,18 @@ CREATE TABLE public.users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email VARCHAR(255) NOT NULL UNIQUE,
   full_name VARCHAR(255) NOT NULL,
-  phone VARCHAR(20),
+  phone VARCHAR(20), -- Formato: +5511999999999 (código país + DDD + número)
+  country_code VARCHAR(5) DEFAULT '+55', -- Código internacional do país
   role VARCHAR(20) NOT NULL DEFAULT 'member' CHECK (role IN ('admin', 'pastor', 'deacon', 'leader', 'member')),
+  lead_source VARCHAR(100), -- Origem do lead: 'organic', 'referral', 'social_media', 'event', etc.
+  lead_medium VARCHAR(100), -- Meio: 'website', 'whatsapp', 'instagram', 'facebook', etc.
+  lead_campaign VARCHAR(100), -- Campanha específica se aplicável
+  utm_source VARCHAR(100), -- UTM tracking
+  utm_medium VARCHAR(100), -- UTM tracking
+  utm_campaign VARCHAR(100), -- UTM tracking
+  utm_content VARCHAR(100), -- UTM tracking
+  utm_term VARCHAR(100), -- UTM tracking
+  referrer_url TEXT, -- URL de referência quando aplicável
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -28,6 +38,12 @@ CREATE TABLE public.users (
 CREATE INDEX idx_users_email ON public.users(email);
 CREATE INDEX idx_users_role ON public.users(role);
 CREATE INDEX idx_users_created_at ON public.users(created_at);
+CREATE INDEX idx_users_phone ON public.users(phone);
+CREATE INDEX idx_users_country_code ON public.users(country_code);
+CREATE INDEX idx_users_lead_source ON public.users(lead_source);
+CREATE INDEX idx_users_lead_medium ON public.users(lead_medium);
+CREATE INDEX idx_users_utm_source ON public.users(utm_source);
+CREATE INDEX idx_users_utm_campaign ON public.users(utm_campaign);
 
 -- ================================================================
 -- ADDRESSES TABLE
@@ -100,6 +116,10 @@ CREATE TRIGGER update_donations_updated_at
   BEFORE UPDATE ON public.donations 
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_integrations_updated_at 
+  BEFORE UPDATE ON public.integrations 
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- ================================================================
 -- ROW LEVEL SECURITY (RLS) SETUP
 -- ================================================================
@@ -108,6 +128,8 @@ CREATE TRIGGER update_donations_updated_at
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.addresses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.donations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.integrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.integration_sync_logs ENABLE ROW LEVEL SECURITY;
 
 -- ================================================================
 -- RLS POLICIES FOR USERS TABLE
@@ -216,6 +238,78 @@ CREATE POLICY "Admins and pastors can manage all donations" ON public.donations
   );
 
 -- ================================================================
+-- RLS POLICIES FOR INTEGRATIONS TABLE
+-- ================================================================
+
+-- Only admins and pastors can create integrations
+CREATE POLICY "Only admins and pastors can create integrations" ON public.integrations
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role IN ('admin', 'pastor')
+    )
+  );
+
+-- Only admins and pastors can view integrations
+CREATE POLICY "Only admins and pastors can view integrations" ON public.integrations
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role IN ('admin', 'pastor')
+    )
+  );
+
+-- Only admins and pastors can update integrations
+CREATE POLICY "Only admins and pastors can update integrations" ON public.integrations
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role IN ('admin', 'pastor')
+    )
+  );
+
+-- Only admins and pastors can delete integrations
+CREATE POLICY "Only admins and pastors can delete integrations" ON public.integrations
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role IN ('admin', 'pastor')
+    )
+  );
+
+-- ================================================================
+-- RLS POLICIES FOR INTEGRATION_SYNC_LOGS TABLE
+-- ================================================================
+
+-- Only admins and pastors can view sync logs
+CREATE POLICY "Only admins and pastors can view sync logs" ON public.integration_sync_logs
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role IN ('admin', 'pastor')
+    )
+  );
+
+-- System can create sync logs (through service account)
+CREATE POLICY "System can create sync logs" ON public.integration_sync_logs
+  FOR INSERT WITH CHECK (true);
+
+-- Only admins can delete sync logs (for cleanup)
+CREATE POLICY "Only admins can delete sync logs" ON public.integration_sync_logs
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND role = 'admin'
+    )
+  );
+
+-- ================================================================
 -- FUNCTIONS FOR CHURCH HIERARCHY PERMISSIONS
 -- ================================================================
 
@@ -266,6 +360,128 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ================================================================
+-- INTEGRATIONS TABLE
+-- ================================================================
+
+CREATE TABLE public.integrations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  integration_type VARCHAR(50) NOT NULL CHECK (integration_type IN ('banking', 'payment', 'members', 'events')),
+  provider VARCHAR(100) NOT NULL, -- 'CREVISC', 'BB', 'Itau', etc.
+  provider_account_id VARCHAR(255), -- Agência/Conta ou identificador externo
+  status VARCHAR(20) NOT NULL DEFAULT 'disconnected' CHECK (status IN ('connected', 'disconnected', 'error', 'pending')),
+  encrypted_credentials TEXT, -- Tokens, refresh_tokens criptografados
+  consent_id VARCHAR(255), -- ID do consentimento Open Finance
+  consent_expires_at TIMESTAMP WITH TIME ZONE,
+  last_sync_at TIMESTAMP WITH TIME ZONE,
+  sync_frequency_hours INTEGER DEFAULT 24, -- Frequência de sincronização
+  permissions JSON, -- Permissões específicas concedidas
+  metadata JSON, -- Dados adicionais específicos do provider
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for integrations table
+CREATE INDEX idx_integrations_user_id ON public.integrations(user_id);
+CREATE INDEX idx_integrations_type ON public.integrations(integration_type);
+CREATE INDEX idx_integrations_provider ON public.integrations(provider);
+CREATE INDEX idx_integrations_status ON public.integrations(status);
+CREATE INDEX idx_integrations_consent_expires ON public.integrations(consent_expires_at);
+CREATE INDEX idx_integrations_last_sync ON public.integrations(last_sync_at);
+CREATE INDEX idx_integrations_is_active ON public.integrations(is_active);
+
+-- ================================================================
+-- INTEGRATION SYNC LOGS TABLE
+-- ================================================================
+
+CREATE TABLE public.integration_sync_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  integration_id UUID NOT NULL REFERENCES public.integrations(id) ON DELETE CASCADE,
+  sync_type VARCHAR(50) NOT NULL, -- 'manual', 'automatic', 'consent_renewal'
+  status VARCHAR(20) NOT NULL CHECK (status IN ('success', 'error', 'partial')),
+  records_processed INTEGER DEFAULT 0,
+  records_added INTEGER DEFAULT 0,
+  records_updated INTEGER DEFAULT 0,
+  error_message TEXT,
+  sync_started_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  sync_completed_at TIMESTAMP WITH TIME ZONE,
+  metadata JSON, -- Detalhes específicos do sync
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for integration_sync_logs table
+CREATE INDEX idx_sync_logs_integration_id ON public.integration_sync_logs(integration_id);
+CREATE INDEX idx_sync_logs_status ON public.integration_sync_logs(status);
+CREATE INDEX idx_sync_logs_sync_started ON public.integration_sync_logs(sync_started_at);
+CREATE INDEX idx_sync_logs_created_at ON public.integration_sync_logs(created_at);
+
+-- ================================================================
+-- PHONE VALIDATION FUNCTIONS
+-- ================================================================
+
+-- Function to validate Brazilian phone format
+CREATE OR REPLACE FUNCTION validate_brazilian_phone(phone_number TEXT)
+RETURNS BOOLEAN AS $$
+BEGIN
+  -- Brazilian phone format: +5511999999999 or +55(11)99999-9999
+  -- Must start with +55, have 2-digit area code, and 8-9 digit number
+  RETURN phone_number ~ '^\+55[1-9][0-9][0-9]{8,9}$';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to format phone number to international standard
+CREATE OR REPLACE FUNCTION format_phone_international(country_code TEXT, phone_local TEXT)
+RETURNS TEXT AS $$
+BEGIN
+  -- Remove all non-digits from local phone
+  phone_local := regexp_replace(phone_local, '\D', '', 'g');
+  
+  -- Ensure country code starts with +
+  IF NOT country_code ~ '^\+' THEN
+    country_code := '+' || country_code;
+  END IF;
+  
+  -- Return formatted international number
+  RETURN country_code || phone_local;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ================================================================
+-- LEAD ANALYTICS VIEWS
+-- ================================================================
+
+-- View for lead source analysis
+CREATE VIEW lead_analytics AS
+SELECT 
+  lead_source,
+  lead_medium,
+  utm_source,
+  utm_campaign,
+  COUNT(*) as total_users,
+  COUNT(CASE WHEN created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as users_last_30_days,
+  COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END) as users_last_7_days,
+  MIN(created_at) as first_user_date,
+  MAX(created_at) as last_user_date
+FROM public.users
+WHERE lead_source IS NOT NULL
+GROUP BY lead_source, lead_medium, utm_source, utm_campaign
+ORDER BY total_users DESC;
+
+-- View for country/phone analytics
+CREATE VIEW phone_analytics AS
+SELECT 
+  country_code,
+  COUNT(*) as total_users,
+  COUNT(CASE WHEN phone IS NOT NULL THEN 1 END) as users_with_phone,
+  ROUND(
+    (COUNT(CASE WHEN phone IS NOT NULL THEN 1 END) * 100.0 / COUNT(*)), 2
+  ) as phone_completion_rate
+FROM public.users
+GROUP BY country_code
+ORDER BY total_users DESC;
+
+-- ================================================================
 -- CHURCH STATISTICS VIEWS
 -- ================================================================
 
@@ -309,10 +525,14 @@ GRANT USAGE ON SCHEMA public TO authenticated;
 GRANT ALL ON public.users TO authenticated;
 GRANT ALL ON public.addresses TO authenticated;
 GRANT ALL ON public.donations TO authenticated;
+GRANT ALL ON public.integrations TO authenticated;
+GRANT ALL ON public.integration_sync_logs TO authenticated;
 
 -- Grant permissions on views
 GRANT SELECT ON donation_statistics TO authenticated;
 GRANT SELECT ON user_statistics TO authenticated;
+GRANT SELECT ON lead_analytics TO authenticated;
+GRANT SELECT ON phone_analytics TO authenticated;
 
 -- Grant permissions on sequences (for auto-generated IDs)
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;

@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
-import { Colors, Typography, Spacing } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+} from '../../components/shared/design-system';
 
 interface PastorDashboardProps {
   onNavigateToCreateDonation: () => void;
@@ -136,7 +140,9 @@ export const PastorDashboard: React.FC<PastorDashboardProps> = ({
       <View style={styles.ministryContent}>
         <Text style={styles.ministryName}>{ministry.name}</Text>
         <Text style={styles.ministryLeader}>Líder: {ministry.leader}</Text>
-        <Text style={styles.ministryMembers}>{ministry.memberCount} membros</Text>
+        <Text style={styles.ministryMembers}>
+          {ministry.memberCount} membros
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -145,15 +151,17 @@ export const PastorDashboard: React.FC<PastorDashboardProps> = ({
     <View key={tithe.month} style={styles.titheItem}>
       <View style={styles.titheHeader}>
         <Text style={styles.titheMonth}>{tithe.month}</Text>
-        <Text style={styles.titheAmount}>R$ {tithe.amount.toLocaleString()}</Text>
+        <Text style={styles.titheAmount}>
+          R$ {tithe.amount.toLocaleString()}
+        </Text>
       </View>
       <View style={styles.titheProgress}>
         <View style={styles.progressBar}>
-          <View 
+          <View
             style={[
-              styles.progressFill, 
-              { width: `${tithe.percentage}%`, backgroundColor: Colors.accent }
-            ]} 
+              styles.progressFill,
+              { width: `${tithe.percentage}%`, backgroundColor: Colors.accent },
+            ]}
           />
         </View>
         <Text style={styles.tithePercentage}>{tithe.percentage}% da meta</Text>
@@ -199,9 +207,7 @@ export const PastorDashboard: React.FC<PastorDashboardProps> = ({
         </View>
 
         {/* Metrics Grid */}
-        <View style={styles.metricsGrid}>
-          {metrics.map(renderMetricCard)}
-        </View>
+        <View style={styles.metricsGrid}>{metrics.map(renderMetricCard)}</View>
 
         {/* Ministries Section */}
         <Card variant="elevated" style={styles.ministriesCard}>
@@ -490,4 +496,4 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
   },
-}); 
+});

@@ -1,5 +1,8 @@
 import { User } from '../../../domain/entities/User';
-import { IAuthService, AuthResult } from '../../interfaces/services/IAuthService';
+import {
+  IAuthService,
+  AuthResult,
+} from '../../interfaces/services/IAuthService';
 import { AuthenticateUserDto } from '../../dto/CreateUserDto';
 
 export class AuthenticateUserUseCase {

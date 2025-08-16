@@ -35,12 +35,21 @@
       "Bash(echo $PNPM_HOME)",
       "Bash(./node_modules/.bin/expo start:*)",
       "Bash(ls:*)",
-      "Bash(timeout 30 pnpm start:lan)"
+      "Bash(timeout 30 pnpm start:lan)",
+      "WebFetch(domain:openfinancebrasil.atlassian.net)",
+      "WebFetch(domain:openfinancebrasil.org.br)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.bb.com.br)",
+      "WebFetch(domain:belvo.com)",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__list_tables",
+      "WebFetch(domain:cghxhewgelpcnglfeirw.supabase.co)"
     ],
     "deny": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "supabase"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

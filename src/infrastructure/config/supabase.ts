@@ -1,24 +1,42 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     'Variáveis de ambiente Supabase são obrigatórias:\n' +
-    '- EXPO_PUBLIC_SUPABASE_URL\n' +
-    '- EXPO_PUBLIC_SUPABASE_ANON_KEY\n' +
-    'Configure no arquivo .env na raiz do projeto'
+      '- EXPO_PUBLIC_SUPABASE_URL\n' +
+      '- EXPO_PUBLIC_SUPABASE_ANON_KEY\n' +
+      'Configure no arquivo .env na raiz do projeto'
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Client for user-facing operations (with RLS)
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: true,
   },
 });
+
+// Service role client for backend operations (bypasses RLS)
+export const supabaseAdmin = supabaseServiceRoleKey 
+  ? createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  : null;
+
+if (!supabaseAdmin) {
+  console.warn(
+    'SUPABASE_SERVICE_ROLE_KEY não configurada. Operações administrativas podem falhar.'
+  );
+}
 
 export interface DatabaseUser {
   id: string;
@@ -50,7 +68,14 @@ export interface DatabaseDonation {
   id: string;
   user_id?: string;
   amount: number;
-  type: 'gasofilaco' | 'pix' | 'cartao' | 'transferencia' | 'tithe' | 'offering' | 'special';
+  type:
+    | 'gasofilaco'
+    | 'pix'
+    | 'cartao'
+    | 'transferencia'
+    | 'tithe'
+    | 'offering'
+    | 'special';
   source: 'manual' | 'automatic';
   description?: string;
   date: string;
@@ -82,12 +107,16 @@ export interface Database {
       addresses: {
         Row: DatabaseAddress;
         Insert: Omit<DatabaseAddress, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseAddress, 'id' | 'created_at' | 'updated_at'>>;
+        Update: Partial<
+          Omit<DatabaseAddress, 'id' | 'created_at' | 'updated_at'>
+        >;
       };
       donations: {
         Row: DatabaseDonation;
         Insert: Omit<DatabaseDonation, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<DatabaseDonation, 'id' | 'created_at' | 'updated_at'>>;
+        Update: Partial<
+          Omit<DatabaseDonation, 'id' | 'created_at' | 'updated_at'>
+        >;
       };
     };
   };

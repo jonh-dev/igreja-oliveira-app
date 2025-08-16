@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { NavigationStrategy, UserRole } from '../../navigation/NavigationStrategy';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  NavigationStrategy,
+  UserRole,
+} from '../../navigation/NavigationStrategy';
 import { Colors, Typography, Spacing } from './design-system';
 
 export const NavigationStrategyTest: React.FC = () => {
@@ -29,7 +38,7 @@ export const NavigationStrategyTest: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🧭 Navigation Strategy Test</Text>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Selecionar Role</Text>
         <View style={styles.roleButtons}>
@@ -39,7 +48,7 @@ export const NavigationStrategyTest: React.FC = () => {
               style={[
                 styles.roleButton,
                 { backgroundColor: color },
-                selectedRole === role && styles.roleButtonActive
+                selectedRole === role && styles.roleButtonActive,
               ]}
               onPress={() => setSelectedRole(role)}
             >
@@ -48,11 +57,15 @@ export const NavigationStrategyTest: React.FC = () => {
           ))}
         </View>
       </View>
-      
+
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Stack Atual: {currentStack.name}</Text>
-        <Text style={styles.subtitle}>Rota Inicial: {currentStack.initialRoute}</Text>
-        
+        <Text style={styles.sectionTitle}>
+          Stack Atual: {currentStack.name}
+        </Text>
+        <Text style={styles.subtitle}>
+          Rota Inicial: {currentStack.initialRoute}
+        </Text>
+
         <View style={styles.screensContainer}>
           <Text style={styles.screensTitle}>Telas Disponíveis:</Text>
           {currentStack.screens.map((screen, index) => (
@@ -65,21 +78,30 @@ export const NavigationStrategyTest: React.FC = () => {
           ))}
         </View>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Teste de Permissões</Text>
         <Text style={styles.subtitle}>Role atual: {selectedRole}</Text>
-        
+
         <View style={styles.permissionsContainer}>
-          {testScreens.map((screen) => {
-            const hasAccess = NavigationStrategy.canAccessScreen(selectedRole, screen);
+          {testScreens.map(screen => {
+            const hasAccess = NavigationStrategy.canAccessScreen(
+              selectedRole,
+              screen
+            );
             return (
               <View key={screen} style={styles.permissionItem}>
                 <Text style={styles.screenName}>{screen}</Text>
-                <View style={[
-                  styles.accessIndicator,
-                  { backgroundColor: hasAccess ? Colors.success : Colors.danger }
-                ]}>
+                <View
+                  style={[
+                    styles.accessIndicator,
+                    {
+                      backgroundColor: hasAccess
+                        ? Colors.success
+                        : Colors.danger,
+                    },
+                  ]}
+                >
                   <Text style={styles.accessText}>
                     {hasAccess ? '✓ Acesso' : '✗ Negado'}
                   </Text>
@@ -89,7 +111,7 @@ export const NavigationStrategyTest: React.FC = () => {
           })}
         </View>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Hierarquia de Permissões</Text>
         <View style={styles.hierarchyContainer}>
@@ -223,4 +245,4 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizeSm,
     color: Colors.gray,
   },
-}); 
+});

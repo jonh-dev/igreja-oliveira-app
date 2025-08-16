@@ -37,16 +37,32 @@ describe('NavigationStrategy', () => {
   });
 
   it('deve verificar permissões corretamente', () => {
-    expect(NavigationStrategy.hasPermission(UserRole.ADMIN, UserRole.MEMBER)).toBe(true);
-    expect(NavigationStrategy.hasPermission(UserRole.PASTOR, UserRole.LEADER)).toBe(true);
-    expect(NavigationStrategy.hasPermission(UserRole.MEMBER, UserRole.ADMIN)).toBe(false);
-    expect(NavigationStrategy.hasPermission(UserRole.LEADER, UserRole.PASTOR)).toBe(false);
+    expect(
+      NavigationStrategy.hasPermission(UserRole.ADMIN, UserRole.MEMBER)
+    ).toBe(true);
+    expect(
+      NavigationStrategy.hasPermission(UserRole.PASTOR, UserRole.LEADER)
+    ).toBe(true);
+    expect(
+      NavigationStrategy.hasPermission(UserRole.MEMBER, UserRole.ADMIN)
+    ).toBe(false);
+    expect(
+      NavigationStrategy.hasPermission(UserRole.LEADER, UserRole.PASTOR)
+    ).toBe(false);
   });
 
   it('deve verificar acesso a telas corretamente', () => {
-    expect(NavigationStrategy.canAccessScreen(UserRole.ADMIN, 'AdminDashboard')).toBe(true);
-    expect(NavigationStrategy.canAccessScreen(UserRole.PASTOR, 'PastorDashboard')).toBe(true);
-    expect(NavigationStrategy.canAccessScreen(UserRole.MEMBER, 'MemberDashboard')).toBe(true);
-    expect(NavigationStrategy.canAccessScreen(UserRole.MEMBER, 'AdminDashboard')).toBe(false);
+    expect(
+      NavigationStrategy.canAccessScreen(UserRole.ADMIN, 'AdminDashboard')
+    ).toBe(true);
+    expect(
+      NavigationStrategy.canAccessScreen(UserRole.PASTOR, 'PastorDashboard')
+    ).toBe(true);
+    expect(
+      NavigationStrategy.canAccessScreen(UserRole.MEMBER, 'MemberDashboard')
+    ).toBe(true);
+    expect(
+      NavigationStrategy.canAccessScreen(UserRole.MEMBER, 'AdminDashboard')
+    ).toBe(false);
   });
-}); 
+});

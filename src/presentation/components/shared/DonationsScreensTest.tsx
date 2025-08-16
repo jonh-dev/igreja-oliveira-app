@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import { Card } from './Card';
 import { Button } from './Button';
-import { DonationsListScreen, CreateDonationScreen, DonationDetailsScreen } from '../../screens/donations';
+import {
+  DonationsListScreen,
+  CreateDonationScreen,
+  DonationDetailsScreen,
+} from '../../screens/donations';
 import { Colors, Typography, Spacing } from './design-system';
 
 type DonationsScreenType = null | 'list' | 'create' | 'details';
@@ -92,7 +96,8 @@ export const DonationsScreensTest: React.FC = () => {
           <Card variant="elevated" style={styles.card}>
             <Text style={styles.cardTitle}>Telas de Doações</Text>
             <Text style={styles.cardDescription}>
-              Selecione uma tela para testar a funcionalidade completa de doações
+              Selecione uma tela para testar a funcionalidade completa de
+              doações
             </Text>
 
             <View style={styles.buttonContainer}>
@@ -120,8 +125,10 @@ export const DonationsScreensTest: React.FC = () => {
           </Card>
 
           <Card variant="elevated" style={styles.featuresCard}>
-            <Text style={styles.featuresTitle}>Funcionalidades Implementadas</Text>
-            
+            <Text style={styles.featuresTitle}>
+              Funcionalidades Implementadas
+            </Text>
+
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
                 <Text style={styles.featureIcon}>📋</Text>
@@ -187,7 +194,7 @@ export const DonationsScreensTest: React.FC = () => {
 
           <Card variant="elevated" style={styles.techCard}>
             <Text style={styles.techTitle}>Tecnologias Utilizadas</Text>
-            
+
             <View style={styles.techList}>
               <Text style={styles.techItem}>• React Native + TypeScript</Text>
               <Text style={styles.techItem}>• Clean Architecture</Text>
@@ -299,4 +306,4 @@ const styles = StyleSheet.create({
     color: Colors.gray,
     lineHeight: 22,
   },
-}); 
+});

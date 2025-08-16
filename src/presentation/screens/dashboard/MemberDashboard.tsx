@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
-import { Colors, Typography, Spacing } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+} from '../../components/shared/design-system';
 
 interface MemberDashboardProps {
   onNavigateToCreateDonation: () => void;
@@ -132,8 +136,11 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
       <View style={styles.donationHeader}>
         <View style={styles.donationType}>
           <Text style={styles.donationTypeText}>
-            {donation.type === 'tithe' ? '💰 Dízimo' : 
-             donation.type === 'offering' ? '💵 Oferta' : '🎁 Especial'}
+            {donation.type === 'tithe'
+              ? '💰 Dízimo'
+              : donation.type === 'offering'
+                ? '💵 Oferta'
+                : '🎁 Especial'}
           </Text>
           <Text style={styles.donationDate}>{donation.date}</Text>
         </View>
@@ -199,9 +206,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
         </View>
 
         {/* Metrics Grid */}
-        <View style={styles.metricsGrid}>
-          {metrics.map(renderMetricCard)}
-        </View>
+        <View style={styles.metricsGrid}>{metrics.map(renderMetricCard)}</View>
 
         {/* My Donations */}
         <Card variant="elevated" style={styles.donationsCard}>
@@ -482,4 +487,4 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
   },
-}); 
+});

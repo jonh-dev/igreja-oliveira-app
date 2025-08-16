@@ -1,4 +1,9 @@
-import { Donation, UpdateDonationData, CreateCultoDonationData, CreateManualDonationData } from '../../../domain/entities/Donation';
+import {
+  Donation,
+  UpdateDonationData,
+  CreateCultoDonationData,
+  CreateManualDonationData,
+} from '../../../domain/entities/Donation';
 
 export interface IDonationRepository {
   createCultoDonation(data: CreateCultoDonationData): Promise<Donation>;

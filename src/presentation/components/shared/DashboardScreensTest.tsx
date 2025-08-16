@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { Button } from './Button';
 import { Card } from './Card';
 import { AdminDashboard } from '../../screens/dashboard/AdminDashboard';
@@ -58,8 +52,12 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'admin') {
     return (
       <AdminDashboard
-        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
-        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
+        onNavigateToCreateDonation={() =>
+          console.log('Navigate to create donation')
+        }
+        onNavigateToDonationsList={() =>
+          console.log('Navigate to donations list')
+        }
         onNavigateToMembers={handleNavigateToMembers}
         onNavigateToDonations={handleNavigateToDonations}
         onNavigateToReports={handleNavigateToReports}
@@ -72,8 +70,12 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'pastor') {
     return (
       <PastorDashboard
-        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
-        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
+        onNavigateToCreateDonation={() =>
+          console.log('Navigate to create donation')
+        }
+        onNavigateToDonationsList={() =>
+          console.log('Navigate to donations list')
+        }
         onNavigateToMembers={handleNavigateToMembers}
         onNavigateToDonations={handleNavigateToDonations}
         onNavigateToMinistries={handleNavigateToMinistries}
@@ -86,8 +88,12 @@ export const DashboardScreensTest: React.FC = () => {
   if (currentScreen === 'member') {
     return (
       <MemberDashboard
-        onNavigateToCreateDonation={() => console.log('Navigate to create donation')}
-        onNavigateToDonationsList={() => console.log('Navigate to donations list')}
+        onNavigateToCreateDonation={() =>
+          console.log('Navigate to create donation')
+        }
+        onNavigateToDonationsList={() =>
+          console.log('Navigate to donations list')
+        }
         onNavigateToMyDonations={handleNavigateToMyDonations}
         onNavigateToMyProfile={handleNavigateToMyProfile}
         onNavigateToEvents={handleNavigateToEvents}
@@ -109,7 +115,8 @@ export const DashboardScreensTest: React.FC = () => {
           <Card variant="elevated" style={styles.card}>
             <Text style={styles.cardTitle}>Dashboards por Hierarquia</Text>
             <Text style={styles.cardDescription}>
-              Selecione um dashboard para testar a interface específica de cada role
+              Selecione um dashboard para testar a interface específica de cada
+              role
             </Text>
 
             <View style={styles.buttonContainer}>
@@ -139,33 +146,33 @@ export const DashboardScreensTest: React.FC = () => {
           <Card variant="outlined" style={styles.infoCard}>
             <Text style={styles.infoTitle}>📋 Funcionalidades Testadas</Text>
             <Text style={styles.infoText}>
-              ✅ Design System aplicado{'\n'}
-              ✅ Métricas personalizadas por role{'\n'}
-              ✅ Cards de estatísticas{'\n'}
-              ✅ Atividades recentes{'\n'}
-              ✅ Ações rápidas{'\n'}
-              ✅ Navegação entre seções{'\n'}
-              ✅ Responsividade mobile
+              ✅ Design System aplicado{'\n'}✅ Métricas personalizadas por role
+              {'\n'}✅ Cards de estatísticas{'\n'}✅ Atividades recentes{'\n'}✅
+              Ações rápidas{'\n'}✅ Navegação entre seções{'\n'}✅
+              Responsividade mobile
             </Text>
           </Card>
 
           <Card variant="outlined" style={styles.infoCard}>
-            <Text style={styles.infoTitle}>🎯 Características por Dashboard</Text>
+            <Text style={styles.infoTitle}>
+              🎯 Características por Dashboard
+            </Text>
             <Text style={styles.infoText}>
-              <Text style={styles.bold}>👑 Admin:</Text> Visão geral completa, todas as métricas{'\n'}
-              <Text style={styles.bold}>⛪ Pastor:</Text> Foco em ministérios e dízimos{'\n'}
-              <Text style={styles.bold}>👤 Member:</Text> Dados pessoais e doações próprias
+              <Text style={styles.bold}>👑 Admin:</Text> Visão geral completa,
+              todas as métricas{'\n'}
+              <Text style={styles.bold}>⛪ Pastor:</Text> Foco em ministérios e
+              dízimos{'\n'}
+              <Text style={styles.bold}>👤 Member:</Text> Dados pessoais e
+              doações próprias
             </Text>
           </Card>
 
           <Card variant="outlined" style={styles.infoCard}>
             <Text style={styles.infoTitle}>🔧 Próximos Passos</Text>
             <Text style={styles.infoText}>
-              • Integração com dados reais do Supabase{'\n'}
-              • Implementação de Context API{'\n'}
-              • Navegação com React Navigation{'\n'}
-              • Testes unitários{'\n'}
-              • Gráficos e visualizações
+              • Integração com dados reais do Supabase{'\n'}• Implementação de
+              Context API{'\n'}• Navegação com React Navigation{'\n'}• Testes
+              unitários{'\n'}• Gráficos e visualizações
             </Text>
           </Card>
         </View>
@@ -237,4 +244,4 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeightSemibold,
     color: Colors.black,
   },
-}); 
+});

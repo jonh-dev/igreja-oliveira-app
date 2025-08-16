@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
-import { Colors, Typography, Spacing } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+} from '../../components/shared/design-system';
 
 interface AdminDashboardProps {
   onNavigateToCreateDonation: () => void;
@@ -178,9 +182,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </View>
 
         {/* Metrics Grid */}
-        <View style={styles.metricsGrid}>
-          {metrics.map(renderMetricCard)}
-        </View>
+        <View style={styles.metricsGrid}>{metrics.map(renderMetricCard)}</View>
 
         {/* Recent Activity */}
         <Card variant="elevated" style={styles.activityCard}>
@@ -411,4 +413,4 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
   },
-}); 
+});

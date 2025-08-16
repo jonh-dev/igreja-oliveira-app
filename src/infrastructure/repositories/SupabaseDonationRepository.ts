@@ -1,5 +1,10 @@
 import { supabase } from '../config/supabase';
-import { Donation, UpdateDonationData, CreateCultoDonationData, CreateManualDonationData } from '../../domain/entities/Donation';
+import {
+  Donation,
+  UpdateDonationData,
+  CreateCultoDonationData,
+  CreateManualDonationData,
+} from '../../domain/entities/Donation';
 import { IDonationRepository } from '../../application/interfaces/repositories/IDonationRepository';
 
 export class SupabaseDonationRepository implements IDonationRepository {
@@ -32,7 +37,9 @@ export class SupabaseDonationRepository implements IDonationRepository {
     return this.mapDatabaseDonationToDonation(donation);
   }
 
-  async createManualDonation(data: CreateManualDonationData): Promise<Donation> {
+  async createManualDonation(
+    data: CreateManualDonationData
+  ): Promise<Donation> {
     const { data: donation, error } = await supabase
       .from('donations')
       .insert({
@@ -92,7 +99,8 @@ export class SupabaseDonationRepository implements IDonationRepository {
     };
 
     if (data.amount !== undefined) updateData.amount = data.amount;
-    if (data.description !== undefined) updateData.description = data.description;
+    if (data.description !== undefined)
+      updateData.description = data.description;
     if (data.notes !== undefined) updateData.notes = data.notes;
 
     const { data: donation, error } = await supabase
@@ -110,10 +118,7 @@ export class SupabaseDonationRepository implements IDonationRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('donations')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('donations').delete().eq('id', id);
 
     if (error) {
       throw new Error(`Error deleting donation: ${error.message}`);
@@ -130,22 +135,28 @@ export class SupabaseDonationRepository implements IDonationRepository {
       userId: databaseDonation.user_id,
       description: databaseDonation.description,
       registeredBy: databaseDonation.registered_by,
-      cultoData: databaseDonation.culto_data ? {
-        billCounts: databaseDonation.culto_data.bill_counts || [],
-        coinCounts: databaseDonation.culto_data.coin_counts || [],
-        countingMethod: databaseDonation.culto_data.counting_method,
-        notes: databaseDonation.culto_data.notes,
-      } : undefined,
-      electronicData: databaseDonation.electronic_data ? {
-        transactionId: databaseDonation.electronic_data.transaction_id,
-        donorId: databaseDonation.electronic_data.donor_id,
-        donorName: databaseDonation.electronic_data.donor_name,
-        paymentMethod: databaseDonation.electronic_data.payment_method,
-        bankInfo: databaseDonation.electronic_data.bank_info,
-        transactionDate: new Date(databaseDonation.electronic_data.transaction_date),
-      } : undefined,
+      cultoData: databaseDonation.culto_data
+        ? {
+            billCounts: databaseDonation.culto_data.bill_counts || [],
+            coinCounts: databaseDonation.culto_data.coin_counts || [],
+            countingMethod: databaseDonation.culto_data.counting_method,
+            notes: databaseDonation.culto_data.notes,
+          }
+        : undefined,
+      electronicData: databaseDonation.electronic_data
+        ? {
+            transactionId: databaseDonation.electronic_data.transaction_id,
+            donorId: databaseDonation.electronic_data.donor_id,
+            donorName: databaseDonation.electronic_data.donor_name,
+            paymentMethod: databaseDonation.electronic_data.payment_method,
+            bankInfo: databaseDonation.electronic_data.bank_info,
+            transactionDate: new Date(
+              databaseDonation.electronic_data.transaction_date
+            ),
+          }
+        : undefined,
       createdAt: new Date(databaseDonation.created_at),
       updatedAt: new Date(databaseDonation.updated_at),
     };
   }
-} 
+}

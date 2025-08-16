@@ -3,4 +3,5 @@ export { SupabaseAddressRepository } from './repositories/SupabaseAddressReposit
 export { SupabaseDonationRepository } from './repositories/SupabaseDonationRepository';
 export { SupabaseAuthService } from './services/SupabaseAuthService';
 export { container } from './config/container';
-export { supabase } from './config/supabase'; 
+export { supabase } from './config/supabase';
+export * from './services/PhoneService';

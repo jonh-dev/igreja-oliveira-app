@@ -15,7 +15,7 @@ export class GetDonationsUseCase {
     // Por enquanto, retornamos todas as doações
     // Futuramente podemos implementar paginação no repository
     const donations = await this.donationRepository.findAll();
-    
+
     // Aplicar paginação manualmente se necessário
     if (limit || offset) {
       const start = offset || 0;

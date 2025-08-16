@@ -12,7 +12,12 @@ import {
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
-import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+} from '../../components/shared/design-system';
 
 interface Donation {
   id: string;
@@ -38,7 +43,9 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'tithe' | 'offering' | 'special'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'tithe' | 'offering' | 'special'
+  >('all');
 
   // Mock data - será substituído por dados reais do Supabase
   useEffect(() => {
@@ -97,14 +104,19 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
   }, []);
 
   const filteredDonations = donations.filter(donation => {
-    const matchesSearch = donation.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         donation.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilter === 'all' || donation.type === selectedFilter;
+    const matchesSearch =
+      donation.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      donation.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      selectedFilter === 'all' || donation.type === selectedFilter;
     return matchesSearch && matchesFilter;
   });
 
   const getTotalAmount = () => {
-    return filteredDonations.reduce((total, donation) => total + donation.amount, 0);
+    return filteredDonations.reduce(
+      (total, donation) => total + donation.amount,
+      0
+    );
   };
 
   const getDonationTypeLabel = (type: string) => {
@@ -141,14 +153,21 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
     >
       <View style={styles.donationHeader}>
         <View style={styles.donationType}>
-          <Text style={[styles.donationTypeText, { color: getDonationTypeColor(donation.type) }]}>
+          <Text
+            style={[
+              styles.donationTypeText,
+              { color: getDonationTypeColor(donation.type) },
+            ]}
+          >
             {getDonationTypeLabel(donation.type)}
           </Text>
           <Text style={styles.donationDate}>{donation.date}</Text>
         </View>
-        <Text style={styles.donationAmount}>R$ {donation.amount.toLocaleString()}</Text>
+        <Text style={styles.donationAmount}>
+          R$ {donation.amount.toLocaleString()}
+        </Text>
       </View>
-      
+
       <View style={styles.donationContent}>
         <Text style={styles.donationUser}>{donation.userName}</Text>
         {donation.description && (
@@ -158,18 +177,23 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
     </TouchableOpacity>
   );
 
-  const renderFilterButton = (filter: 'all' | 'tithe' | 'offering' | 'special', label: string) => (
+  const renderFilterButton = (
+    filter: 'all' | 'tithe' | 'offering' | 'special',
+    label: string
+  ) => (
     <TouchableOpacity
       style={[
         styles.filterButton,
-        selectedFilter === filter && styles.filterButtonActive
+        selectedFilter === filter && styles.filterButtonActive,
       ]}
       onPress={() => setSelectedFilter(filter)}
     >
-      <Text style={[
-        styles.filterButtonText,
-        selectedFilter === filter && styles.filterButtonTextActive
-      ]}>
+      <Text
+        style={[
+          styles.filterButtonText,
+          selectedFilter === filter && styles.filterButtonTextActive,
+        ]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -182,7 +206,10 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Doações</Text>
-        <TouchableOpacity style={styles.addButton} onPress={onNavigateToCreateDonation}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={onNavigateToCreateDonation}
+        >
           <Text style={styles.addButtonText}>➕</Text>
         </TouchableOpacity>
       </View>
@@ -218,11 +245,15 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
           <View style={styles.summaryContent}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Total de Doações</Text>
-              <Text style={styles.summaryValue}>{filteredDonations.length}</Text>
+              <Text style={styles.summaryValue}>
+                {filteredDonations.length}
+              </Text>
             </View>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Valor Total</Text>
-              <Text style={styles.summaryValue}>R$ {getTotalAmount().toLocaleString()}</Text>
+              <Text style={styles.summaryValue}>
+                R$ {getTotalAmount().toLocaleString()}
+              </Text>
             </View>
           </View>
         </Card>
@@ -240,7 +271,9 @@ export const DonationsListScreen: React.FC<DonationsListScreenProps> = ({
           <Card variant="elevated" style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>Nenhuma doação encontrada</Text>
             <Text style={styles.emptySubtitle}>
-              {searchTerm ? 'Tente ajustar os filtros de busca' : 'Não há doações registradas ainda'}
+              {searchTerm
+                ? 'Tente ajustar os filtros de busca'
+                : 'Não há doações registradas ainda'}
             </Text>
             <Button
               title="Nova Doação"
@@ -448,4 +481,4 @@ const styles = StyleSheet.create({
   emptyButton: {
     minWidth: 200,
   },
-}); 
+});

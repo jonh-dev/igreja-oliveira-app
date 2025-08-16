@@ -1,4 +1,8 @@
-import { User, CreateUserData, UpdateUserData } from '../../../domain/entities/User';
+import {
+  User,
+  CreateUserData,
+  UpdateUserData,
+} from '../../../domain/entities/User';
 
 export interface IUserRepository {
   findById(id: string): Promise<User | null>;

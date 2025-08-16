@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Church Management Systems**: Deep understanding of Brazilian evangelical church operations, hierarchy, and donation processes
 - **React Native + Expo**: Expert in mobile development with performance optimization and clean architecture
 - **Supabase Integration**: Advanced knowledge of PostgreSQL, RLS, real-time subscriptions, and authentication
-- **Open Finance Brazil**: Specialist in payment integrations, PIX, Mercado Pago, and Brazilian financial regulations
+- **Brazilian Payment Systems**: Specialist in PIX, banking APIs, payment gateways, and Brazilian financial regulations
 - **Brazilian Context**: Expert in CPF validation, CEP integration, currency handling (Real), and church-specific workflows
 
 ## 🚀 Development Commands
@@ -26,6 +26,18 @@ pnpm start
 pnpm android
 pnpm ios
 pnpm web
+
+# Tunnel development (for external device testing)
+pnpm start:tunnel
+pnpm android:tunnel
+pnpm ios:tunnel
+
+# Clear cache development
+pnpm start:clear
+pnpm start:tunnel-clear
+
+# LAN development
+pnpm start:lan
 
 # Type checking (run before every commit)
 pnpm run type-check
@@ -61,8 +73,8 @@ pnpm run build:verify
 ### Clean Architecture Layers
 ```
 📦 Domain Layer (Core Business Rules)
-├── entities/          - User, Address, Donation
-├── value-objects/     - CEP, Email validation
+├── entities/          - User, Address, Donation, Integration, IntegrationSyncLog, UserLeadTracking
+├── value-objects/     - CEP, Email, Phone validation
 └── domain-services/   - Complex business logic
 
 📦 Application Layer (Use Cases)
@@ -73,13 +85,14 @@ pnpm run build:verify
 
 📦 Infrastructure Layer (External Concerns)
 ├── repositories/     - Supabase implementations
-├── services/         - Auth, CEP validation, Push notifications
+├── services/         - Auth, CEP validation, Lead tracking, Push notifications
 ├── config/          - Database, environment, DI container
 └── adapters/        - Third-party integrations
 
 📦 Presentation Layer (UI)
 ├── screens/         - Feature-based screen organization
-├── components/      - Atomic design system
+├── components/      - Atomic design system (includes PhoneInput, CountryCodePicker)
+├── hooks/          - Custom hooks for lead tracking and state management
 ├── navigation/      - Strategy pattern for role-based routing
 └── state/          - Context API (migrating to Zustand)
 ```
@@ -153,16 +166,38 @@ Each user role has a specific dashboard with different capabilities:
 - **Header back button** for feature screen navigation
 
 ### Unified Donations System
-The system handles both **manual donations** (cash/check collected during services) and **electronic donations** (PIX/card through Open Finance integration):
+The system handles both **manual donations** (cash/check collected during services) and **electronic donations** (with CREVISC bank reconciliation):
 
-- **Manual donations**: Service offerings, tithes, special projects
-- **Electronic donations**: Automatic transactions via Mercado Pago integration
-- **Unified reporting**: Combined analytics and export capabilities
+- **Manual donations**: Service offerings, tithes, special projects counted manually
+- **Electronic donations**: PIX/transfers received in CREVISC account (Agência: 111, Conta: 19414552)
+- **CREVISC Integration**: Secure storage of Open Finance credentials with pastor consent and automatic synchronization
+- **Reconciliation**: Intelligent matching of CREVISC transactions with donation records
+- **Unified reporting**: Combined analytics and export capabilities for all donation sources
 
 ### Brazilian Context Specifics
-- **CPF validation**: Brazilian tax ID with proper formatting and validation
-- **CEP integration**: Via CEP API for address auto-completion
-- **Church hierarchy**: Brazilian evangelical church structure
+- **Phone validation**: International format with CountryCodePicker component and Brazilian masks
+- **CPF validation**: Brazilian tax ID with proper formatting and validation (removed from registration)
+- **CEP integration**: ViaCEP API for address auto-completion (partially implemented)
+- **Church hierarchy**: Brazilian evangelical church structure with hierarchical permissions
+- **Lead tracking**: Comprehensive UTM parameters and source analytics with UserLeadTracking entity
+- **Banking integration**: CREVISC Open Finance integration for donation reconciliation
+
+## 🎯 Cursor IDE Integration
+
+### Available Development Rules
+The project includes comprehensive Cursor rules in `.cursor/rules/` for development guidance:
+- **igreja-oliveira-main.mdc**: Main project context and rules
+- **architecture-clean.mdc**: Clean Architecture enforcement patterns
+- **brazilian-context.mdc**: Brazilian-specific validations and business rules
+- **development-workflow.mdc**: Development process and commit standards
+- **supabase-integration.mdc**: Database integration patterns and RLS policies
+- **testing-quality.mdc**: Testing standards and quality assurance practices
+
+### Key Development Constraints from Rules
+- **Architecture Boundaries**: Strict enforcement of Clean Architecture layer separation
+- **Brazilian Standards**: CPF, CEP, phone number validation according to Brazilian regulations
+- **Church Context**: Evangelical church hierarchy and donation management patterns
+- **Database Security**: RLS policy requirements and secure data access patterns
 
 ## 🔧 Development Workflow
 
@@ -175,12 +210,15 @@ The system handles both **manual donations** (cash/check collected during servic
 
 ### 📋 Documentation Update Requirements
 - **ALWAYS** update `docs/Tasks.md` immediately after completing any task
+- **ALWAYS** update `CLAUDE.md` when context or architecture changes
 - **ALWAYS** check existing code before creating new implementations
 - **ALWAYS** mark completed tasks as [x] when finished
 - **ALWAYS** update progress percentages and status
 - **NEVER** assume functionality needs to be created without checking first
 - **ALWAYS** read the current task list before starting any work
 - **NEVER create new .md files** - always use existing files in `docs/` directory
+- **MANDATORY**: Update both CLAUDE.md and Tasks.md when any context, architecture, or requirements change
+- **DATABASE CHANGES**: Always assume existing tables/data - create ALTER TABLE migrations in `supabase/migrations/` folder
 
 ### Environment Setup
 ```bash
@@ -248,7 +286,8 @@ pnpm run test CreateUserUseCase.test.ts
 ### Configuration Files
 - `tsconfig.json` - TypeScript configuration (strict mode)
 - `package.json` - Dependencies and scripts
-- `jest.config.js` - Testing configuration
+- `jest.config.js` - Jest testing configuration with ts-jest
+- `app.json` - Expo application configuration
 - `src/config/environment.ts` - Environment management
 - `.mcp.json` - Supabase MCP server configuration
 - `supabase/schema.sql` - Complete database schema with RLS policies
@@ -272,6 +311,8 @@ pnpm run test CreateUserUseCase.test.ts
 ### Component Library
 - `src/presentation/components/shared/` - Atomic design components
 - `src/presentation/components/shared/design-system.ts` - Design tokens
+- **Phone Components**: `CountryCodePicker.tsx`, `PhoneInput.tsx` - International phone input system
+- **Custom Hooks**: `src/presentation/hooks/` - Lead tracking and state management hooks
 
 ## 🔌 MCP Integration
 

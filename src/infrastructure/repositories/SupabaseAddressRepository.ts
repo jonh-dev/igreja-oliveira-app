@@ -1,6 +1,10 @@
 import { IAddressRepository } from '../../application/interfaces/repositories/IAddressRepository';
-import { Address, CreateAddressData, UpdateAddressData } from '../../domain/entities/Address';
-import { supabase, DatabaseAddress } from '../config/supabase';
+import {
+  Address,
+  CreateAddressData,
+  UpdateAddressData,
+} from '../../domain/entities/Address';
+import { supabase, supabaseAdmin, DatabaseAddress } from '../config/supabase';
 
 export class SupabaseAddressRepository implements IAddressRepository {
   async findById(id: string): Promise<Address | null> {
@@ -48,46 +52,94 @@ export class SupabaseAddressRepository implements IAddressRepository {
   }
 
   async create(addressData: CreateAddressData): Promise<Address> {
+    console.log('[SupabaseAddressRepository] Iniciando criação de endereço:', {
+      addressData,
+      timestamp: new Date().toISOString()
+    });
+
     if (addressData.isDefault) {
+      console.log('[SupabaseAddressRepository] Removendo flag default de outros endereços do usuário:', {
+        userId: addressData.userId
+      });
       await this.unsetDefaultAddresses(addressData.userId);
     }
 
-    const { data, error } = await supabase
+    const insertData = {
+      user_id: addressData.userId,
+      street: addressData.street,
+      number: addressData.number || null,
+      neighborhood: addressData.neighborhood,
+      city: addressData.city,
+      state: addressData.state || null,
+      zip_code: addressData.zipCode,
+      country: addressData.country || 'Brasil',
+      is_default: addressData.isDefault || false,
+    };
+    
+    console.log('[SupabaseAddressRepository] Dados para inserção na tabela addresses:', insertData);
+
+    console.log('[SupabaseAddressRepository] Executando INSERT na tabela addresses...');
+    // Usar supabaseAdmin para operações de criação durante o registro
+    // pois o usuário ainda não está autenticado no contexto do Supabase
+    const client = supabaseAdmin || supabase;
+    const { data, error } = await client
       .from('addresses')
-      .insert({
-        user_id: addressData.userId,
-        street: addressData.street,
-        number: addressData.number || null,
-        neighborhood: addressData.neighborhood,
-        city: addressData.city,
-        state: addressData.state || null,
-        zip_code: addressData.zipCode,
-        country: addressData.country || 'Brasil',
-        is_default: addressData.isDefault || false,
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (error) {
+      console.error('[SupabaseAddressRepository] ERRO ao inserir endereço:', {
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        insertData
+      });
       throw new Error(`Error creating address: ${error.message}`);
     }
 
-    return this.mapToAddress(data);
+    console.log('[SupabaseAddressRepository] Endereço inserido com sucesso na tabela addresses:', {
+      insertedData: data,
+      hasId: !!data?.id,
+      userId: data?.user_id,
+      street: data?.street,
+      city: data?.city,
+      zipCode: data?.zip_code,
+      isDefault: data?.is_default
+    });
+
+    const mappedAddress = this.mapToAddress(data);
+    console.log('[SupabaseAddressRepository] Endereço mapeado para entidade:', {
+      id: mappedAddress.id,
+      userId: mappedAddress.userId,
+      street: mappedAddress.street,
+      city: mappedAddress.city,
+      zipCode: mappedAddress.zipCode,
+      isDefault: mappedAddress.isDefault
+    });
+
+    return mappedAddress;
   }
 
   async update(id: string, addressData: UpdateAddressData): Promise<Address> {
     const updateData: Partial<DatabaseAddress> = {};
 
-    if (addressData.street !== undefined) updateData.street = addressData.street;
-    if (addressData.number !== undefined) updateData.number = addressData.number;
-    if (addressData.neighborhood !== undefined) updateData.neighborhood = addressData.neighborhood;
+    if (addressData.street !== undefined)
+      updateData.street = addressData.street;
+    if (addressData.number !== undefined)
+      updateData.number = addressData.number;
+    if (addressData.neighborhood !== undefined)
+      updateData.neighborhood = addressData.neighborhood;
     if (addressData.city !== undefined) updateData.city = addressData.city;
     if (addressData.state !== undefined) updateData.state = addressData.state;
-    if (addressData.zipCode !== undefined) updateData.zip_code = addressData.zipCode;
-    if (addressData.country !== undefined) updateData.country = addressData.country;
+    if (addressData.zipCode !== undefined)
+      updateData.zip_code = addressData.zipCode;
+    if (addressData.country !== undefined)
+      updateData.country = addressData.country;
     if (addressData.isDefault !== undefined) {
       updateData.is_default = addressData.isDefault;
-      
+
       if (addressData.isDefault) {
         const currentAddress = await this.findById(id);
         if (currentAddress) {
@@ -111,10 +163,7 @@ export class SupabaseAddressRepository implements IAddressRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('addresses')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('addresses').delete().eq('id', id);
 
     if (error) {
       throw new Error(`Error deleting address: ${error.message}`);
@@ -136,7 +185,9 @@ export class SupabaseAddressRepository implements IAddressRepository {
   }
 
   private async unsetDefaultAddresses(userId: string): Promise<void> {
-    const { error } = await supabase
+    // Usar supabaseAdmin para operações durante o registro
+    const client = supabaseAdmin || supabase;
+    const { error } = await client
       .from('addresses')
       .update({ is_default: false })
       .eq('user_id', userId)

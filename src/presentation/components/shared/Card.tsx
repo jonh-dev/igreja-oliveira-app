@@ -6,7 +6,13 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from './design-system';
 
 export interface CardProps {
   title?: string;
@@ -51,10 +57,8 @@ export const Card: React.FC<CardProps> = ({
           </View>
         </View>
       )}
-      
-      <View style={styles.content}>
-        {children}
-      </View>
+
+      <View style={styles.content}>{children}</View>
     </CardContainer>
   );
 };
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     marginBottom: Spacing.md,
   },
-  
+
   // Variantes
   default: {
     ...Shadows.sm,
@@ -79,12 +83,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.lightGray,
     backgroundColor: 'transparent',
   },
-  
+
   // Estados
   pressable: {
     // Adiciona feedback visual para cards clicáveis
   },
-  
+
   // Header
   header: {
     flexDirection: 'row',
@@ -108,9 +112,9 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeightNormal,
     color: Colors.gray,
   },
-  
+
   // Content
   content: {
     // Content area
   },
-}); 
+});

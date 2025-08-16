@@ -16,44 +16,47 @@ export const CardTest: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Card Component Test</Text>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Variantes</Text>
-        
+
         <Card
           title="Card Padrão"
           subtitle="Este é um card padrão com shadow"
           variant="default"
         >
           <Text style={styles.cardText}>
-            Este é o conteúdo do card padrão. Ele tem uma sombra suave e é usado para conteúdo geral.
+            Este é o conteúdo do card padrão. Ele tem uma sombra suave e é usado
+            para conteúdo geral.
           </Text>
         </Card>
-        
+
         <Card
           title="Card Elevado"
           subtitle="Este é um card com shadow mais pronunciado"
           variant="elevated"
         >
           <Text style={styles.cardText}>
-            Este card tem uma sombra mais pronunciada e é usado para destacar conteúdo importante.
+            Este card tem uma sombra mais pronunciada e é usado para destacar
+            conteúdo importante.
           </Text>
         </Card>
-        
+
         <Card
           title="Card Contornado"
           subtitle="Este é um card com borda"
           variant="outlined"
         >
           <Text style={styles.cardText}>
-            Este card tem apenas uma borda e é usado para conteúdo secundário ou informações complementares.
+            Este card tem apenas uma borda e é usado para conteúdo secundário ou
+            informações complementares.
           </Text>
         </Card>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cards Clicáveis</Text>
-        
+
         <Card
           title="Card Clicável"
           subtitle="Toque para ver a ação"
@@ -63,7 +66,7 @@ export const CardTest: React.FC = () => {
             Este card é clicável e tem feedback visual quando pressionado.
           </Text>
         </Card>
-        
+
         <Card
           title="Card com Botão"
           subtitle="Card com ação interna"
@@ -80,42 +83,43 @@ export const CardTest: React.FC = () => {
           />
         </Card>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cards Simples</Text>
-        
+
         <Card>
           <Text style={styles.cardText}>
             Card sem título, apenas com conteúdo.
           </Text>
         </Card>
-        
+
         <Card title="Apenas Título">
           <Text style={styles.cardText}>
             Card apenas com título, sem subtítulo.
           </Text>
         </Card>
-        
+
         <Card subtitle="Apenas Subtítulo">
           <Text style={styles.cardText}>
             Card apenas com subtítulo, sem título.
           </Text>
         </Card>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cards com Ícones</Text>
-        
+
         <Card
           title="Card com Ícone"
           subtitle="Exemplo de card com ícone"
           icon={<Text style={styles.icon}>📊</Text>}
         >
           <Text style={styles.cardText}>
-            Este card tem um ícone no cabeçalho para melhor identificação visual.
+            Este card tem um ícone no cabeçalho para melhor identificação
+            visual.
           </Text>
         </Card>
-        
+
         <Card
           title="Card de Doação"
           subtitle="R$ 500,00 - Dízimo"
@@ -165,4 +169,4 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: Typography.fontSize2xl,
   },
-}); 
+});

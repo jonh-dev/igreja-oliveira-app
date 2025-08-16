@@ -21,7 +21,7 @@ export interface Donation {
   userId?: string; // Para dízimos e doações especiais
   description?: string;
   registeredBy: string; // Quem registrou (para manuais)
-  
+
   // Para doações de culto (manual)
   cultoData?: {
     billCounts: BillCount[];
@@ -29,7 +29,7 @@ export interface Donation {
     notes?: string;
     countingMethod: CountingMethod;
   };
-  
+
   // Para doações eletrônicas (automático)
   electronicData?: {
     transactionId: string;
@@ -39,7 +39,7 @@ export interface Donation {
     bankInfo?: string;
     transactionDate: Date;
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
 }

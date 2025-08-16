@@ -1,744 +1,337 @@
-# 🔧 Regras de Desenvolvimento - Igreja Oliveira App
-
-## 👤 Perfil do Desenvolvedor
-
-**Especialista Mobile Senior para Igreja - Características:**
-- 🏗️ **Arquitetura**: Clean Architecture, SOLID, DDD
-- 📱 **Mobile**: React Native, TypeScript, Performance
-- 🗄️ **Backend**: Supabase (especialista), PostgreSQL, RLS
-- 🎯 **Visão**: Escalabilidade, abstração, manutenibilidade
-- ⛪ **Domínio**: Sistemas de gestão eclesiástica
-
----
+# 📋 Regras de Desenvolvimento - Igreja Oliveira App
 
 ## 🎯 Princípios Fundamentais
 
-### **0. Versão Node.js - Regra LTS**
-- **SEMPRE usar a versão LTS mais recente do Node.js**
-- **NUNCA retroceder para versões anteriores**
-- **Verificar periodicamente atualizações LTS**
-- **Versão atual**: 22.11.0 (LTS mais recente)
-- **Comando para alterar**: `nvm use 22.11.0`
+### **1. Clean Architecture Rigorosa**
+- **Dependências**: Apenas para dentro (Domain → Application → Infrastructure → Presentation)
+- **Inversão**: Interfaces no Application Layer, implementações no Infrastructure
+- **Independência**: Domain Layer não pode importar de outras camadas
+- **Testabilidade**: Cada camada deve ser testável independentemente
 
-### **1. Escalabilidade Primeiro**
-- Código deve suportar crescimento de 50 → 50.000 usuários
-- Arquitetura preparada para expansão de funcionalidades
-- Performance otimizada desde o início
-- Cache strategies e lazy loading por padrão
+### **2. TypeScript Strict Mode**
+- **Configuração**: `strict: true` no tsconfig.json
+- **Tipagem**: 100% das interfaces e funções tipadas
+- **Sem any**: Evitar uso de `any`, preferir `unknown` ou tipos específicos
+- **Null Safety**: Usar optional chaining e nullish coalescing
 
-### **2. Abstração Inteligente**
-- Interfaces bem definidas entre camadas
-- Dependency Injection em todos os níveis
-- Strategy Pattern para comportamentos variáveis
-- Factory Pattern para criação de objetos complexos
+### **3. Supabase como Backend Principal**
+- **RLS**: Row Level Security obrigatório em todas as tabelas
+- **Políticas**: Hierarquia de usuários (admin > pastor > diácono > líder > membro)
+- **Validação**: Sem fallbacks mockados, sempre dados reais
+- **Performance**: Indexes otimizados para consultas frequentes
 
-### **3. Manutenibilidade Extrema**
-- Código auto-documentado
-- Separação clara de responsabilidades
-- Testes obrigatórios para lógica crítica
-- Refactoring contínuo
-
-### **4. Performance Igreja-Focused**
-- Otimizado para dispositivos Android básicos
-- Bundle size mínimo (<10MB)
-- Offline-first quando possível
-- Sync inteligente de dados
-
-### **5. Design System - Igreja Oliveira**
-- **Paleta de Cores**: Verde oliveira escuro (#556B2F), Verde oliveira claro (#8FBC8F), Verde oliveira médio (#6B8E23)
-- **Tipografia**: Inter (primária), Poppins (secundária)
-- **Espaçamentos**: Sistema de 8px (8, 16, 24, 32, 48px)
-- **Border Radius**: 4px, 8px, 12px, 16px
-- **Shadows**: 3 níveis (sm, md, lg)
-- **Mobile First**: Design otimizado para smartphones
-- **Accessibility**: Suporte a VoiceOver e TalkBack
-
-### **6. Desenvolvimento Incremental e Testável - REGRA CRÍTICA**
-- **NUNCA** implementar múltiplas funcionalidades de uma vez
-- **SEMPRE** implementar um contexto por vez até ser testável
-- **SEMPRE** testar cada implementação antes de prosseguir
-- **SEMPRE** commitar e fazer push após cada contexto testado
-- **SEMPRE** validar que o código funciona antes de continuar
-- **NUNCA** deixar código não testado ou não funcional
-- **SEMPRE** seguir o fluxo: Implementar → Testar → Commitar → Push → Próximo
+### **4. React Native + Expo**
+- **Versão**: Expo SDK 53 + React Native 0.79.5
+- **Package Manager**: PNPM obrigatório (nunca npm/yarn)
+- **TypeScript**: 5.8.3 com configuração strict
+- **Navegação**: React Navigation 7.x com Strategy Pattern
 
 ---
 
-## 🏗️ Padrões Arquiteturais Obrigatórios
+## 🏗️ Arquitetura de Camadas
 
-### **Clean Architecture - Camadas Rigorosas**
-
-```
-📦 Domain Layer (Núcleo)
-├── Entities (Regras de negócio da igreja)
-├── Value Objects (CPF, Email, Money, etc.)
-└── Domain Services (Lógicas complexas)
-
-📦 Application Layer (Casos de Uso)
-├── Use Cases (1 por ação específica)
-├── Interfaces (Contratos)
-├── DTOs (Entrada/Saída)
-└── Policies (Validações de domínio)
-
-📦 Infrastructure Layer (Externo)
-├── Repositories (Supabase implementations)
-├── Services (Auth, Storage, Push)
-├── Config (Environment, Database)
-└── Adapters (Third-party integrations)
-
-📦 Presentation Layer (UI)
-├── Screens (Feature-based)
-├── Components (Atomic Design)
-├── Navigation (Strategy Pattern)
-└── State Management (Context/Zustand)
-```
-
-### **Dependências - Regra de Ouro**
-```
-Domain ← Application ← Infrastructure
-   ↑         ↑
-   └─── Presentation ←┘
-```
-
-**NUNCA quebrar esta hierarquia!**
-
----
-
-## 📱 Padrões React Native + TypeScript
-
-### **1. Componentes - Atomic Design**
-
+### **Domain Layer (Núcleo)**
 ```typescript
-// ✅ CORRETO - Componente atômico seguindo design system
-interface ButtonProps {
-  title: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
-  size?: 'small' | 'medium' | 'large';
-  loading?: boolean;
-  disabled?: boolean;
-  icon?: React.ReactNode;
+// ✅ CORRETO - Domain Layer
+export interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  phone?: string;
+  countryCode?: string;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  title,
-  onPress,
-  variant = 'primary',
-  size = 'medium',
-  loading = false,
-  disabled = false,
-  icon
-}) => {
-  // Implementação limpa e tipada seguindo design system
-};
+export interface UserLeadTracking {
+  id: string;
+  userId: string;
+  leadSource?: string;
+  leadMedium?: string;
+  leadCampaign?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  referrerUrl?: string;
+  landingPage?: string;
+  userAgent?: string;
+  ipAddress?: string;
+  deviceType?: string;
+  browser?: string;
+  platform?: string;
+  conversionType?: string;
+  conversionValue?: number;
+  trackingData?: Record<string, any>;
+  isPrimary: boolean;
+  trackedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ❌ INCORRETO - Domain Layer não pode importar de outras camadas
+import { SupabaseClient } from '@supabase/supabase-js'; // ❌
 ```
 
-### **2. Hooks Customizados - Lógica Reutilizável**
-
+### **Application Layer (Casos de Uso)**
 ```typescript
-// ✅ CORRETO - Hook para Use Case
-export const useCreateUser = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const createUser = useCallback(async (data: CreateUserDto) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const userRepository = container.get<IUserRepository>('UserRepository');
-      const useCase = new CreateUserUseCase(userRepository);
-      return await useCase.execute(data);
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-  
-  return { createUser, loading, error };
-};
-```
+// ✅ CORRETO - Application Layer
+export interface IUserRepository {
+  findById(id: string): Promise<User | null>;
+  create(userData: CreateUserData): Promise<User>;
+  update(id: string, userData: UpdateUserData): Promise<User>;
+  delete(id: string): Promise<void>;
+}
 
-### **3. Navigation - Strategy Pattern**
+export interface IUserLeadTrackingRepository {
+  findById(id: string): Promise<UserLeadTracking | null>;
+  findByUserId(userId: string): Promise<UserLeadTracking[]>;
+  create(trackingData: CreateUserLeadTrackingData): Promise<UserLeadTracking>;
+  getLeadAnalytics(filters?: AnalyticsFilters): Promise<LeadAnalytics[]>;
+  getPhoneAnalytics(): Promise<PhoneAnalytics[]>;
+  getConversionAnalytics(filters?: ConversionFilters): Promise<ConversionAnalytics[]>;
+}
 
-```typescript
-// ✅ CORRETO - Navegação baseada em papel
-export class NavigationStrategy {
-  static getStackForRole(role: UserRole): NavigationStack {
-    switch (role) {
-      case UserRole.ADMIN:
-        return AdminNavigationStack;
-      case UserRole.PASTOR:
-        return PastorNavigationStack;
-      case UserRole.MEMBER:
-        return MemberNavigationStack;
-      default:
-        return GuestNavigationStack;
-    }
+export class CreateUserLeadTrackingUseCase {
+  constructor(private userLeadTrackingRepository: IUserLeadTrackingRepository) {}
+  
+  async execute(request: CreateUserLeadTrackingRequest): Promise<CreateUserLeadTrackingResponse> {
+    // Lógica de negócio aqui
   }
 }
 ```
 
----
-
-## 🗄️ Padrões Supabase - Expertise Aplicada
-
-### **⚠️ REGRA CRÍTICA: VARIÁVEIS DE AMBIENTE**
-
-#### **🚨 NUNCA usar fallbacks de variáveis de ambiente**
+### **Infrastructure Layer (Implementações)**
 ```typescript
-// ❌ PROIBIDO - Fallbacks podem expor dados em produção
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://default.supabase.co';
-
-// ✅ CORRETO - Falha rápida sem fallback
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-if (!supabaseUrl) {
-  throw new Error('EXPO_PUBLIC_SUPABASE_URL é obrigatório');
-}
-```
-
-#### **📋 Processo de Setup Supabase Obrigatório:**
-
-**1. Criar projeto no Supabase:**
-```bash
-# 1. Ir para https://database.new
-# 2. Criar novo projeto: "igreja-oliveira-app"
-# 3. Escolher região próxima (South America - São Paulo)
-# 4. Definir senha forte para banco
-# 5. Aguardar provisionamento (~2min)
-```
-
-**2. Configurar variáveis no Expo:**
-```bash
-# Criar arquivo .env na raiz do projeto
-echo "EXPO_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co" > .env
-echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here" >> .env
-
-# Adicionar ao .gitignore (já feito)
-# .env já está no .gitignore
-```
-
-**3. Validação obrigatória:**
-```typescript
-// src/infrastructure/config/supabase.ts
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-
-// Validação rigorosa sem fallbacks
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Variáveis de ambiente Supabase são obrigatórias');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-```
-
-### **1. Row Level Security (RLS) - Hierarquia Igreja**
-
-```sql
--- ✅ CORRETO - RLS para hierarquia eclesiástica
-CREATE POLICY "usuarios_podem_ver_subordinados" ON users
-  FOR SELECT USING (
-    CASE auth.jwt() ->> 'user_role'
-      WHEN 'admin' THEN true
-      WHEN 'pastor' THEN role IN ('deacon', 'leader', 'member')
-      WHEN 'deacon' THEN role IN ('leader', 'member')
-      WHEN 'leader' THEN role = 'member'
-      ELSE id = auth.uid()
-    END
-  );
-```
-
-### **2. Repository Pattern - Supabase Optimized**
-
-```typescript
-// ✅ CORRETO - Repository com cache e offline
-export class SupabaseUserRepository implements IUserRepository {
-  private cache = new Map<string, User>();
+// ✅ CORRETO - Infrastructure Layer
+export class SupabaseUserLeadTrackingRepository implements IUserLeadTrackingRepository {
+  constructor(private supabase: SupabaseClient) {}
   
-  async findById(id: string): Promise<User | null> {
-    // 1. Verifica cache primeiro
-    if (this.cache.has(id)) {
-      return this.cache.get(id)!;
-    }
-    
-    // 2. Busca no Supabase com RLS automático
+  async create(trackingData: CreateUserLeadTrackingData): Promise<UserLeadTracking> {
+    const dbData = this.mapEntityToDatabase(trackingData);
     const { data, error } = await this.supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
+      .from('user_lead_tracking')
+      .insert(dbData)
+      .select()
+      .single();
     
-    if (error) throw new RepositoryError(error.message);
-    if (!data) return null;
+    if (error) throw error;
+    return this.mapDatabaseToEntity(data);
+  }
+  
+  async getLeadAnalytics(filters?: AnalyticsFilters): Promise<LeadAnalytics[]> {
+    let query = this.supabase.from('lead_analytics').select('*');
     
-    // 3. Converte para entidade de domínio
-    const user = UserMapper.toDomain(data);
+    if (filters?.leadSource) {
+      query = query.eq('lead_source', filters.leadSource);
+    }
     
-    // 4. Atualiza cache
-    this.cache.set(id, user);
+    const { data, error } = await query;
+    if (error) throw error;
     
-    return user;
+    return data.map(this.mapAnalyticsRecord);
   }
 }
 ```
 
----
-
-## 🎨 Padrões de Código - Qualidade Extrema
-
-### **⚠️ REGRA CRÍTICA: NUNCA USAR COMENTÁRIOS**
-
-#### **🚨 PROIBIDO: Comentários no código**
+### **Presentation Layer (UI)**
 ```typescript
-// ❌ PROIBIDO - Comentários no código
-// Este método busca usuários por email
-const findUserByEmail = (email: string) => {
-  // Validar email antes de buscar
-  if (!email) return null;
-  // Buscar no banco de dados
-  return userRepository.findByEmail(email);
+// ✅ CORRETO - Presentation Layer
+export const useLeadTracking = () => {
+  const trackingService = container.get<LeadTrackingService>('LeadTrackingService');
+  
+  const trackUserRegistration = useCallback(async (context: TrackingContext) => {
+    return trackingService.trackUserRegistration(context);
+  }, [trackingService]);
+  
+  return {
+    trackUserRegistration,
+    trackFirstLogin,
+    trackFirstDonation,
+    getPrimaryTracking,
+    isFirstLogin,
+    isFirstDonation
+  };
 };
 
-// ✅ CORRETO - Código auto-explicativo
-const findUserByEmail = (email: string): Promise<User | null> => {
-  if (!email) return Promise.resolve(null);
-  return userRepository.findByEmail(email);
+export const useTrackingOnMount = (userId: string, conversionType: 'registration' | 'first_login' | 'first_donation') => {
+  const { trackUserRegistration, trackFirstLogin, trackFirstDonation } = useLeadTracking();
+  
+  useEffect(() => {
+    const trackConversion = async () => {
+      try {
+        const deviceInfo = detectDeviceInfo();
+        const urlData = captureUrlTrackingData(window.location.href);
+        
+        const context: TrackingContext = {
+          userId,
+          ...urlData,
+          ...deviceInfo,
+          conversionType
+        };
+        
+        switch (conversionType) {
+          case 'registration':
+            await trackUserRegistration(context);
+            break;
+          case 'first_login':
+            const shouldTrackFirstLogin = await isFirstLogin(userId);
+            if (shouldTrackFirstLogin) {
+              await trackFirstLogin(context);
+            }
+            break;
+          case 'first_donation':
+            const shouldTrackFirstDonation = await isFirstDonation(userId);
+            if (shouldTrackFirstDonation) {
+              await trackFirstDonation(context);
+            }
+            break;
+        }
+      } catch (error) {
+        console.error('Error tracking conversion:', error);
+      }
+    };
+    
+    if (userId) {
+      trackConversion();
+    }
+  }, [userId, conversionType]);
 };
 ```
 
-#### **📋 Princípios de Código Limpo:**
-- **Self-documenting code**: Nomes descritivos eliminam necessidade de comentários
-- **Single Responsibility**: Funções pequenas e específicas
-- **Clear naming**: Variáveis e funções explicam sua intenção
-- **Type safety**: TypeScript fornece documentação via tipos
+---
 
-#### **🚫 Exceções (também proibidas):**
-- ❌ TODO comments
-- ❌ FIXME comments  
-- ❌ Comments explicando código
-- ❌ Commented out code
-- ❌ Documentation comments no código
+## 📊 Sistema de Tracking de Leads
 
-**Se precisar documentar, use arquivos .md separados!**
-
-### **1. Nomenclatura - Igreja Context**
-
-```typescript
-// ✅ CORRETO - Nomes específicos do domínio
-interface ChurchMemberDto {
-  fullName: string;           // Nome completo
-  membershipDate: Date;       // Data de membresia
-  baptismDate?: Date;         // Data do batismo
-  ministries: MinistryId[];   // Ministérios que participa
-  titheAmount?: MoneyValue;   // Valor do dízimo
-}
-
-// ✅ CORRETO - Use Cases específicos
-class RegisterNewMemberUseCase {
-  async execute(data: RegisterMemberDto): Promise<Member> {
-    // Validações específicas da igreja
-    await this.validateMembershipRequirements(data);
+### **1. Estrutura de Banco Escalável**
+```sql
+-- Tabela separada para tracking (não na users)
+CREATE TABLE public.user_lead_tracking (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     
-    // Lógica de negócio
-    const member = Member.create(data);
+    -- Primary tracking fields
+    lead_source VARCHAR(100), -- 'organic', 'referral', 'social_media', 'event', 'paid_ads'
+    lead_medium VARCHAR(100), -- 'website', 'whatsapp', 'instagram', 'facebook', 'google'
+    lead_campaign VARCHAR(100), -- Specific campaign name
     
-    return await this.memberRepository.save(member);
-  }
-}
+    -- UTM parameters (for detailed campaign tracking)
+    utm_source VARCHAR(100),
+    utm_medium VARCHAR(100), 
+    utm_campaign VARCHAR(100),
+    utm_content VARCHAR(100),
+    utm_term VARCHAR(100),
+    
+    -- Additional tracking data
+    referrer_url TEXT,
+    landing_page VARCHAR(500),
+    user_agent TEXT,
+    ip_address VARCHAR(45), -- IPv6 compatible
+    device_type VARCHAR(50), -- 'mobile', 'desktop', 'tablet'
+    browser VARCHAR(100),
+    platform VARCHAR(100), -- 'ios', 'android', 'web'
+    
+    -- Lead tracking
+    conversion_type VARCHAR(100), -- 'registration', 'first_login', 'lead_capture'
+    conversion_value DECIMAL(10,2), -- For tracking monetary conversions (future use)
+    
+    -- Metadata
+    tracking_data JSONB, -- Flexible field for additional tracking data
+    is_primary BOOLEAN DEFAULT false, -- Mark the primary/first tracking record
+    
+    -- Timestamps
+    tracked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
-### **2. Error Handling - Igreja Specific**
+### **2. Analytics Views**
+```sql
+-- Lead analytics view
+CREATE VIEW lead_analytics AS
+SELECT 
+    lt.lead_source,
+    lt.lead_medium,
+    lt.utm_source,
+    lt.utm_campaign,
+    lt.conversion_type,
+    COUNT(DISTINCT lt.user_id) as unique_users,
+    COUNT(*) as total_events,
+    COUNT(CASE WHEN lt.tracked_at >= NOW() - INTERVAL '30 days' THEN 1 END) as events_last_30_days,
+    COUNT(CASE WHEN lt.tracked_at >= NOW() - INTERVAL '7 days' THEN 1 END) as events_last_7_days,
+    SUM(lt.conversion_value) as total_conversion_value,
+    MIN(lt.tracked_at) as first_event_date,
+    MAX(lt.tracked_at) as last_event_date
+FROM public.user_lead_tracking lt
+GROUP BY lt.lead_source, lt.lead_medium, lt.utm_source, lt.utm_campaign, lt.conversion_type
+ORDER BY unique_users DESC;
 
-```typescript
-// ✅ CORRETO - Errors específicos do domínio
-export class ChurchDomainError extends Error {
-  constructor(message: string, public code: string) {
-    super(message);
-    this.name = 'ChurchDomainError';
-  }
-}
+-- Phone analytics view
+CREATE VIEW phone_analytics AS
+SELECT 
+    u.country_code,
+    COUNT(*) as total_users,
+    COUNT(CASE WHEN u.phone IS NOT NULL THEN 1 END) as users_with_phone,
+    ROUND(
+        (COUNT(CASE WHEN u.phone IS NOT NULL THEN 1 END) * 100.0 / COUNT(*)), 2
+    ) as phone_completion_rate
+FROM public.users u
+GROUP BY u.country_code
+ORDER BY total_users DESC;
 
-export class InsufficientPermissionError extends ChurchDomainError {
-  constructor(requiredRole: UserRole, currentRole: UserRole) {
-    super(
-      `Acesso negado. Necessário: ${requiredRole}, Atual: ${currentRole}`,
-      'INSUFFICIENT_PERMISSION'
+-- Conversion funnel analytics (focused on leads only)
+CREATE VIEW conversion_analytics AS
+SELECT 
+    lt.lead_source,
+    lt.lead_medium,
+    COUNT(CASE WHEN lt.conversion_type = 'registration' THEN 1 END) as registrations,
+    COUNT(CASE WHEN lt.conversion_type = 'first_login' THEN 1 END) as first_logins,
+    ROUND(
+        COUNT(CASE WHEN lt.conversion_type = 'first_login' THEN 1 END) * 100.0 
+        / NULLIF(COUNT(CASE WHEN lt.conversion_type = 'registration' THEN 1 END), 0), 2
+    ) as login_conversion_rate
+FROM public.user_lead_tracking lt
+WHERE lt.conversion_type IN ('registration', 'first_login')
+GROUP BY lt.lead_source, lt.lead_medium
+ORDER BY registrations DESC;
+```
+
+### **3. RLS Policies para Tracking**
+```sql
+-- Users can view their own tracking data
+CREATE POLICY "Users can view own tracking data" ON public.user_lead_tracking
+    FOR SELECT USING (auth.uid() = user_id);
+
+-- Only admins and pastors can view all tracking data (for analytics)
+CREATE POLICY "Admins and pastors can view all tracking data" ON public.user_lead_tracking
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM public.users 
+            WHERE id = auth.uid() 
+            AND role IN ('admin', 'pastor')
+        )
     );
-  }
-}
 
-export class TitheValidationError extends ChurchDomainError {
-  constructor(amount: number) {
-    super(
-      `Valor de dízimo inválido: R$ ${amount}. Deve ser maior que zero.`,
-      'INVALID_TITHE_AMOUNT'
+-- System can create tracking records (usually via backend/API)
+CREATE POLICY "System can create tracking records" ON public.user_lead_tracking
+    FOR INSERT WITH CHECK (true);
+
+-- Only admins can update/delete tracking records
+CREATE POLICY "Only admins can manage tracking records" ON public.user_lead_tracking
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM public.users 
+            WHERE id = auth.uid() 
+            AND role = 'admin'
+        )
     );
-  }
-}
 ```
 
-### **3. Validation - Igreja Rules**
-
-```typescript
-// ✅ CORRETO - Validações específicas da igreja
-export class ChurchValidators {
-  static validateCPF(cpf: string): boolean {
-    // Lógica de validação de CPF brasileiro
-    return CPFValidator.isValid(cpf);
-  }
-  
-  static validateMembershipDate(date: Date): boolean {
-    const today = new Date();
-    const minDate = new Date('1900-01-01');
-    return date >= minDate && date <= today;
-  }
-  
-  static validateTitheAmount(amount: number): boolean {
-    return amount > 0 && amount <= 1000000; // Limite razoável
-  }
-}
-```
-
-### **4. CEP Validation - Brasil Específico**
-
-```typescript
-// ✅ CORRETO - Value Object para CEP
-export class CEP {
-  private constructor(private readonly value: string) {}
-
-  static create(cep: string): CEP {
-    const cleanCep = this.cleanCEP(cep);
-    
-    if (!this.isValidFormat(cleanCep)) {
-      throw new Error('CEP deve ter 8 dígitos numéricos');
-    }
-
-    return new CEP(cleanCep);
-  }
-
-  getValue(): string {
-    return this.value;
-  }
-
-  getFormatted(): string {
-    return `${this.value.substring(0, 5)}-${this.value.substring(5)}`;
-  }
-
-  private static cleanCEP(cep: string): string {
-    return cep.replace(/\D/g, '');
-  }
-
-  private static isValidFormat(cep: string): boolean {
-    return /^\d{8}$/.test(cep);
-  }
-}
-```
-
----
-
-## 🧪 Testes - Cobertura Obrigatória
-
-### **1. Testes de Use Cases - 100%**
-
-```typescript
-// ✅ CORRETO - Teste de Use Case
-describe('CreateMemberUseCase', () => {
-  let useCase: CreateMemberUseCase;
-  let mockRepository: jest.Mocked<IMemberRepository>;
-  
-  beforeEach(() => {
-    mockRepository = createMockRepository();
-    useCase = new CreateMemberUseCase(mockRepository);
-  });
-  
-  it('should create member with valid data', async () => {
-    // Arrange
-    const memberData = createValidMemberData();
-    
-    // Act
-    const result = await useCase.execute(memberData);
-    
-    // Assert
-    expect(result).toBeDefined();
-    expect(result.email).toBe(memberData.email);
-    expect(mockRepository.save).toHaveBeenCalledTimes(1);
-  });
-  
-  it('should throw error for invalid CPF', async () => {
-    // Arrange
-    const invalidData = { ...createValidMemberData(), cpf: 'invalid' };
-    
-    // Act & Assert
-    await expect(useCase.execute(invalidData))
-      .rejects
-      .toThrow(InvalidCPFError);
-  });
-});
-```
-
-### **2. Testes de Repository - Supabase**
-
-```typescript
-// ✅ CORRETO - Teste de Repository
-describe('SupabaseMemberRepository', () => {
-  let repository: SupabaseMemberRepository;
-  let mockSupabase: jest.Mocked<SupabaseClient>;
-  
-  beforeEach(() => {
-    mockSupabase = createMockSupabaseClient();
-    repository = new SupabaseMemberRepository(mockSupabase);
-  });
-  
-  it('should find member by CPF', async () => {
-    // Arrange
-    const cpf = '12345678901';
-    const mockData = { id: '1', cpf, name: 'João' };
-    mockSupabase.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          maybeSingle: jest.fn().mockResolvedValue({ data: mockData, error: null })
-        })
-      })
-    } as any);
-    
-    // Act
-    const result = await repository.findByCPF(cpf);
-    
-    // Assert
-    expect(result).toBeDefined();
-    expect(result!.cpf.value).toBe(cpf);
-  });
-});
-```
-
----
-
-## 🔒 Segurança - Igreja Standards
-
-### **1. Autenticação Hierárquica**
-
-```typescript
-// ✅ CORRETO - Middleware de autenticação
-export class ChurchAuthMiddleware {
-  static requireRole(requiredRole: UserRole) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      const userRole = req.user?.role;
-      
-      if (!userRole) {
-        throw new UnauthorizedError('Token inválido');
-      }
-      
-      if (!this.hasPermission(userRole, requiredRole)) {
-        throw new ForbiddenError('Permissão insuficiente');
-      }
-      
-      next();
-    };
-  }
-  
-  private static hasPermission(userRole: UserRole, requiredRole: UserRole): boolean {
-    const hierarchy = {
-      [UserRole.ADMIN]: 4,
-      [UserRole.PASTOR]: 3,
-      [UserRole.DEACON]: 2,
-      [UserRole.LEADER]: 1,
-      [UserRole.MEMBER]: 0
-    };
-    
-    return hierarchy[userRole] >= hierarchy[requiredRole];
-  }
-}
-```
-
-### **2. Dados Sensíveis - Proteção**
-
-```typescript
-// ✅ CORRETO - Proteção de dados sensíveis
-export class SensitiveDataProtection {
-  static sanitizeUserForRole(user: User, viewerRole: UserRole): Partial<User> {
-    const baseData = {
-      id: user.id,
-      name: user.name,
-      role: user.role
-    };
-    
-    // Apenas admin e pastor podem ver dados pessoais completos
-    if (viewerRole === UserRole.ADMIN || viewerRole === UserRole.PASTOR) {
-      return {
-        ...baseData,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
-        cpf: user.cpf?.masked // CPF mascarado
-      };
-    }
-    
-    return baseData;
-  }
-}
-```
-
----
-
-## 📊 Performance - Igreja Scale
-
-### **1. Otimizações Obrigatórias**
-
-```typescript
-// ✅ CORRETO - Lazy loading e cache
-export class OptimizedMemberService {
-  private memberCache = new LRUCache<string, Member>(1000);
-  
-  // Lazy loading para listas grandes
-  async getMembersPage(page: number, size: number = 50): Promise<Member[]> {
-    const cacheKey = `members_${page}_${size}`;
-    
-    if (this.memberCache.has(cacheKey)) {
-      return this.memberCache.get(cacheKey)!;
-    }
-    
-    const members = await this.repository.findPaginated(page, size);
-    this.memberCache.set(cacheKey, members);
-    
-    return members;
-  }
-  
-  // Debounce para pesquisas
-  searchMembers = debounce(async (term: string) => {
-    return await this.repository.searchByTerm(term);
-  }, 300);
-}
-```
-
-### **2. Bundle Optimization**
-
-```typescript
-// ✅ CORRETO - Code splitting por feature
-const DonationsScreen = lazy(() => import('../screens/donations/DonationsScreen'));
-const MembersScreen = lazy(() => import('../screens/members/MembersScreen'));
-const ReportsScreen = lazy(() => import('../screens/reports/ReportsScreen'));
-
-// ✅ CORRETO - Barrel exports otimizados
-// Evitar import de tudo
-export { CreateMemberUseCase } from './CreateMemberUseCase';
-export { UpdateMemberUseCase } from './UpdateMemberUseCase';
-// Ao invés de export * from './index';
-```
-
----
-
-## 🚀 Comandos de Qualidade Obrigatórios
-
-### **⚠️ REGRA OBRIGATÓRIA: SEMPRE USE PNPM**
-- **NUNCA** use npm ou yarn
-- **SEMPRE** use pnpm para todos os comandos
-- **VALIDAR** package manager antes de executar comandos
-
-### **Pre-Commit Checklist**
-```bash
-# 1. Linting rigoroso
-pnpm run lint:strict
-
-# 2. Type checking
-pnpm run type-check
-
-# 3. Tests com coverage
-pnpm run test:coverage
-
-# 4. Build verification
-pnpm run build:verify
-
-# 5. Bundle size check
-pnpm run bundle:analyze
-```
-
-### **CI/CD Pipeline**
-```yaml
-# .github/workflows/quality.yml
-name: Quality Gates
-on: [push, pull_request]
-
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Lint
-        run: pnpm run lint:strict
-      
-      - name: Type Check
-        run: pnpm run type-check
-        
-      - name: Test Coverage
-        run: pnpm run test:coverage
-        
-      - name: Architecture Tests
-        run: pnpm run test:architecture
-        
-      - name: Bundle Size
-        run: pnpm run bundle:check
-```
-
----
-
-## 🎯 KPIs de Qualidade
-
-### **Métricas Obrigatórias**
-- **Cobertura de Testes**: ≥ 80%
-- **Type Coverage**: 100%
-- **Bundle Size**: < 10MB
-- **Load Time**: < 2s
-- **Crash Rate**: < 0.1%
-
-### **Code Quality**
-- **Cyclomatic Complexity**: < 10
-- **Maintainability Index**: > 80
-- **Technical Debt**: < 5%
-- **Duplication**: < 3%
-
-### **Performance**
-- **Time to Interactive**: < 3s
-- **First Contentful Paint**: < 1.5s
-- **Memory Usage**: < 200MB
-- **Battery Impact**: Minimal
-
----
-
-## ⚙️ Configuração do TypeScript (tsconfig.json)
-
-- **NUNCA** usar `extends: "expo/tsconfig.base"` a menos que o preset esteja instalado e seja realmente necessário.
-- Para projetos Expo + TypeScript, utilize o seguinte padrão:
-
-```json
-{
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "jsx": "react-native",
-    "strict": true,
-    "moduleResolution": "node",
-    "allowJs": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true
-  },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js"
-  ]
-}
-```
-
----
-
-**📋 Documento criado em**: 2025-01-14  
-**🔄 Próxima revisão**: Após cada sprint  
-**📊 Versão**: 1.0  
-**👤 Responsável**: João Zanardi (jonh-dev)
-
-**🎯 Objetivo**: Garantir código de qualidade enterprise para sistema de gestão eclesiástica escalável e mantível. 
+### **4. Uso Interno da Igreja**
+- **Análise de engajamento**: Como os membros descobrem e usam o app
+- **Otimização de comunicação**: Quais canais são mais efetivos
+- **Relatórios para liderança**: Métricas de crescimento da comunidade
+- **Automação futura**: Base para comunicações personalizadas 

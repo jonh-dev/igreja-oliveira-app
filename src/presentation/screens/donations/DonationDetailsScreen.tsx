@@ -11,7 +11,12 @@ import {
 } from 'react-native';
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
-import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+} from '../../components/shared/design-system';
 
 interface Donation {
   id: string;
@@ -48,30 +53,29 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
 
   const loadDonationDetails = async () => {
     setLoading(true);
-    
+
     try {
       // Simular carregamento de dados - será substituído por chamada real ao Supabase
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const mockDonation: Donation = {
         id: donationId,
         type: 'tithe',
         amount: 500,
         date: '15/01/2025',
-        description: 'Dízimo do mês de janeiro - Contribuição regular para a obra',
+        description:
+          'Dízimo do mês de janeiro - Contribuição regular para a obra',
         userId: 'user1',
         userName: 'João Silva',
         createdAt: '15/01/2025 10:30:00',
         updatedAt: '15/01/2025 10:30:00',
       };
-      
+
       setDonation(mockDonation);
     } catch (error) {
-      Alert.alert(
-        'Erro',
-        'Erro ao carregar detalhes da doação.',
-        [{ text: 'OK', onPress: onNavigateBack }]
-      );
+      Alert.alert('Erro', 'Erro ao carregar detalhes da doação.', [
+        { text: 'OK', onPress: onNavigateBack },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -94,27 +98,21 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
 
   const confirmDelete = async () => {
     setDeleting(true);
-    
+
     try {
       // Simular exclusão - será substituído por chamada real ao Supabase
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      Alert.alert(
-        'Sucesso!',
-        'Doação excluída com sucesso.',
-        [
-          {
-            text: 'OK',
-            onPress: onDonationDeleted,
-          },
-        ]
-      );
+
+      Alert.alert('Sucesso!', 'Doação excluída com sucesso.', [
+        {
+          text: 'OK',
+          onPress: onDonationDeleted,
+        },
+      ]);
     } catch (error) {
-      Alert.alert(
-        'Erro',
-        'Erro ao excluir doação. Tente novamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Erro', 'Erro ao excluir doação. Tente novamente.', [
+        { text: 'OK' },
+      ]);
     } finally {
       setDeleting(false);
     }
@@ -169,7 +167,7 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
           <Text style={styles.headerTitle}>Detalhes da Doação</Text>
           <View style={styles.headerSpacer} />
         </View>
-        
+
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Carregando detalhes...</Text>
         </View>
@@ -187,7 +185,7 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
           <Text style={styles.headerTitle}>Detalhes da Doação</Text>
           <View style={styles.headerSpacer} />
         </View>
-        
+
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Doação não encontrada</Text>
         </View>
@@ -202,7 +200,10 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Detalhes da Doação</Text>
-        <TouchableOpacity style={styles.editButton} onPress={() => onNavigateToEdit(donation.id)}>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => onNavigateToEdit(donation.id)}
+        >
           <Text style={styles.editButtonText}>✏️</Text>
         </TouchableOpacity>
       </View>
@@ -211,7 +212,12 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
         {/* Donation Type Card */}
         <Card variant="elevated" style={styles.typeCard}>
           <View style={styles.typeHeader}>
-            <Text style={[styles.typeLabel, { color: getDonationTypeColor(donation.type) }]}>
+            <Text
+              style={[
+                styles.typeLabel,
+                { color: getDonationTypeColor(donation.type) },
+              ]}
+            >
               {getDonationTypeLabel(donation.type)}
             </Text>
             <Text style={styles.typeDescription}>
@@ -223,29 +229,31 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
         {/* Amount Card */}
         <Card variant="elevated" style={styles.amountCard}>
           <Text style={styles.amountLabel}>Valor da Doação</Text>
-          <Text style={styles.amountValue}>R$ {donation.amount.toLocaleString()}</Text>
+          <Text style={styles.amountValue}>
+            R$ {donation.amount.toLocaleString()}
+          </Text>
         </Card>
 
         {/* Details Card */}
         <Card variant="elevated" style={styles.detailsCard}>
           <Text style={styles.sectionTitle}>Informações da Doação</Text>
-          
+
           <View style={styles.detailsList}>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Data:</Text>
               <Text style={styles.detailValue}>{donation.date}</Text>
             </View>
-            
+
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Doador:</Text>
               <Text style={styles.detailValue}>{donation.userName}</Text>
             </View>
-            
+
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Registrado em:</Text>
               <Text style={styles.detailValue}>{donation.createdAt}</Text>
             </View>
-            
+
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Última atualização:</Text>
               <Text style={styles.detailValue}>{donation.updatedAt}</Text>
@@ -264,7 +272,7 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
         {/* Actions Card */}
         <Card variant="elevated" style={styles.actionsCard}>
           <Text style={styles.sectionTitle}>Ações</Text>
-          
+
           <View style={styles.actionsContainer}>
             <Button
               title="Editar Doação"
@@ -273,7 +281,7 @@ export const DonationDetailsScreen: React.FC<DonationDetailsScreenProps> = ({
               size="medium"
               style={styles.actionButton}
             />
-            
+
             <Button
               title="Excluir Doação"
               onPress={handleDelete}
@@ -437,4 +445,4 @@ const styles = StyleSheet.create({
   actionButton: {
     width: '100%',
   },
-}); 
+});

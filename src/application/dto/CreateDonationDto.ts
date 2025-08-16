@@ -1,4 +1,10 @@
-import { DonationType, DonationSource, CountingMethod, BillCount, CoinCount } from '../../domain/entities/Donation';
+import {
+  DonationType,
+  DonationSource,
+  CountingMethod,
+  BillCount,
+  CoinCount,
+} from '../../domain/entities/Donation';
 
 export interface CreateDonationDto {
   type: DonationType;
@@ -8,7 +14,7 @@ export interface CreateDonationDto {
   userId?: string; // Para dízimos e doações especiais
   description?: string;
   registeredBy: string;
-  
+
   // Para doações de culto
   cultoData?: {
     billCounts: BillCount[];
@@ -16,7 +22,7 @@ export interface CreateDonationDto {
     countingMethod: CountingMethod;
     notes?: string;
   };
-  
+
   // Para doações eletrônicas
   electronicData?: {
     transactionId: string;

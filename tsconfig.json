@@ -10,7 +10,8 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["react", "react-native", "jest"]
   },
   "exclude": [
     "node_modules",

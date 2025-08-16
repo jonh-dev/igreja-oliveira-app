@@ -3,7 +3,7 @@ export class CEP {
 
   static create(cep: string): CEP {
     const cleanCep = this.cleanCEP(cep);
-    
+
     if (!this.isValidFormat(cleanCep)) {
       throw new Error('CEP deve ter 8 dígitos numéricos');
     }

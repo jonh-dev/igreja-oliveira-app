@@ -1,4 +1,8 @@
-import { Address, CreateAddressData, UpdateAddressData } from '../../../domain/entities/Address';
+import {
+  Address,
+  CreateAddressData,
+  UpdateAddressData,
+} from '../../../domain/entities/Address';
 
 export interface IAddressRepository {
   findById(id: string): Promise<Address | null>;

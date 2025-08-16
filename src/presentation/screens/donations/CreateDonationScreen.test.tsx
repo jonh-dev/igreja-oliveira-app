@@ -1,16 +1,30 @@
-import { DonationType, CountingMethod, BillCount, CoinCount } from '../../../domain/entities/Donation';
+import {
+  DonationType,
+  CountingMethod,
+  BillCount,
+  CoinCount,
+} from '../../../domain/entities/Donation';
 
 describe('CreateDonationScreen Logic', () => {
-  const calculateTotalFromCounts = (billCounts: BillCount[], coinCounts: CoinCount[]): number => {
-    const billTotal = billCounts.reduce((sum, bill) => sum + (bill.value * bill.count), 0);
-    const coinTotal = coinCounts.reduce((sum, coin) => sum + (coin.value * coin.count), 0);
+  const calculateTotalFromCounts = (
+    billCounts: BillCount[],
+    coinCounts: CoinCount[]
+  ): number => {
+    const billTotal = billCounts.reduce(
+      (sum, bill) => sum + bill.value * bill.count,
+      0
+    );
+    const coinTotal = coinCounts.reduce(
+      (sum, coin) => sum + coin.value * coin.count,
+      0
+    );
     return billTotal + coinTotal;
   };
 
   const formatCurrency = (value: string): string => {
     const numericValue = value.replace(/[^\d]/g, '');
     if (numericValue === '') return '';
-    
+
     const floatValue = parseFloat(numericValue) / 100;
     return floatValue.toLocaleString('pt-BR', {
       style: 'currency',
@@ -33,7 +47,9 @@ describe('CreateDonationScreen Logic', () => {
     if (!amount.trim()) {
       errors.amount = 'Valor é obrigatório';
     } else {
-      const amountValue = parseFloat(amount.replace(/[^\d,]/g, '').replace(',', '.'));
+      const amountValue = parseFloat(
+        amount.replace(/[^\d,]/g, '').replace(',', '.')
+      );
       if (isNaN(amountValue) || amountValue <= 0) {
         errors.amount = 'Valor deve ser maior que zero';
       }
@@ -69,11 +85,11 @@ describe('CreateDonationScreen Logic', () => {
       const billCounts: BillCount[] = [
         { value: 100, count: 2 },
         { value: 50, count: 1 },
-        { value: 20, count: 3 }
+        { value: 20, count: 3 },
       ];
       const coinCounts: CoinCount[] = [
         { value: 1, count: 5 },
-        { value: 0.5, count: 2 }
+        { value: 0.5, count: 2 },
       ];
 
       const total = calculateTotalFromCounts(billCounts, coinCounts);
@@ -88,7 +104,7 @@ describe('CreateDonationScreen Logic', () => {
     it('should handle only bills', () => {
       const billCounts: BillCount[] = [
         { value: 200, count: 1 },
-        { value: 100, count: 2 }
+        { value: 100, count: 2 },
       ];
 
       const total = calculateTotalFromCounts(billCounts, []);
@@ -98,7 +114,7 @@ describe('CreateDonationScreen Logic', () => {
     it('should handle only coins', () => {
       const coinCounts: CoinCount[] = [
         { value: 1, count: 10 },
-        { value: 0.25, count: 4 }
+        { value: 0.25, count: 4 },
       ];
 
       const total = calculateTotalFromCounts([], coinCounts);
@@ -124,57 +140,121 @@ describe('CreateDonationScreen Logic', () => {
   describe('validateForm', () => {
     it('should validate required fields', () => {
       const errors = validateForm('', '', 'culto', '', 'total', [], []);
-      
+
       expect(errors.amount).toBe('Valor é obrigatório');
       expect(errors.date).toBe('Data é obrigatória');
     });
 
     it('should validate amount format', () => {
-      const errors = validateForm('0', '15/01/2025', 'culto', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '0',
+        '15/01/2025',
+        'culto',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(errors.amount).toBe('Valor deve ser maior que zero');
     });
 
     it('should validate date format', () => {
-      const errors = validateForm('100', 'invalid-date', 'culto', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '100',
+        'invalid-date',
+        'culto',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(errors.date).toBe('Data deve estar no formato DD/MM/AAAA');
     });
 
     it('should validate user ID for tithe and special donations', () => {
-      const errors = validateForm('100', '15/01/2025', 'tithe', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'tithe',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(errors.userId).toBe('Identificação do doador é obrigatória');
     });
 
     it('should not require user ID for culto donations', () => {
-      const errors = validateForm('100', '15/01/2025', 'culto', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'culto',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(errors.userId).toBeUndefined();
     });
 
     it('should validate counting for detailed culto donations', () => {
-      const errors = validateForm('100', '15/01/2025', 'culto', '', 'detailed', [], []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'culto',
+        '',
+        'detailed',
+        [],
+        []
+      );
+
       expect(errors.counting).toBe('Adicione pelo menos uma cédula ou moeda');
     });
 
     it('should not validate counting for total method', () => {
-      const errors = validateForm('100', '15/01/2025', 'culto', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'culto',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(errors.counting).toBeUndefined();
     });
 
     it('should pass validation with valid data', () => {
-      const errors = validateForm('100', '15/01/2025', 'culto', '', 'total', [], []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'culto',
+        '',
+        'total',
+        [],
+        []
+      );
+
       expect(Object.keys(errors)).toHaveLength(0);
     });
 
     it('should pass validation with detailed counting', () => {
       const billCounts: BillCount[] = [{ value: 100, count: 1 }];
-      const errors = validateForm('100', '15/01/2025', 'culto', '', 'detailed', billCounts, []);
-      
+      const errors = validateForm(
+        '100',
+        '15/01/2025',
+        'culto',
+        '',
+        'detailed',
+        billCounts,
+        []
+      );
+
       expect(errors.counting).toBeUndefined();
     });
   });
@@ -223,4 +303,4 @@ describe('CreateDonationScreen Logic', () => {
       expect(coinValues[5]).toBe(0.01);
     });
   });
-}); 
+});

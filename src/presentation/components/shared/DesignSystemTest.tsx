@@ -1,12 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from './design-system';
 
 export const DesignSystemTest: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Design System Test</Text>
-      
+
       <View style={styles.colorTest}>
         <View style={[styles.colorBox, { backgroundColor: Colors.primary }]}>
           <Text style={styles.colorText}>Primary</Text>
@@ -18,14 +24,16 @@ export const DesignSystemTest: React.FC = () => {
           <Text style={styles.colorText}>Accent</Text>
         </View>
       </View>
-      
+
       <View style={styles.typographyTest}>
         <Text style={styles.textXs}>Text XS - {Typography.fontSizeXs}px</Text>
         <Text style={styles.textSm}>Text SM - {Typography.fontSizeSm}px</Text>
-        <Text style={styles.textBase}>Text Base - {Typography.fontSizeBase}px</Text>
+        <Text style={styles.textBase}>
+          Text Base - {Typography.fontSizeBase}px
+        </Text>
         <Text style={styles.textLg}>Text LG - {Typography.fontSizeLg}px</Text>
       </View>
-      
+
       <View style={styles.spacingTest}>
         <View style={[styles.spacingBox, { margin: Spacing.xs }]}>
           <Text>Spacing XS</Text>
@@ -105,4 +113,4 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     ...Shadows.sm,
   },
-}); 
+});

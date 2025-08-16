@@ -12,10 +12,23 @@ import {
 import { Card } from '../../components/shared/Card';
 import { Button } from '../../components/shared/Button';
 import { Input } from '../../components/shared/Input';
-import { Colors, Typography, Spacing, BorderRadius } from '../../components/shared/design-system';
-import { DonationType, CountingMethod, BillCount, CoinCount } from '../../../domain/entities/Donation';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+} from '../../components/shared/design-system';
+import {
+  DonationType,
+  CountingMethod,
+  BillCount,
+  CoinCount,
+} from '../../../domain/entities/Donation';
 import { CreateDonationUseCase } from '../../../application/use-cases/donation/CreateDonationUseCase';
-import { CreateCultoDonationDto, CreateManualDonationDto } from '../../../application/dto/CreateDonationDto';
+import {
+  CreateCultoDonationDto,
+  CreateManualDonationDto,
+} from '../../../application/dto/CreateDonationDto';
 import { container } from '../../../infrastructure/config/container';
 import { IDonationRepository } from '../../../application/interfaces/repositories/IDonationRepository';
 
@@ -37,53 +50,89 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
   const [userId, setUserId] = useState('');
-  const [countingMethod, setCountingMethod] = useState<CountingMethod>('detailed');
+  const [countingMethod, setCountingMethod] =
+    useState<CountingMethod>('detailed');
   const [billCounts, setBillCounts] = useState<BillCount[]>([]);
   const [coinCounts, setCoinCounts] = useState<CoinCount[]>([]);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
+  const validateAmount = (): string | null => {
     if (!amount.trim()) {
-      newErrors.amount = 'Valor é obrigatório';
-    } else {
-      const amountValue = parseFloat(amount.replace(/[^\d,]/g, '').replace(',', '.'));
-      if (isNaN(amountValue) || amountValue <= 0) {
-        newErrors.amount = 'Valor deve ser maior que zero';
-      }
+      return 'Valor é obrigatório';
     }
+    
+    const amountValue = parseFloat(
+      amount.replace(/[^\d,]/g, '').replace(',', '.')
+    );
+    
+    if (isNaN(amountValue) || amountValue <= 0) {
+      return 'Valor deve ser maior que zero';
+    }
+    
+    return null;
+  };
 
+  const validateDate = (): string | null => {
     if (!date.trim()) {
-      newErrors.date = 'Data é obrigatória';
-    } else {
-      const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
-      if (!dateRegex.test(date)) {
-        newErrors.date = 'Data deve estar no formato DD/MM/AAAA';
-      }
+      return 'Data é obrigatória';
     }
+    
+    const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (!dateRegex.test(date)) {
+      return 'Data deve estar no formato DD/MM/AAAA';
+    }
+    
+    return null;
+  };
 
+  const validateUserId = (): string | null => {
     if (donationType === 'tithe' || donationType === 'special') {
       if (!userId.trim()) {
-        newErrors.userId = 'Identificação do doador é obrigatória';
+        return 'Identificação do doador é obrigatória';
       }
     }
+    return null;
+  };
 
+  const validateCounting = (): string | null => {
     if (donationType === 'culto' && countingMethod === 'detailed') {
       const totalFromCounts = calculateTotalFromCounts();
       if (totalFromCounts === 0) {
-        newErrors.counting = 'Adicione pelo menos uma cédula ou moeda';
+        return 'Adicione pelo menos uma cédula ou moeda';
       }
     }
+    return null;
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    const amountError = validateAmount();
+    if (amountError) newErrors.amount = amountError;
+
+    const dateError = validateDate();
+    if (dateError) newErrors.date = dateError;
+
+    const userIdError = validateUserId();
+    if (userIdError) newErrors.userId = userIdError;
+
+    const countingError = validateCounting();
+    if (countingError) newErrors.counting = countingError;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const calculateTotalFromCounts = () => {
-    const billTotal = billCounts.reduce((sum, bill) => sum + (bill.value * bill.count), 0);
-    const coinTotal = coinCounts.reduce((sum, coin) => sum + (coin.value * coin.count), 0);
+    const billTotal = billCounts.reduce(
+      (sum, bill) => sum + bill.value * bill.count,
+      0
+    );
+    const coinTotal = coinCounts.reduce(
+      (sum, coin) => sum + coin.value * coin.count,
+      0
+    );
     return billTotal + coinTotal;
   };
 
@@ -95,7 +144,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   const handleBillCountChange = (value: number, count: number) => {
     const newBillCounts = [...billCounts];
     const existingIndex = newBillCounts.findIndex(bill => bill.value === value);
-    
+
     if (count === 0) {
       if (existingIndex !== -1) {
         newBillCounts.splice(existingIndex, 1);
@@ -107,9 +156,9 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         newBillCounts.push({ value, count });
       }
     }
-    
+
     setBillCounts(newBillCounts);
-    
+
     if (countingMethod === 'detailed') {
       const total = calculateTotalFromCounts();
       setAmount(formatCurrency(total.toString()));
@@ -119,7 +168,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   const handleCoinCountChange = (value: number, count: number) => {
     const newCoinCounts = [...coinCounts];
     const existingIndex = newCoinCounts.findIndex(coin => coin.value === value);
-    
+
     if (count === 0) {
       if (existingIndex !== -1) {
         newCoinCounts.splice(existingIndex, 1);
@@ -131,9 +180,9 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         newCoinCounts.push({ value, count });
       }
     }
-    
+
     setCoinCounts(newCoinCounts);
-    
+
     if (countingMethod === 'detailed') {
       const total = calculateTotalFromCounts();
       setAmount(formatCurrency(total.toString()));
@@ -148,8 +197,11 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
     setLoading(true);
 
     try {
-      const donationRepository = container.get<IDonationRepository>('DonationRepository');
-      const createDonationUseCase = new CreateDonationUseCase(donationRepository);
+      const donationRepository =
+        container.get<IDonationRepository>('DonationRepository');
+      const createDonationUseCase = new CreateDonationUseCase(
+        donationRepository
+      );
 
       const registeredBy = 'user_current_id'; // TODO: Obter do contexto de auth
       const amountValue = parseAmount(amount);
@@ -180,25 +232,19 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         await createDonationUseCase.executeManualDonation(manualDto);
       }
 
-      Alert.alert(
-        'Sucesso!',
-        'Doação registrada com sucesso.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              onDonationCreated();
-            },
+      Alert.alert('Sucesso!', 'Doação registrada com sucesso.', [
+        {
+          text: 'OK',
+          onPress: () => {
+            onDonationCreated();
           },
-        ]
-      );
+        },
+      ]);
     } catch (error) {
       console.error('Erro ao registrar doação:', error);
-      Alert.alert(
-        'Erro',
-        'Erro ao registrar doação. Tente novamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Erro', 'Erro ao registrar doação. Tente novamente.', [
+        { text: 'OK' },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -229,7 +275,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
   const formatCurrency = (value: string) => {
     const numericValue = value.replace(/[^\d]/g, '');
     if (numericValue === '') return '';
-    
+
     const floatValue = parseFloat(numericValue) / 100;
     return floatValue.toLocaleString('pt-BR', {
       style: 'currency',
@@ -250,20 +296,24 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
     <TouchableOpacity
       style={[
         styles.typeButton,
-        donationType === type && styles.typeButtonActive
+        donationType === type && styles.typeButtonActive,
       ]}
       onPress={() => setDonationType(type)}
     >
-      <Text style={[
-        styles.typeButtonText,
-        donationType === type && styles.typeButtonTextActive
-      ]}>
+      <Text
+        style={[
+          styles.typeButtonText,
+          donationType === type && styles.typeButtonTextActive,
+        ]}
+      >
         {getDonationTypeLabel(type)}
       </Text>
-      <Text style={[
-        styles.typeButtonDescription,
-        donationType === type && styles.typeButtonDescriptionActive
-      ]}>
+      <Text
+        style={[
+          styles.typeButtonDescription,
+          donationType === type && styles.typeButtonDescriptionActive,
+        ]}
+      >
         {getDonationTypeDescription(type)}
       </Text>
     </TouchableOpacity>
@@ -276,28 +326,32 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         <TouchableOpacity
           style={[
             styles.toggleButton,
-            countingMethod === 'detailed' && styles.toggleButtonActive
+            countingMethod === 'detailed' && styles.toggleButtonActive,
           ]}
           onPress={() => setCountingMethod('detailed')}
         >
-          <Text style={[
-            styles.toggleButtonText,
-            countingMethod === 'detailed' && styles.toggleButtonTextActive
-          ]}>
+          <Text
+            style={[
+              styles.toggleButtonText,
+              countingMethod === 'detailed' && styles.toggleButtonTextActive,
+            ]}
+          >
             📊 Detalhada
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.toggleButton,
-            countingMethod === 'total' && styles.toggleButtonActive
+            countingMethod === 'total' && styles.toggleButtonActive,
           ]}
           onPress={() => setCountingMethod('total')}
         >
-          <Text style={[
-            styles.toggleButtonText,
-            countingMethod === 'total' && styles.toggleButtonTextActive
-          ]}>
+          <Text
+            style={[
+              styles.toggleButtonText,
+              countingMethod === 'total' && styles.toggleButtonTextActive,
+            ]}
+          >
             💰 Valor Total
           </Text>
         </TouchableOpacity>
@@ -310,14 +364,17 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
       <Text style={styles.countingTitle}>Cédulas</Text>
       <View style={styles.countingGrid}>
         {BILL_VALUES.map(value => {
-          const billCount = billCounts.find(bill => bill.value === value)?.count || 0;
+          const billCount =
+            billCounts.find(bill => bill.value === value)?.count || 0;
           return (
             <View key={value} style={styles.countingItem}>
               <Text style={styles.countingItemLabel}>R$ {value}</Text>
               <View style={styles.countingControls}>
                 <TouchableOpacity
                   style={styles.countingButton}
-                  onPress={() => handleBillCountChange(value, Math.max(0, billCount - 1))}
+                  onPress={() =>
+                    handleBillCountChange(value, Math.max(0, billCount - 1))
+                  }
                 >
                   <Text style={styles.countingButtonText}>-</Text>
                 </TouchableOpacity>
@@ -341,14 +398,19 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
       <Text style={styles.countingTitle}>Moedas</Text>
       <View style={styles.countingGrid}>
         {COIN_VALUES.map(value => {
-          const coinCount = coinCounts.find(coin => coin.value === value)?.count || 0;
+          const coinCount =
+            coinCounts.find(coin => coin.value === value)?.count || 0;
           return (
             <View key={value} style={styles.countingItem}>
-              <Text style={styles.countingItemLabel}>R$ {value.toFixed(2)}</Text>
+              <Text style={styles.countingItemLabel}>
+                R$ {value.toFixed(2)}
+              </Text>
               <View style={styles.countingControls}>
                 <TouchableOpacity
                   style={styles.countingButton}
-                  onPress={() => handleCoinCountChange(value, Math.max(0, coinCount - 1))}
+                  onPress={() =>
+                    handleCoinCountChange(value, Math.max(0, coinCount - 1))
+                  }
                 >
                   <Text style={styles.countingButtonText}>-</Text>
                 </TouchableOpacity>
@@ -384,7 +446,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
           <Text style={styles.sectionSubtitle}>
             Selecione o tipo de contribuição que deseja registrar
           </Text>
-          
+
           <View style={styles.typeButtonsContainer}>
             {renderTypeButton('culto')}
             {renderTypeButton('tithe')}
@@ -406,10 +468,10 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
             <Text style={styles.sectionSubtitle}>
               Conte as cédulas e moedas coletadas
             </Text>
-            
+
             {renderBillCounting()}
             {renderCoinCounting()}
-            
+
             <View style={styles.totalSection}>
               <Text style={styles.totalLabel}>Total Calculado:</Text>
               <Text style={styles.totalValue}>
@@ -422,7 +484,7 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         {/* Donation Details */}
         <Card variant="elevated" style={styles.detailsCard}>
           <Text style={styles.sectionTitle}>Detalhes da Doação</Text>
-          
+
           <View style={styles.formContainer}>
             <Input
               label="Valor (R$)"
@@ -485,34 +547,33 @@ export const CreateDonationScreen: React.FC<CreateDonationScreenProps> = ({
         {/* Summary */}
         <Card variant="elevated" style={styles.summaryCard}>
           <Text style={styles.sectionTitle}>Resumo</Text>
-          
+
           <View style={styles.summaryContent}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Tipo:</Text>
-              <Text style={styles.summaryValue}>{getDonationTypeLabel(donationType)}</Text>
+              <Text style={styles.summaryValue}>
+                {getDonationTypeLabel(donationType)}
+              </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Valor:</Text>
-              <Text style={styles.summaryValue}>
-                {amount || 'R$ 0,00'}
-              </Text>
+              <Text style={styles.summaryValue}>{amount || 'R$ 0,00'}</Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Data:</Text>
-              <Text style={styles.summaryValue}>
-                {date || 'Não informada'}
-              </Text>
+              <Text style={styles.summaryValue}>{date || 'Não informada'}</Text>
             </View>
-            
-            {(donationType === 'tithe' || donationType === 'special') && userId && (
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Doador:</Text>
-                <Text style={styles.summaryValue}>{userId}</Text>
-              </View>
-            )}
-            
+
+            {(donationType === 'tithe' || donationType === 'special') &&
+              userId && (
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Doador:</Text>
+                  <Text style={styles.summaryValue}>{userId}</Text>
+                </View>
+              )}
+
             {description && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Descrição:</Text>
@@ -782,4 +843,4 @@ const styles = StyleSheet.create({
   submitButton: {
     width: '100%',
   },
-}); 
+});

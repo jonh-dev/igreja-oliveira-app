@@ -23,11 +23,11 @@ export class NavigationStrategy {
             'MembersManagement',
             'DonationsManagement',
             'Reports',
-            'Settings'
+            'Settings',
           ],
-          initialRoute: 'AdminDashboard'
+          initialRoute: 'AdminDashboard',
         };
-        
+
       case UserRole.PASTOR:
         return {
           name: 'PastorStack',
@@ -36,11 +36,11 @@ export class NavigationStrategy {
             'MembersView',
             'DonationsView',
             'Ministries',
-            'Settings'
+            'Settings',
           ],
-          initialRoute: 'PastorDashboard'
+          initialRoute: 'PastorDashboard',
         };
-        
+
       case UserRole.DEACON:
         return {
           name: 'DeaconStack',
@@ -49,11 +49,11 @@ export class NavigationStrategy {
             'MembersView',
             'DonationsView',
             'Ministries',
-            'Settings'
+            'Settings',
           ],
-          initialRoute: 'DeaconDashboard'
+          initialRoute: 'DeaconDashboard',
         };
-        
+
       case UserRole.LEADER:
         return {
           name: 'LeaderStack',
@@ -61,32 +61,23 @@ export class NavigationStrategy {
             'LeaderDashboard',
             'MembersView',
             'DonationsView',
-            'Settings'
+            'Settings',
           ],
-          initialRoute: 'LeaderDashboard'
+          initialRoute: 'LeaderDashboard',
         };
-        
+
       case UserRole.MEMBER:
         return {
           name: 'MemberStack',
-          screens: [
-            'MemberDashboard',
-            'MyDonations',
-            'MyProfile',
-            'Events'
-          ],
-          initialRoute: 'MemberDashboard'
+          screens: ['MemberDashboard', 'MyDonations', 'MyProfile', 'Events'],
+          initialRoute: 'MemberDashboard',
         };
-        
+
       default:
         return {
           name: 'GuestStack',
-          screens: [
-            'Login',
-            'Register',
-            'ForgotPassword'
-          ],
-          initialRoute: 'Login'
+          screens: ['Login', 'Register', 'ForgotPassword'],
+          initialRoute: 'Login',
         };
     }
   }
@@ -97,33 +88,73 @@ export class NavigationStrategy {
       [UserRole.PASTOR]: 3,
       [UserRole.DEACON]: 2,
       [UserRole.LEADER]: 1,
-      [UserRole.MEMBER]: 0
+      [UserRole.MEMBER]: 0,
     };
-    
+
     return hierarchy[userRole] >= hierarchy[requiredRole];
   }
 
   static canAccessScreen(userRole: UserRole, screenName: string): boolean {
-    const adminScreens = ['AdminDashboard', 'MembersManagement', 'DonationsManagement', 'Reports'];
-    const pastorScreens = ['PastorDashboard', 'MembersView', 'DonationsView', 'Ministries'];
-    const deaconScreens = ['DeaconDashboard', 'MembersView', 'DonationsView', 'Ministries'];
+    const adminScreens = [
+      'AdminDashboard',
+      'MembersManagement',
+      'DonationsManagement',
+      'Reports',
+    ];
+    const pastorScreens = [
+      'PastorDashboard',
+      'MembersView',
+      'DonationsView',
+      'Ministries',
+    ];
+    const deaconScreens = [
+      'DeaconDashboard',
+      'MembersView',
+      'DonationsView',
+      'Ministries',
+    ];
     const leaderScreens = ['LeaderDashboard', 'MembersView', 'DonationsView'];
-    const memberScreens = ['MemberDashboard', 'MyDonations', 'MyProfile', 'Events'];
+    const memberScreens = [
+      'MemberDashboard',
+      'MyDonations',
+      'MyProfile',
+      'Events',
+    ];
     const guestScreens = ['Login', 'Register', 'ForgotPassword'];
 
     switch (userRole) {
       case UserRole.ADMIN:
-        return [...adminScreens, ...pastorScreens, ...deaconScreens, ...leaderScreens, ...memberScreens, ...guestScreens].includes(screenName);
+        return [
+          ...adminScreens,
+          ...pastorScreens,
+          ...deaconScreens,
+          ...leaderScreens,
+          ...memberScreens,
+          ...guestScreens,
+        ].includes(screenName);
       case UserRole.PASTOR:
-        return [...pastorScreens, ...deaconScreens, ...leaderScreens, ...memberScreens, ...guestScreens].includes(screenName);
+        return [
+          ...pastorScreens,
+          ...deaconScreens,
+          ...leaderScreens,
+          ...memberScreens,
+          ...guestScreens,
+        ].includes(screenName);
       case UserRole.DEACON:
-        return [...deaconScreens, ...leaderScreens, ...memberScreens, ...guestScreens].includes(screenName);
+        return [
+          ...deaconScreens,
+          ...leaderScreens,
+          ...memberScreens,
+          ...guestScreens,
+        ].includes(screenName);
       case UserRole.LEADER:
-        return [...leaderScreens, ...memberScreens, ...guestScreens].includes(screenName);
+        return [...leaderScreens, ...memberScreens, ...guestScreens].includes(
+          screenName
+        );
       case UserRole.MEMBER:
         return [...memberScreens, ...guestScreens].includes(screenName);
       default:
         return guestScreens.includes(screenName);
     }
   }
-} 
+}

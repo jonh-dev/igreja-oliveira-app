@@ -9,7 +9,13 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from './design-system';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from './design-system';
 
 export interface InputProps extends Omit<TextInputProps, 'onChangeText'> {
   label: string;
@@ -41,31 +47,31 @@ export const Input: React.FC<InputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleFocus = () => {
+  const handleFocus: TextInputProps['onFocus'] = e => {
     setIsFocused(true);
-    textInputProps.onFocus?.(textInputProps.onFocus as any);
+    textInputProps.onFocus?.(e);
   };
 
-  const handleBlur = () => {
+  const handleBlur: TextInputProps['onBlur'] = e => {
     setIsFocused(false);
-    textInputProps.onBlur?.(textInputProps.onBlur as any);
+    textInputProps.onBlur?.(e);
   };
 
   const applyMask = (text: string) => {
     const cleanText = text.replace(/\D/g, '');
-    
+
     if (type === 'cep') {
       if (cleanText.length <= 5) {
         return cleanText;
       }
       return `${cleanText.slice(0, 5)}-${cleanText.slice(5, 8)}`;
     }
-    
+
     if (!mask) return text;
-    
+
     let maskedText = '';
     let textIndex = 0;
-    
+
     for (let i = 0; i < mask.length && textIndex < text.length; i++) {
       if (mask[i] === '#') {
         maskedText += text[textIndex];
@@ -74,7 +80,7 @@ export const Input: React.FC<InputProps> = ({
         maskedText += mask[i];
       }
     }
-    
+
     return maskedText;
   };
 
@@ -137,7 +143,7 @@ export const Input: React.FC<InputProps> = ({
         {label}
         {required && <Text style={styles.required}> *</Text>}
       </Text>
-      
+
       <View style={styles.inputContainer}>
         <TextInput
           style={[inputStyle, type === 'password' && styles.passwordInput]}
@@ -152,7 +158,7 @@ export const Input: React.FC<InputProps> = ({
           onBlur={handleBlur}
           {...textInputProps}
         />
-        
+
         {type === 'password' && (
           <TouchableOpacity
             style={styles.eyeIcon}
@@ -166,7 +172,7 @@ export const Input: React.FC<InputProps> = ({
           </TouchableOpacity>
         )}
       </View>
-      
+
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -234,4 +240,4 @@ const styles = StyleSheet.create({
   eyeText: {
     fontSize: 16,
   },
-}); 
+});

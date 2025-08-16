@@ -18,67 +18,71 @@ export const ButtonTest: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Button Component Test</Text>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Variantes</Text>
-        
+
         <View style={styles.buttonRow}>
           <Button title="Primary" onPress={handlePress} variant="primary" />
           <Button title="Secondary" onPress={handlePress} variant="secondary" />
         </View>
-        
+
         <View style={styles.buttonRow}>
           <Button title="Danger" onPress={handlePress} variant="danger" />
           <Button title="Outline" onPress={handlePress} variant="outline" />
         </View>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tamanhos</Text>
-        
+
         <View style={styles.buttonRow}>
           <Button title="Small" onPress={handlePress} size="small" />
           <Button title="Medium" onPress={handlePress} size="medium" />
           <Button title="Large" onPress={handlePress} size="large" />
         </View>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Estados</Text>
-        
+
         <View style={styles.buttonRow}>
-          <Button title="Loading" onPress={handleLoadingPress} loading={loading} />
+          <Button
+            title="Loading"
+            onPress={handleLoadingPress}
+            loading={loading}
+          />
           <Button title="Disabled" onPress={handlePress} disabled />
         </View>
       </View>
-      
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Combinações</Text>
-        
+
         <View style={styles.buttonRow}>
-          <Button 
-            title="Primary Large" 
-            onPress={handlePress} 
-            variant="primary" 
-            size="large" 
+          <Button
+            title="Primary Large"
+            onPress={handlePress}
+            variant="primary"
+            size="large"
           />
         </View>
-        
+
         <View style={styles.buttonRow}>
-          <Button 
-            title="Danger Small" 
-            onPress={handlePress} 
-            variant="danger" 
-            size="small" 
+          <Button
+            title="Danger Small"
+            onPress={handlePress}
+            variant="danger"
+            size="small"
           />
         </View>
-        
+
         <View style={styles.buttonRow}>
-          <Button 
-            title="Outline Medium" 
-            onPress={handlePress} 
-            variant="outline" 
-            size="medium" 
+          <Button
+            title="Outline Medium"
+            onPress={handlePress}
+            variant="outline"
+            size="medium"
           />
         </View>
       </View>
@@ -113,4 +117,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: Spacing.md,
   },
-}); 
+});

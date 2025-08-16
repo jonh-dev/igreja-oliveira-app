@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { Button } from './Button';
 import { Card } from './Card';
 import { LoginScreen } from '../../screens/auth/LoginScreen';
@@ -62,8 +56,11 @@ export const AuthScreensTest: React.FC = () => {
     return (
       <RegisterScreen
         onRegisterSuccess={handleRegisterSuccess}
-        onNavigateBack={handleNavigateToLogin}
         onNavigateToLogin={handleNavigateToLogin}
+        onNavigateToEmailVerification={data => {
+          console.log('➡️ Ir para verificação de e-mail com:', data.email);
+          setCurrentScreen(null);
+        }}
       />
     );
   }
@@ -120,24 +117,18 @@ export const AuthScreensTest: React.FC = () => {
           <Card variant="outlined" style={styles.infoCard}>
             <Text style={styles.infoTitle}>📋 Funcionalidades Testadas</Text>
             <Text style={styles.infoText}>
-              ✅ Design System aplicado{'\n'}
-              ✅ Validações de formulário{'\n'}
-              ✅ Estados de loading{'\n'}
-              ✅ Tratamento de erros{'\n'}
-              ✅ Navegação entre telas{'\n'}
-              ✅ Responsividade{'\n'}
-              ✅ Acessibilidade básica
+              ✅ Design System aplicado{'\n'}✅ Validações de formulário{'\n'}✅
+              Estados de loading{'\n'}✅ Tratamento de erros{'\n'}✅ Navegação
+              entre telas{'\n'}✅ Responsividade{'\n'}✅ Acessibilidade básica
             </Text>
           </Card>
 
           <Card variant="outlined" style={styles.infoCard}>
             <Text style={styles.infoTitle}>🔧 Próximos Passos</Text>
             <Text style={styles.infoText}>
-              • Integração com SupabaseAuthService{'\n'}
-              • Implementação de Context API{'\n'}
-              • Navegação com React Navigation{'\n'}
-              • Testes unitários{'\n'}
-              • Validações de CPF e CEP reais
+              • Integração com SupabaseAuthService{'\n'}• Implementação de
+              Context API{'\n'}• Navegação com React Navigation{'\n'}• Testes
+              unitários{'\n'}• Validações de CPF e CEP reais
             </Text>
           </Card>
         </View>
@@ -205,4 +196,4 @@ const styles = StyleSheet.create({
     color: Colors.gray,
     lineHeight: 20,
   },
-}); 
+});
