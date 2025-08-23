@@ -35,7 +35,6 @@ describe('Phone Registration Tests', () => {
   });
 
   afterEach(async () => {
-    // Clean up created users after each test
     for (const user of createdUsers) {
       try {
         await supabaseAdmin.auth.admin.deleteUser(user.id);
@@ -101,7 +100,8 @@ describe('Phone Registration Tests', () => {
       options: {
         data: {
           full_name: fullName,
-          phone: phone
+          phone: phone,
+          provider_type: 'email'
         }
       }
     });
@@ -119,6 +119,9 @@ describe('Phone Registration Tests', () => {
     const userPhone = result.data.user.user_metadata?.phone;
     expect(userPhone).toBe(phone);
     expect(userPhone).toBeTruthy();
+    
+    // Verify provider_type is in user_metadata (will be moved to app_metadata by admin.updateUserById)
+    expect(result.data.user.user_metadata?.provider_type).toBe('email');
 
     // Track user for cleanup
     if (result.data.user) {
@@ -140,8 +143,7 @@ describe('Phone Registration Tests', () => {
       phone_confirm: true,
       user_metadata: {
         full_name: fullName,
-        phone_verified: true,
-        provider_type: 'email'
+        phone_verified: true
       },
       app_metadata: {
         provider_type: 'email',
@@ -155,8 +157,8 @@ describe('Phone Registration Tests', () => {
     expect(data.user.phone).toBe(phone.replace('+', ''));
     expect(data.user.user_metadata.full_name).toBe(fullName);
     expect(data.user.user_metadata.phone_verified).toBe(true);
-    expect(data.user.user_metadata.provider_type).toBe('email');
     expect(data.user.app_metadata.provider_type).toBe('email');
+    expect(data.user.app_metadata.registration_source).toBe('test');
 
     // Track user for cleanup
     createdUsers.push({ id: data.user.id, email });

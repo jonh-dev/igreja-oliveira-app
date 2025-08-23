@@ -89,7 +89,8 @@ export class SupabaseAuthService implements IAuthService {
         },
         app_metadata: {
           ...(addressData && { pending_address: addressData }),
-          provider_type: 'email'
+          provider: phone ? 'phone' : 'email',
+          provider_type: phone ? 'phone' : 'email'
         }
       });
       
@@ -107,7 +108,7 @@ export class SupabaseAuthService implements IAuthService {
           data: {
             full_name: fullName,
             ...(phone && { phone }),
-            provider_type: 'email'
+            provider_type: phone ? 'phone' : 'email'
           },
         },
       };
@@ -120,6 +121,40 @@ export class SupabaseAuthService implements IAuthService {
       const signUpResult = await supabase.auth.signUp(signUpData);
       data = signUpResult.data;
       error = signUpResult.error;
+
+      // Após signUp com anon, normalizar e persistir metadados críticos via admin
+      if (!error && data?.user && supabaseAdmin) {
+        try {
+          console.log('[SupabaseAuthService] Normalizando metadados via admin.updateUserById');
+          const { error: updErr } = await supabaseAdmin.auth.admin.updateUserById(
+            data.user.id,
+            {
+              // Persistir telefone no auth.users e marcá-lo como confirmado quando fornecido
+              ...(phone ? { phone, phone_confirm: true } : {}),
+              // Garantir user_metadata consistente
+              user_metadata: {
+                full_name: fullName,
+                ...(phone ? { phone, phone_verified: true } : {}),
+              },
+              // Garantir provider_type no app_metadata e endereço pendente quando aplicável
+              app_metadata: {
+                provider: phone ? 'phone' : 'email',
+                provider_type: phone ? 'phone' : 'email',
+                ...(addressData ? { pending_address: addressData } : {}),
+              },
+            }
+          );
+          if (updErr) {
+            console.warn('[SupabaseAuthService] Falha ao atualizar metadados via admin.updateUserById:', updErr.message || updErr);
+          } else {
+            console.log('[SupabaseAuthService] Metadados persistidos com sucesso via admin.updateUserById');
+          }
+        } catch (e: any) {
+          console.warn('[SupabaseAuthService] Exceção ao atualizar metadados via admin.updateUserById:', e?.message || e);
+        }
+      } else if (!supabaseAdmin) {
+        console.warn('[SupabaseAuthService] SUPABASE_SERVICE_ROLE_KEY ausente — não foi possível persistir phone/app_metadata em auth.users');
+      }
     }
     
     console.log('[SupabaseAuthService] Dados enviados para Supabase Auth:', {
@@ -150,7 +185,7 @@ export class SupabaseAuthService implements IAuthService {
       emailConfirmedAt: data.user.email_confirmed_at,
       userMetadata: data.user.user_metadata,
       rawUserMetadata: data.user.user_metadata,
-      hasSession: !!data.session
+      hasSession: 'session' in data ? !!data.session : false
     });
     
     // Criar usuário e endereço imediatamente, mesmo antes da confirmação do email
@@ -206,8 +241,8 @@ export class SupabaseAuthService implements IAuthService {
 
     return {
       user: resultUser,
-      token: data.session?.access_token || '',
-      refreshToken: data.session?.refresh_token,
+      token: ('session' in data && data.session?.access_token) || '',
+      refreshToken: ('session' in data && data.session?.refresh_token) || '',
     };
   }
 

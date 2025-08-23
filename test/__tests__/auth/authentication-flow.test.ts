@@ -1,7 +1,6 @@
 import type { AuthResult } from '../../../src/application/interfaces/services/IAuthService';
 import { SupabaseAuthService } from '../../../src/infrastructure/services/SupabaseAuthService';
 
-// Construiremos os fakes antes de mockar o módulo
 const fakeUserId = '00000000-0000-0000-0000-000000000001';
 const fakeEmail = 'jonh.dev.br@gmail.com';
 
@@ -40,7 +39,6 @@ const makeUsersBuilder = () => {
 
 const usersBuilder = makeUsersBuilder();
 
-// Mock do módulo usado no serviço (usar require.resolve inline para evitar hoisting de variável)
 jest.mock(require.resolve('../../../src/infrastructure/config/supabase'), () => {
   const fakeSupabase: any = {
     auth: {

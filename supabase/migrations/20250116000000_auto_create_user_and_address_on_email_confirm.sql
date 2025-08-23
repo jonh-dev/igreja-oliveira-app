@@ -137,7 +137,7 @@ BEGIN
     p_email, 
     p_full_name, 
     p_phone, 
-    '+55', 
+    CASE WHEN p_phone IS NOT NULL THEN '+55' ELSE NULL END, 
     'member'
   )
   ON CONFLICT (id) DO UPDATE SET

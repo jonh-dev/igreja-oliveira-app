@@ -183,7 +183,7 @@ export class SupabaseUserRepository implements IUserRepository {
       email: userData.email,
       full_name: userData.fullName,
       phone: userData.phone,
-      country_code: userData.countryCode || '+55',
+      country_code: userData.phone ? (userData.countryCode || '+55') : null,
       role: this.mapUserRoleToDatabaseRole(userData.role),
     };
 

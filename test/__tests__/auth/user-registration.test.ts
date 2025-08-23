@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
 import { generateTestPhone, generateTestEmail } from '../../utils/test-helpers';
 
-// Load environment variables
 config();
 
 interface TestUser {
